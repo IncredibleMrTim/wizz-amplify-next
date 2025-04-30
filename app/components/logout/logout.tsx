@@ -11,7 +11,7 @@ export default function Logout() {
   const handleSignOut = async () => {
     setIsSigningOut(true); // Set loading state
     try {
-      await Auth.signOut(); // Ensure sign-out completes
+      await signOut(); // Ensure sign-out completes
       router.push("/"); // Redirect after sign-out
     } catch (error) {
       console.error("Error signing out:", error);
