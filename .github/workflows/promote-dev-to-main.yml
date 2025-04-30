@@ -46,17 +46,9 @@ jobs:
           git commit -m "Bump version to ${{ steps.version.outputs.new_version }}"
           git push origin dev
 
-      # Step 5: Merge dev into main
-      - name: Merge dev into main
+      # Step 5: Force dev to overwrite main
+      - name: Force dev to overwrite main
         run: |
           git fetch origin
-          git checkout main
-          git merge origin/dev --no-ff --allow-unrelated-histories -m "Promote dev to main"
-          git push origin main
-
-      # Step 6: Sync version back to dev
-      - name: Sync version back to dev
-        run: |
           git checkout dev
-          git merge main --no-ff --allow-unrelated-histories -m "Sync version from main to dev"
-          git push origin dev
+          git push origin dev:main --force
