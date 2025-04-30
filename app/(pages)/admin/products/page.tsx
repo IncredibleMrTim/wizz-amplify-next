@@ -1,9 +1,10 @@
 "use client";
 
-import { Client, generateClient } from "aws-amplify/data";
+import { generateClient } from "aws-amplify/data";
 import { type Schema } from "@/amplify/data/resource";
 import { useEffect, useState } from "react";
 import AddProduct from "@/app/components/products/addProduct/AddProduct";
+import { addProduct } from "@/app/services/productAdd";
 
 const AdminProductsPage = () => {
   const client = generateClient<Schema>();
@@ -26,27 +27,16 @@ const AdminProductsPage = () => {
 
   return (
     <div>
-      {products &&
+      {/* {products &&
         products.map((product) => (
           <div key={product.id}>
-            <h2>{product.name}</h2>
-            <p>{product.description}</p>
-            <p>£{product.price}</p>
+            <h2>{product?.name}</h2>
+            <p>{product?.description}</p>
+            <p>£{product?.price}</p>
           </div>
-        ))}
+        ))} */}
 
-      <AddProduct />
-      <button
-        onClick={async () => {
-          const newProduct = await client.models.Product.create({
-            name: "New Product",
-            description: "This is a new product",
-            price: 100,
-          });
-        }}
-      >
-        Create
-      </button>
+      <AddProduct onSubmit={addProduct} />
     </div>
   );
 };

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Theme } from "@radix-ui/themes";
 import "@radix-ui/themes/styles.css";
+import "./globals.css";
 
 import "@aws-amplify/ui-react/styles.css";
 import ConfigureAmplifyClientSide from "@/app/components/configureAmplify/ConfigureAmplify";

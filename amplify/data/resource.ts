@@ -1,5 +1,6 @@
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
+
 /*== STEP 1 ===============================================================
 The section below creates a Todo database table with a "content" field. Try
 adding a new "isDone" field as a boolean. The authorization rule below
@@ -15,12 +16,12 @@ const schema = a.schema({
     .authorization((allow) => [allow.publicApiKey()]),
   Product: a
     .model({
-      name: a.string(),
-      description: a.string(),
-      price: a.integer(),
+      name: a.string().required(),
+      description: a.string().required(),
+      price: a.integer().required(),
       imageUrl: a.string(),
       category: a.string(),
-      stock: a.integer(),
+      stock: a.integer().required(),
     })
     .authorization((allow) => [allow.publicApiKey()]),
 });
