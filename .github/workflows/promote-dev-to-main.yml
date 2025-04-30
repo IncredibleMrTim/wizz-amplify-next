@@ -4,7 +4,7 @@ on:
   workflow_dispatch: # Allows the workflow to be triggered manually via a button in GitHub Actions
 
 jobs:
-  promote:
+  promote-dev-to-main:
     runs-on: ubuntu-latest
 
     steps:
@@ -52,11 +52,11 @@ jobs:
           git fetch origin
           git checkout main
           git merge origin/dev --no-ff --allow-unrelated-histories -s recursive -X ours -m "Promote dev to main"
-          git push origin main
+          git push origin main --force
 
       # Step 6: Sync version back to dev (favor dev branch changes)
       - name: Sync version back to dev
         run: |
           git checkout dev
           git merge main --no-ff --allow-unrelated-histories -s recursive -X theirs -m "Sync version from main to dev"
-          git push origin dev
+          git push origin dev --force
