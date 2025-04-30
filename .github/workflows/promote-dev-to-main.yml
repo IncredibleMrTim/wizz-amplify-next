@@ -1,4 +1,5 @@
 name: Promote Dev to Main
+
 on:
   workflow_dispatch: # Allows the workflow to be triggered manually via a button in GitHub Actions
 
@@ -45,9 +46,10 @@ jobs:
           git commit -m "Bump version to ${{ steps.version.outputs.new_version }}"
           git push origin dev
 
-      # Step 5: Force dev to overwrite main
-      - name: Force dev to overwrite main
+      # Step 5: Merge dev into main
+      - name: Merge dev into main
         run: |
           git fetch origin
-          git checkout dev
-          git push origin dev:main --force
+          git checkout main
+          git merge origin/dev --no-ff -m "Promote dev to main"
+          git push origin main
