@@ -4,7 +4,7 @@ on:
   workflow_dispatch: # Allows the workflow to be triggered manually via a button in GitHub Actions
 
 jobs:
-  promote-dev-to-main:
+  promote:
     runs-on: ubuntu-latest
 
     steps:
