@@ -3,7 +3,6 @@ name: Promote Dev to Main
 on:
   workflow_dispatch: # Allows the workflow to be triggered manually via a button in GitHub Actions
 
-
 jobs:
   promote:
     runs-on: ubuntu-latest
