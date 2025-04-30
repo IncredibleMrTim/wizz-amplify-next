@@ -12,9 +12,6 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         <Authenticator>{children}</Authenticator>
         <Logout />
       </main>
-      <footer className="bg-gray-800 text-white p-4 text-center">
-        &copy; 2023 My Admin Dashboard
-      </footer>
     </div>
   );
 };

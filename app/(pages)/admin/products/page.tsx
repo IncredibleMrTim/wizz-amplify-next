@@ -3,6 +3,7 @@
 import { Client, generateClient } from "aws-amplify/data";
 import { type Schema } from "@/amplify/data/resource";
 import { useEffect, useState } from "react";
+import AddProduct from "@/app/components/products/addProduct/AddProduct";
 
 const AdminProductsPage = () => {
   const client = generateClient<Schema>();
@@ -25,8 +26,6 @@ const AdminProductsPage = () => {
 
   return (
     <div>
-      <h1>Admin Products Page</h1>
-      <p>This is the admin products page.</p>
       {products &&
         products.map((product) => (
           <div key={product.id}>
@@ -36,6 +35,7 @@ const AdminProductsPage = () => {
           </div>
         ))}
 
+      <AddProduct />
       <button
         onClick={async () => {
           const newProduct = await client.models.Product.create({

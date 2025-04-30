@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./app.css";
+import { Theme } from "@radix-ui/themes";
+import "@radix-ui/themes/styles.css";
 
 import "@aws-amplify/ui-react/styles.css";
 import ConfigureAmplifyClientSide from "@/app/components/configureAmplify/ConfigureAmplify";
@@ -21,7 +22,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <ConfigureAmplifyClientSide />
-        {children}
+        <Theme>{children}</Theme>
       </body>
     </html>
   );
