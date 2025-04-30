@@ -10,6 +10,17 @@ const schema = a.schema({
   Todo: a
     .model({
       content: a.string(),
+      isDone: a.boolean(),
+    })
+    .authorization((allow) => [allow.publicApiKey()]),
+  Product: a
+    .model({
+      name: a.string(),
+      description: a.string(),
+      price: a.integer(),
+      imageUrl: a.string(),
+      category: a.string(),
+      stock: a.integer(),
     })
     .authorization((allow) => [allow.publicApiKey()]),
 });
