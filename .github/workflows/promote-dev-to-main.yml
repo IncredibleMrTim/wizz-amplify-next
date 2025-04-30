@@ -46,7 +46,7 @@ jobs:
           git commit -m "Bump version to ${{ steps.version.outputs.new_version }}"
           git push origin dev
 
-      # Step 5: Merge dev into main
+      # Step 5: Merge dev into main (favor main branch changes)
       - name: Merge dev into main
         run: |
           git fetch origin
