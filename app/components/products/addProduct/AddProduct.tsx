@@ -12,17 +12,21 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { FileUploader } from "@aws-amplify/ui-react-storage";
 import { type Schema } from "@/amplify/data/resource";
-import { useState } from "react";
-import { z } from "zod";
+import { useEffect, useState } from "react";
+import { set, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { getUserCredentials } from "@/services/users";
+import { AuthSession } from "aws-amplify/auth";
 interface AddProductProps {
   onSubmit: (product: Schema["Product"]["type"]) => void;
 }
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
+  image: z.string().optional(),
   description: z.string().min(1, { message: "Description is required" }),
   price: z
     .number()
@@ -38,6 +42,16 @@ const AddProduct = ({ onSubmit }: AddProductProps) => {
   const [product, setProduct] = useState<z.infer<typeof formSchema> | null>(
     null
   );
+  const [creds, setCreds] = useState<AuthSession | null>(null);
+
+  useEffect(() => {
+    const fetchUserCredentials = async () => {
+      const { credentials, user, attrs } = await getUserCredentials();
+      setCreds(credentials);
+    };
+
+    fetchUserCredentials();
+  }, []);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -133,20 +147,29 @@ const AddProduct = ({ onSubmit }: AddProductProps) => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Stock Level</FormLabel>
+                <FormControl></FormControl>
+                <FormDescription>Enter the product stock level</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="image"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Image</FormLabel>
                 <FormControl>
-                  <Input
-                    {...field}
-                    type="number"
-                    placeholder="Stock"
-                    onChange={(e) =>
-                      setProduct({
-                        ...product,
-                        stock: parseInt(e.target.value),
-                      } as unknown as z.infer<typeof formSchema>)
-                    }
+                  <FileUploader
+                    acceptedFileTypes={["image/*"]}
+                    path={`${process.env.AWS_S3_PRODUCT_IMAGE_PATH!}/${creds?.identityId}/`}
+                    maxFileCount={1}
+                    bucket={process.env.AWS_S3_PRODUCT_IMAGE_BUCKET!}
+                    isResumable
+                    showThumbnails
                   />
                 </FormControl>
-                <FormDescription>Enter the product stock level</FormDescription>
+                <FormDescription>Upload a product image.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
