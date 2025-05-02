@@ -1,5 +1,5 @@
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
-
+import { create } from "domain";
 
 /*== STEP 1 ===============================================================
 The section below creates a Todo database table with a "content" field. Try
@@ -15,8 +15,9 @@ const schema = a.schema({
       price: a.integer().required(),
       imageUrl: a.string(),
       category: a.string(),
-      feature: a.boolean(),
+      isFeatured: a.boolean(),
       stock: a.integer().required(),
+      sortOrder: a.integer(),
     })
     .authorization((allow) => [allow.publicApiKey()]),
 });

@@ -1,4 +1,4 @@
-import { type Schema } from "@/amplify/data/resource";
+import { type Schema } from "amplify/data/resource";
 import { generateClient } from "aws-amplify/data";
 
 const client = generateClient<Schema>();
@@ -9,12 +9,13 @@ export const addProduct = async (product: Schema["Product"]["type"]) => {
   return result;
 };
 
-export const getFeaturedProducts = async () => {
+export const getFeaturedProducts = async (count?: number) => {
   const result = await client.models.Product.list({
     filter: {
-      feature: { eq: true },
+      isFeatured: { eq: true },
     },
+    limit: count ?? 10,
   });
 
-  return result;
+  return result.data;
 };
