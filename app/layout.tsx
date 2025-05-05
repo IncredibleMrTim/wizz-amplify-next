@@ -7,6 +7,7 @@ import "./globals.css";
 import "@aws-amplify/ui-react/styles.css";
 import ConfigureAmplifyClientSide from "@/components/configureAmplifyClientSide/ConfigureAmplifyClientSide";
 import Header from "./components/header/Header";
+import ReduxProvider from "./stores/redux/provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,8 +26,10 @@ export default function RootLayout({
       <body className={inter.className}>
         <ConfigureAmplifyClientSide />
         <Theme>
-          <Header />
-          <Container>{children}</Container>
+          <ReduxProvider>
+            <Header />
+            <Container>{children}</Container>
+          </ReduxProvider>
         </Theme>
       </body>
     </html>
