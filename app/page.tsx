@@ -15,10 +15,14 @@ export default async function App() {
   return (
     <main>
       <Flex>
-        <div className="flex flex-col md:flex-row gap-4 p-4">
+        <div className="flex flex-col md:flex-row gap-4 p-4 justify-between w-full">
           {featuredProducts?.length ? (
             featuredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard
+                showDescription={false}
+                key={product.id}
+                product={product}
+              />
             ))
           ) : (
             <p>No featured products available</p>
