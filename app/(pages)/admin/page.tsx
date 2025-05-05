@@ -1,5 +1,3 @@
-import Auth from "@/app/components/login/Login";
-
 const AdminPage = () => {
   return (
     <div>
