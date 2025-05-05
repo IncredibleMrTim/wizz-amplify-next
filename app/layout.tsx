@@ -5,8 +5,8 @@ import "@radix-ui/themes/styles.css";
 import "./globals.css";
 
 import "@aws-amplify/ui-react/styles.css";
-
-import { Header, ConfigureAmplifyClientSide } from "@/components";
+import ConfigureAmplifyClientSide from "@/components/configureAmplifyClientSide/ConfigureAmplifyClientSide";
+import Header from "./components/header/Header";
 
 const inter = Inter({ subsets: ["latin"] });
 
