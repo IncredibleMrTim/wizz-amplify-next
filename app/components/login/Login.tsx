@@ -15,4 +15,6 @@ function Login({ user }: { user?: AuthUser }) {
   return null;
 }
 
-export default withAuthenticator(Login);
+export default withAuthenticator(Login, {
+  variation: "modal",
+});

@@ -1,15 +1,19 @@
 "use client";
-
-import { generateClient } from "aws-amplify/data";
-import { type Schema } from "@/amplify/data/resource";
-import { useEffect, useState } from "react";
-import AddProduct from "@/app/components/products/addProduct/AddProduct";
-import { addProduct } from "@/app/services/products";
+import { type Schema } from "amplify/data/resource";
+import AddProduct from "@/components/products/addProduct/AddProduct";
+import { addProduct } from "@/services/products";
+import { useRouter } from "next/navigation";
 
 const AdminProductsPage = () => {
+  const router = useRouter();
+  const handleSubmit = (p: Schema["Product"]["type"]) => {
+    addProduct(p);
+    router.push("/admin");
+  };
+
   return (
     <div>
-      <AddProduct onSubmit={addProduct} />
+      <AddProduct onSubmit={(p) => handleSubmit(p)} />
     </div>
   );
 };

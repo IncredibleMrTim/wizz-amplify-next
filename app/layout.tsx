@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { Theme } from "@radix-ui/themes";
+import { Container, Theme } from "@radix-ui/themes";
 import "@radix-ui/themes/styles.css";
 import "./globals.css";
 
 import "@aws-amplify/ui-react/styles.css";
-import ConfigureAmplifyClientSide from "@/app/components/configureAmplify/ConfigureAmplify";
+import ConfigureAmplifyClientSide from "@/components/configureAmplifyClientSide/ConfigureAmplifyClientSide";
+import Header from "./components/header/Header";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,7 +24,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <ConfigureAmplifyClientSide />
-        <Theme>{children}</Theme>
+        <Theme>
+          <Header />
+          <Container>{children}</Container>
+        </Theme>
       </body>
     </html>
   );
