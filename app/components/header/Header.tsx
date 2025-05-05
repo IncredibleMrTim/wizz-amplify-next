@@ -1,8 +1,10 @@
+import Navigation from "@/components/navigation/Navigation";
+
 const Header = () => {
   return (
-    <header className="h-48">
-      <div className="relative">
-        <div className="absolute top-0 left-0 w-full h-48 bg-gradient-to-r from-transparent from-40% to-black to-100% z-10">
+    <div>
+      <header className="h-48 relative">
+        <div className="absolute top-0 left-0 w-full h-48 bg-gradient-to-r from-transparent from-40% to-black to-100%">
           <img
             src="header-model.jpg"
             alt="Header Model"
@@ -14,8 +16,11 @@ const Header = () => {
             className="w-96 object-right absolute top-0 right-0 mt-4 mr-4"
           />
         </div>
+      </header>
+      <div className="px-2 w-full">
+        <Navigation />
       </div>
-    </header>
+    </div>
   );
 };
 export default Header;

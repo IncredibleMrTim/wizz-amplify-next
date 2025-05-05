@@ -15,12 +15,10 @@ interface ProductCardProps {
 
 const ProductCard = ({
   product,
-  onClick,
   showTitle = true,
   showDescription = true,
   showImage = true,
   showPrice = true,
-  showQuantity = true,
 }: ProductCardProps) => {
   return (
     <div
