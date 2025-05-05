@@ -1,32 +1,57 @@
 "use client";
 import { Schema } from "amplify/data/resource";
-import { Button, Flex } from "@radix-ui/themes";
+import { Button, Card, Flex } from "@radix-ui/themes";
 
 interface ProductCardProps {
   product: Schema["Product"]["type"];
+  showTitle?: boolean;
+  showDescription?: boolean;
+  showImage?: boolean;
+  showPrice?: boolean;
+  showQuantity?: boolean;
+
   onClick?: (product: Schema["Product"]["type"]) => void;
 }
 
-const ProductCard = ({ product, onClick }: ProductCardProps) => {
+const ProductCard = ({
+  product,
+  onClick,
+  showTitle = true,
+  showDescription = true,
+  showImage = true,
+  showPrice = true,
+  showQuantity = true,
+}: ProductCardProps) => {
   return (
     <div
       key={product.id}
-      className="flex flex-col justify-between border-0 rounded-md md:border-1 shadow-md p-4 h-full"
+      className="w-1/3 flex flex-col !justify-between !h-max  bg-white p-4"
     >
-      <div className="flex flex-col gap-4 border-b-1 border-gray-300 mb-4 pb-4">
-        <h2>{product.name}</h2>
-        <span>Price: £{product.price}</span>
-        <p>{product.description}</p>
+      <div className="flex flex-col gap-4 ">
+        {showDescription && <p>{product.description}</p>}
       </div>
-      {product?.imageUrl && (
-        <img
-          src={`${process.env.AWS_S3_PRODUCT_IMAGE_URL}${product.imageUrl}`}
-          alt={product.name}
-          className="flex self-center object-scale-down h-52 w-52"
-        />
+
+      {showImage && product?.imageUrl && (
+        <div className="flex justify-center">
+          <img
+            src={`${process.env.AWS_S3_PRODUCT_IMAGE_URL}${product.imageUrl}`}
+            alt={product.name}
+            className="flex self-center object-scale-down w-full"
+          />
+        </div>
       )}
-      <Flex align="end" direction={"column"} className="mt-4">
-        <Button
+
+      <div className="flex flex-col py-2 justify-between">
+        {showTitle && (
+          <div className="flex w-full justify-center pb-1">{product.name}</div>
+        )}
+        {showPrice && (
+          <div className="flex w-full justify-center">£{product.price} GBP</div>
+        )}
+      </div>
+
+      <div className="mt-4 bottom-4 flex justify-between">
+        {/* <Button
           className="mt-4 bg-blue-500 text-white p-2 rounded-md"
           onClick={() => {
             if (onClick) {
@@ -35,8 +60,8 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
           }}
         >
           Place Order
-        </Button>
-      </Flex>
+        </Button> */}
+      </div>
     </div>
   );
 };
