@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "NunitoSans";
+  src: url("./fonts/NunitoSans-VariableFont_YTLC.ttf");
+}
+
 @theme {
   --animate-fade-in-scale: fade-in-scale 0.2s ease-out;
 
@@ -13,6 +18,14 @@
       transform: scale(1);
     }
   }
+}
+
+p {
+  font-family: "NunitoSans", sans-serif;
+  font-size: 1rem !important;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0.08em;
 }
 
 h1 {
