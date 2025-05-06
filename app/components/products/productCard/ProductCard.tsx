@@ -41,7 +41,7 @@ const ProductCard = ({
 
       <div className="flex flex-col py-2 justify-between">
         {showTitle && (
-          <div className="flex w-full justify-center pb-1">{product.name}</div>
+          <p className="flex w-full justify-center pb-1">{product.name}</p>
         )}
         {showPrice && (
           <div className="flex w-full justify-center">£{product.price} GBP</div>
