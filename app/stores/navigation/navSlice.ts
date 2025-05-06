@@ -1,5 +1,22 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { MenuItem, MenuItems } from "./types";
+
+export enum MenuItems {
+  HOME = "Home",
+  DRESSES = "Dresses",
+  PAGEANT_ACCESSORIES = "Pageant Accessories",
+  DANCE_ACCESSORIES = "Dance Accessories",
+}
+
+export type MenuItem = {
+  name: MenuItems;
+  path: string;
+  isActive?: boolean;
+};
+
+export const NAV_TYPES = {
+  SET_ACTIVE_MENU_ITEM: "NAVIGATION/setActiveMenuItem",
+  SET_DRAWER_IS_OPEN: "NAVIGATION/setIsDrawerOpen",
+};
 
 export interface NavState {
   menuItems: MenuItem[];
@@ -28,11 +45,10 @@ const initialSate = {
 };
 
 export const navSlice = createSlice({
-  name: "navigation",
+  name: "NAVIGATION",
   initialState: initialSate,
   reducers: {
     setActiveMenuItem: (state, action: PayloadAction<MenuItem>) => {
-      console.log("setActiveMenuItem", action.payload);
       state.menuItems = state.menuItems.map((item) => ({
         ...item,
         isActive: item.name === action.payload.name,

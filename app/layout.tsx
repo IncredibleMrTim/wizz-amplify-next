@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+
 import { Container, Theme } from "@radix-ui/themes";
 import "@radix-ui/themes/styles.css";
 import "./globals.css";
@@ -8,8 +8,7 @@ import "@aws-amplify/ui-react/styles.css";
 import ConfigureAmplifyClientSide from "@/components/configureAmplifyClientSide/ConfigureAmplifyClientSide";
 import Header from "./components/header/Header";
 import ReduxProvider from "./stores/redux/provider";
-
-const inter = Inter({ subsets: ["latin"] });
+import CheckAuth from "./components/auth/Auth";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -23,12 +22,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body>
         <ConfigureAmplifyClientSide />
         <Theme>
           <ReduxProvider>
+            <CheckAuth />
             <Header />
-            <Container>{children}</Container>
+            <Container className="mt-16" size="4">
+              {children}
+            </Container>
           </ReduxProvider>
         </Theme>
       </body>

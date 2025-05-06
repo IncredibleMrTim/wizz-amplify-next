@@ -17,7 +17,7 @@ const Header = () => {
           />
         </div>
       </header>
-      <div className="px-2 w-full">
+      <div className="w-full border-b border-gray-300">
         <Navigation />
       </div>
     </div>

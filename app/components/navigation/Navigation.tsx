@@ -1,128 +1,72 @@
 "use client";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuIndicator,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-  NavigationMenuViewport,
-  navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu";
-import { Separator } from "@aws-amplify/ui-react-storage/dist/types/components/StorageBrowser/components/base";
-import { useState } from "react";
 
-type NavComponent = {
+import Link from "next/link";
+import { useState } from "react";
+import { useAppSelector } from "@/stores/redux/store";
+import Logout from "../logout/logout";
+import adminComponents from "./adminComponents";
+import userComponents from "./userComponents";
+import { Button } from "@radix-ui/themes";
+
+export type NavComponent = {
+  id: string;
+  type: "button" | "link";
   title: string;
   href: string;
-  description: string | React.ReactNode;
+  content?: string | React.ReactNode;
 };
 
-const components: NavComponent[] = [
-  {
-    title: "Pageant Wear",
-    href: "/docs/primitives/alert-dialog",
-    description: (
-      <div className="p-4">
-        <ul>
-          <li>Glitz dresses</li>
-          <li>Natural dresses</li>
-          <li>Casual wear</li>
-          <li>OOC/fun fashion</li>
-          <li>Swimwear</li>
-          <li>Other</li>
-          <li>Accessories</li>
-          <li>Gallery</li>
-        </ul>
-      </div>
-    ),
-  },
-  {
-    title: "Dance wear",
-    href: "/docs/primitives/hover-card",
-    description: (
-      <div className="flex p-4 gap-8">
-        <div>
-          <h2>Figure Skating</h2>
-          <ul>
-            <li>Lyrical</li>
-            <li>Modern</li>
-            <li>Jazz</li>
-            <li>Tap</li>
-            <li>Character inspired</li>
-            <li>Acro</li>
-            <li>Stretch</li>
-            <li>Pancake tutus</li>
-            <li>Hand painted</li>
-            <li>Airbrush</li>
-            <li>Other</li>
-            <li>Accessories</li>
-            <li>Gallery</li>
-          </ul>
-        </div>
+interface NavigationProps {
+  type?: "user" | "admin";
+}
 
-        <div>
-          <h2>Aerial</h2>
-          <ul>
-            <li>Lyrical</li>
-            <li>Modern</li>
-            <li>Jazz</li>
-            <li>Tap</li>
-            <li>Character inspired</li>
-            <li>Acro</li>
-            <li>Stretch</li>
-            <li>Pancake tutus</li>
-            <li>Hand painted</li>
-            <li>Airbrush</li>
-            <li>Other</li>
-            <li>Accessories</li>
-            <li>Gallery</li>
-          </ul>
-        </div>
-      </div>
-    ),
-  },
-];
-
-const Navigation = () => {
-  const [isHovered, setIsHovered] = useState<boolean>(false);
+const Navigation = ({ type = "user" }: NavigationProps) => {
   const [selected, setSelected] = useState<NavComponent | null>(null);
+  const currentUser = useAppSelector((state) => state.auth.currentUser);
 
-  const NavContent = () => {
-    return (
-      <div
-        className={`absolute bg-white border-b-2 border-gray-100 w-full shadow-md ${isHovered ? "animate-fade-in-scale" : "opacity-0"}`}
-      >
-        {selected && <div>{selected.description}</div>}
-      </div>
-    );
-  };
+  const components = type === "admin" ? adminComponents : userComponents;
 
   return (
-    <div
-      className="w-full relative border-b border-gray-200"
-      onMouseLeave={() => {
-        setSelected(null);
-      }}
-    >
-      <ul className="flex gap-2">
-        {components.map((component) => (
-          <li>
-            <div
-              className={`cursor-pointer p-4 ${selected?.title === component.title ? "border-b-2 border-gray-400" : ""}`}
-              onMouseEnter={() => {
-                setIsHovered(true);
-                setSelected(component);
-              }}
-            >
-              {component.title}
-            </div>
-          </li>
-        ))}
-      </ul>
-
-      <NavContent />
+    <div>
+      <div
+        className={` w-full bg-white box-border ${type === "user" && "absolute  shadow-md"} ${selected && "h-auto"} `}
+        onMouseLeave={(e) => {
+          setSelected(null);
+        }}
+      >
+        <ul className="flex gap-4 bg-white">
+          {components &&
+            components.map((component) => (
+              <li
+                className={`${type === "user" && "first:ml-4 h-10"}  ${selected?.id === component.id && type === "user" && "border-b-2 border-gray-400"}`}
+                key={component.id}
+              >
+                {component.type === "link" ? (
+                  <div
+                    className={`cursor-pointer py-2`}
+                    onMouseEnter={() => {
+                      setSelected(component);
+                    }}
+                  >
+                    {component.title}
+                  </div>
+                ) : (
+                  <Button variant="outline">{component.title}</Button>
+                )}
+              </li>
+            ))}
+        </ul>
+        {type === "user" && (
+          <div className="absolute top-0 right-0 px-4 py-2">
+            {currentUser ? <Logout /> : <Link href="/admin">Login</Link>}
+          </div>
+        )}
+        <div
+          className={`overflow-hidden bg-white ${selected?.content && "fade-in-scale border-t-1 border-gray-100"}`}
+        >
+          {selected?.content}
+        </div>
+      </div>
     </div>
   );
 };
