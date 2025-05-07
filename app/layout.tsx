@@ -5,10 +5,17 @@ import "@radix-ui/themes/styles.css";
 import "./globals.css";
 
 import "@aws-amplify/ui-react/styles.css";
+<<<<<<< Updated upstream
 import ConfigureAmplifyClientSide from "@/components/configureAmplifyClientSide/ConfigureAmplifyClientSide";
 import Header from "./components/header/Header";
 import ReduxProvider from "./stores/redux/provider";
 import CheckAuth from "./components/auth/Auth";
+=======
+import ConfigureAmplifyClientSide from "@/app/components/configureAmplify/ConfigureAmplify";
+import Header from "./components/header/Header";
+
+const inter = Inter({ subsets: ["latin"] });
+>>>>>>> Stashed changes
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -25,6 +32,7 @@ export default function RootLayout({
       <body>
         <ConfigureAmplifyClientSide />
         <Theme>
+<<<<<<< Updated upstream
           <ReduxProvider>
             <CheckAuth />
             <Header />
@@ -32,6 +40,10 @@ export default function RootLayout({
               {children}
             </Container>
           </ReduxProvider>
+=======
+          <Header />
+          {children}
+>>>>>>> Stashed changes
         </Theme>
       </body>
     </html>
