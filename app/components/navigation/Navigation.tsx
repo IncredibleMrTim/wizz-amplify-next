@@ -7,6 +7,7 @@ import Logout from "../logout/logout";
 import adminComponents from "./adminComponents";
 import userComponents from "./userComponents";
 import { Button } from "@radix-ui/themes";
+import { useRouter } from "next/navigation";
 
 export type NavComponent = {
   id: string;
@@ -23,7 +24,7 @@ interface NavigationProps {
 const Navigation = ({ type = "user" }: NavigationProps) => {
   const [selected, setSelected] = useState<NavComponent | null>(null);
   const currentUser = useAppSelector((state) => state.auth.currentUser);
-
+  const router = useRouter();
   const components = type === "admin" ? adminComponents : userComponents;
 
   return (
@@ -51,7 +52,11 @@ const Navigation = ({ type = "user" }: NavigationProps) => {
                     {component.title}
                   </div>
                 ) : (
-                  <Button variant="outline">{component.title}</Button>
+                  <Link href={component.href} prefetch>
+                    <Button variant="soft" className="px-2 py-2">
+                      {component.title}
+                    </Button>
+                  </Link>
                 )}
               </li>
             ))}
