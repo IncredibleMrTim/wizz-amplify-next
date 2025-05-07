@@ -1,13 +1,10 @@
 "use server";
 
 import "@/app.css";
-import { Amplify } from "aws-amplify";
-import outputs from "amplify_outputs.json";
+
 import { getFeaturedProducts } from "@/services/products";
 import { Flex, Card } from "@radix-ui/themes";
 import ProductCard from "@/components/products/productCard/ProductCard";
-
-Amplify.configure(outputs);
 
 export default async function App() {
   const featuredProducts = await getFeaturedProducts();

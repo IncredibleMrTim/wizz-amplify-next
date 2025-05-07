@@ -65,7 +65,11 @@ const AddProduct = ({ onSubmit }: AddProductProps) => {
     console.log("Product state changed:", product);
   }, [product]);
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<
+    z.infer<typeof formSchema>,
+    any,
+    z.infer<typeof formSchema>
+  >({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",

@@ -14,7 +14,7 @@ const schema = a.schema({
       price: a.integer().required(),
       imageUrl: a.string(),
       category: a.string(),
-      isFeatured: a.boolean(),
+      isFeatured: a.boolean().default(false),
       stock: a.integer().required(),
     })
     .authorization((allow) => [allow.publicApiKey()]),
