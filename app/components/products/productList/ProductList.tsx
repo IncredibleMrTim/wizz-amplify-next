@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import {
-  ColumnDef,
   ColumnFiltersState,
   SortingState,
   VisibilityState,
@@ -12,10 +11,9 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ChevronDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+
 import {
   Table,
   TableBody,
@@ -26,85 +24,10 @@ import {
 } from "@/components/ui/table";
 import { getProducts } from "@/services/products";
 import { Schema } from "amplify/data/resource";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
-export const columns: ColumnDef<Schema["Product"]["type"]>[] = [
-  {
-    accessorKey: "name",
-    header: "Name",
-    size: 50, // Explicit size
-    cell: ({ row }) => (
-      <div className="overflow-hidden text-ellipsis whitespace-nowrap">
-        {row.getValue("name")}
-      </div>
-    ),
-  },
-  {
-    accessorKey: "description",
-    header: "Description",
-    size: 100, // Explicit size
-    cell: ({ row }) => {
-      return (
-        <div className="overflow-hidden text-ellipsis whitespace-nowrap">
-          {row.getValue("description")}
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "category",
-    header: "Category",
-    size: 30, // Explicit size
-    cell: ({ row }) => {
-      return (
-        <div className="overflow-hidden text-ellipsis whitespace-nowrap">
-          {row.getValue("category")}
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "price",
-    header: "Price",
-    size: 20, // Explicit size
-    cell: ({ row }) => {
-      return (
-        <div className="overflow-hidden text-ellipsis whitespace-nowrap">
-          {row.getValue("price")}
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "stock",
-    header: "Stock",
-    size: 20, // Explicit size
-    cell: ({ row }) => {
-      return (
-        <div className="overflow-hidden text-ellipsis whitespace-nowrap">
-          {row.getValue("stock")}
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "isFeatured",
-    header: "Featured",
-    size: 20, // Explicit size
-    cell: ({ row }) => {
-      return (
-        <div className="overflow-hidden text-ellipsis whitespace-nowrap">
-          {row.getValue("isFeatured") ? "Yes" : "No"}
-        </div>
-      );
-    },
-  },
-];
+import { columns } from "./productListColumnDefs";
+import { ProductFilter } from "./ProductFilter";
+import { ProductTableFooter } from "./ProductTableFooter";
 
 const ProductList = () => {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -145,129 +68,74 @@ const ProductList = () => {
     },
   });
 
+  const renderHeaders = () => (
+    <TableHeader>
+      {table.getHeaderGroups().map((headerGroup) => (
+        <TableRow key={headerGroup.id} className="border-stone-200">
+          {headerGroup.headers.map((header) => {
+            return (
+              <TableHead
+                key={header.id}
+                style={{
+                  width: `${header.column.columnDef.size}px`, // Apply explicit size
+                }}
+              >
+                {header.isPlaceholder
+                  ? null
+                  : flexRender(
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
+              </TableHead>
+            );
+          })}
+        </TableRow>
+      ))}
+    </TableHeader>
+  );
+
+  const renderBody = () => (
+    <TableBody className="overflow-scroll">
+      {table.getRowModel().rows?.length ? (
+        table.getRowModel().rows.map((row) => (
+          <TableRow
+            key={row.id}
+            data-state={row.getIsSelected() && "selected"}
+            className="border-0 odd:bg-stone-100 even:bg-stone-50"
+          >
+            {row.getVisibleCells().map((cell) => (
+              <TableCell
+                key={cell.id}
+                style={{
+                  width: `${cell.column.columnDef.size}px`, // Apply explicit size
+                }}
+                className="overflow-hidden text-ellipsis whitespace-nowrap py-4"
+              >
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </TableCell>
+            ))}
+          </TableRow>
+        ))
+      ) : (
+        <TableRow>
+          <TableCell colSpan={columns.length} className="h-24 text-center">
+            No results.
+          </TableCell>
+        </TableRow>
+      )}
+    </TableBody>
+  );
+
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
-        <Input
-          placeholder="Filter products..."
-          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("name")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="bg-white">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-      <div className="rounded-md border">
-        <Table className="table-fixed">
-          {" "}
-          {/* Ensure table layout is fixed */}
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead
-                      key={header.id}
-                      style={{
-                        width: `${header.column.columnDef.size}px`, // Apply explicit size
-                      }}
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      style={{
-                        width: `${cell.column.columnDef.size}px`, // Apply explicit size
-                      }}
-                      className="overflow-hidden text-ellipsis whitespace-nowrap"
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
-          Showing {table.getFilteredRowModel().rows.length} of {data.length}{" "}
-          products
-        </div>
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
+      <div className="mt-4">
+        <div>
+          <Table className="table-fixed">{renderHeaders()}</Table>
+          <div className="min-h-124 overflow-scroll  border-1 border-stone-100 rounded-sm">
+            <Table className="table-fixed">{renderBody()}</Table>
+          </div>
+
+          <ProductTableFooter table={table} allRowCount={data.length} />
         </div>
       </div>
     </div>
