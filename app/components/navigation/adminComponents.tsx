@@ -11,7 +11,7 @@ const components: NavComponent[] = [
     id: "new-product",
     type: "button",
     title: "New Product",
-    href: "/admin/products",
+    href: "/admin/product",
   },
 ];
 

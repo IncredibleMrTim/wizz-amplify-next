@@ -21,6 +21,7 @@ export const getFeaturedProducts = async (count?: number) => {
 };
 
 export const updateProduct = async (product: Schema["Product"]["type"]) => {
+  console.log("update", product);
   const result = await client.models.Product.update(product);
 
   return result;
@@ -28,12 +29,23 @@ export const updateProduct = async (product: Schema["Product"]["type"]) => {
 
 export const getProduct = async (id: string) => {
   const result = await client.models.Product.get({ id: id });
-
-  return result;
+  console.log("result", result.data);
+  return result.data;
 };
 
 export const getProducts = async (count?: number) => {
-  const result = await client.models.Product.list();
+  const result = await client.models.Product.list({
+    selectionSet: [
+      "id",
+      "name",
+      "description",
+      "price",
+      "imageUrl",
+      "category",
+      "isFeatured",
+      "stock",
+    ],
+  });
 
   return result.data;
 };

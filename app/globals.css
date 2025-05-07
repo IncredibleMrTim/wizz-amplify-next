@@ -2,6 +2,7 @@
 
 @font-face {
   font-family: "NunitoSans";
+  display: swap;
   src: url("./fonts/NunitoSans-VariableFont_YTLC.ttf");
 }
 
@@ -29,6 +30,20 @@ p {
   font-weight: 400;
   line-height: 1.5;
   letter-spacing: 0.08em;
+}
+
+div,
+span,
+a,
+button,
+input,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "NunitoSans", sans-serif !important;
 }
 
 h1 {

@@ -22,6 +22,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { getUserCredentials } from "@/services/users";
 import { AuthSession } from "aws-amplify/auth";
+import { useParams } from "next/navigation";
+import { getProduct } from "@/services/products";
 interface AddProductProps {
   onSubmit: (product: Schema["Product"]["type"]) => void;
 }
@@ -52,18 +54,7 @@ const AddProduct = ({ onSubmit }: AddProductProps) => {
   );
   const [creds, setCreds] = useState<AuthSession | null>(null);
 
-  useEffect(() => {
-    const fetchUserCredentials = async () => {
-      const { credentials, user, attrs } = await getUserCredentials();
-      setCreds(credentials);
-    };
-
-    fetchUserCredentials();
-  }, []);
-
-  useEffect(() => {
-    console.log("Product state changed:", product);
-  }, [product]);
+  const params = useParams();
 
   const form = useForm<
     z.infer<typeof formSchema>,
@@ -72,14 +63,52 @@ const AddProduct = ({ onSubmit }: AddProductProps) => {
   >({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      description: "",
-      price: 0,
-      stock: 0,
-      imageUrl: "",
-      isFeatured: false,
+      name: product?.name || "",
+      description: product?.description || "",
+      price: product?.price || 0,
+      stock: product?.stock || 0,
+      imageUrl: product?.imageUrl || "",
+      isFeatured: product?.isFeatured || false,
     },
   });
+
+  const { reset } = form;
+
+  useEffect(() => {
+    const fetchUserCredentials = async () => {
+      const { credentials, user, attrs } = await getUserCredentials();
+      setCreds(credentials);
+    };
+
+    fetchUserCredentials();
+
+    if (params.productId) {
+      const fetchProduct = async () => {
+        if (params.productId) {
+          const fetchedProduct = await getProduct(
+            params.productId[0] as string
+          );
+          reset({
+            name: fetchedProduct?.name || "",
+            description: fetchedProduct?.description || "",
+            price: fetchedProduct?.price || 0,
+            stock: fetchedProduct?.stock || 0,
+            imageUrl: fetchedProduct?.imageUrl || "",
+            isFeatured: fetchedProduct?.isFeatured || false,
+          });
+          setProduct(fetchedProduct);
+        } else {
+          console.error("Invalid product ID:", params.productId);
+        }
+      };
+
+      fetchProduct();
+    }
+  }, []);
+
+  useEffect(() => {
+    console.log("Product state changed:", product);
+  }, [product]);
 
   const handleSubmit = () => {
     if (product) {
@@ -273,6 +302,13 @@ const AddProduct = ({ onSubmit }: AddProductProps) => {
                           placeholder="Stock"
                           value={product?.imageUrl || ""}
                         />
+                        {product?.imageUrl && (
+                          <img
+                            src={`${process.env.AWS_S3_PRODUCT_IMAGE_URL}/${product.imageUrl}`}
+                            alt="Product"
+                            className="w-1/2 h-1/2 object-cover"
+                          />
+                        )}
                       </div>
                     </FormControl>
 

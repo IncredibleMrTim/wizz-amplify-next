@@ -10,7 +10,7 @@ interface ProductCardProps {
   showPrice?: boolean;
   showQuantity?: boolean;
 
-  onClick?: (product: Schema["Product"]["type"]) => void;
+  onClick?: (product: Schema["Product"]) => void;
 }
 
 const ProductCard = ({

@@ -1,7 +1,14 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Schema } from "amplify/data/resource";
+import Link from "next/link";
 
 export const columns: ColumnDef<Schema["Product"]["type"]>[] = [
+  {
+    accessorKey: "id",
+    header: "id",
+    size: 20, // Explicit size
+    cell: ({ row }) => row.getValue("id"),
+  },
   {
     accessorKey: "name",
     header: "Name",
@@ -69,6 +76,18 @@ export const columns: ColumnDef<Schema["Product"]["type"]>[] = [
         <div className="overflow-hidden text-ellipsis whitespace-nowrap">
           {row.getValue("isFeatured") ? "Yes" : "No"}
         </div>
+      );
+    },
+  },
+  {
+    accessorKey: "edit",
+    header: "Edit",
+    size: 20, // Explicit size
+    cell: ({ row }) => {
+      return (
+        <Link href={`/admin/product/${row.getValue("id")}`} prefetch>
+          Edit
+        </Link>
       );
     },
   },

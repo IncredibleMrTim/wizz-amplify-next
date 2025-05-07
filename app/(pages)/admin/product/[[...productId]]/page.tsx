@@ -1,13 +1,20 @@
 "use client";
 import { type Schema } from "amplify/data/resource";
 import AddProduct from "@/components/products/addProduct/AddProduct";
-import { addProduct } from "@/services/products";
+import { addProduct, updateProduct } from "@/services/products";
 import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 
 const AdminProductsPage = () => {
   const router = useRouter();
+  const params = useParams();
+
   const handleSubmit = (p: Schema["Product"]["type"]) => {
-    addProduct(p);
+    if (params.productId) {
+      updateProduct(p);
+    } else {
+      addProduct(p);
+    }
     router.push("/admin");
   };
 

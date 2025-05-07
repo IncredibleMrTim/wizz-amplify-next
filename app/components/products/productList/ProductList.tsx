@@ -12,8 +12,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-import { Button } from "@/components/ui/button";
-
 import {
   Table,
   TableBody,
@@ -26,8 +24,13 @@ import { getProducts } from "@/services/products";
 import { Schema } from "amplify/data/resource";
 
 import { columns } from "./productListColumnDefs";
-import { ProductFilter } from "./ProductFilter";
 import { ProductTableFooter } from "./ProductTableFooter";
+import { ProductFilter } from "./ProductFilter";
+import {
+  useAppDispatch,
+  useAppSelector,
+  STORE_PATHS,
+} from "@/stores/redux/store";
 
 const ProductList = () => {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -36,16 +39,22 @@ const ProductList = () => {
   const [rowSelection, setRowSelection] = useState({});
   const [data, setData] = useState<Schema["Product"]["type"][]>([]);
 
+  const dispatch = useAppDispatch();
+  const products = useAppSelector((state) => state.products.allProducts);
+
   useEffect(() => {
     const getData = async () => {
       const d = await getProducts();
+      console.log("d", d);
       return d;
     };
-    getData().then((d) => setData(d as Schema["Product"]["type"][]));
+    getData().then((d) =>
+      dispatch({ type: STORE_PATHS.SET_PRODUCTS, payload: d })
+    );
   }, []);
 
   const table = useReactTable({
-    data,
+    data: products,
     columns,
     defaultColumn: {
       minSize: 50,
@@ -63,7 +72,10 @@ const ProductList = () => {
     state: {
       sorting,
       columnFilters,
-      columnVisibility,
+      columnVisibility: {
+        ...columnVisibility,
+        id: false,
+      },
       rowSelection,
     },
   });
@@ -128,6 +140,7 @@ const ProductList = () => {
 
   return (
     <div className="w-full">
+      <ProductFilter table={table} />
       <div className="mt-4">
         <div>
           <Table className="table-fixed">{renderHeaders()}</Table>
