@@ -1,6 +1,6 @@
 "use client";
 import { type Schema } from "amplify/data/resource";
-import AddProduct from "@/components/products/addProduct/AddProduct";
+import AddProduct from "@/components/products/product/Product";
 import { addProduct, updateProduct } from "@/services/products";
 import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
