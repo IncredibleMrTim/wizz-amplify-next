@@ -1,9 +1,12 @@
 import { defineStorage } from "@aws-amplify/backend";
 
 export const storage = defineStorage({
-  name: "WIZZINGTON_IMAGE_STORAGE",
+  name: "wizzington_product_images",
 
   access: (allow) => ({
-    "public/*": [allow.entity("identity").to(["read", "write", "delete"])],
+    "public/*": [
+      allow.entity("identity").to(["read", "write", "delete"]),
+      allow.guest.to(["read"]),
+    ],
   }),
 });

@@ -9,6 +9,10 @@ import ConfigureAmplifyClientSide from "@/components/configureAmplifyClientSide/
 import Header from "./components/header/Header";
 import ReduxProvider from "./stores/redux/provider";
 import CheckAuth from "./components/auth/Auth";
+import { Amplify } from "aws-amplify";
+import outputs from "amplify_outputs.json";
+
+Amplify.configure(outputs);
 
 export const metadata: Metadata = {
   title: "Create Next App",

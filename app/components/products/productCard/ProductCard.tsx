@@ -1,6 +1,6 @@
 "use client";
 import { Schema } from "amplify/data/resource";
-import { Button, Card, Flex } from "@radix-ui/themes";
+import { StorageImage } from "@aws-amplify/ui-react-storage";
 
 interface ProductCardProps {
   product: Schema["Product"]["type"];
@@ -10,7 +10,7 @@ interface ProductCardProps {
   showPrice?: boolean;
   showQuantity?: boolean;
 
-  onClick?: (product: Schema["Product"]["type"]) => void;
+  onClick?: (product: Schema["Product"]) => void;
 }
 
 const ProductCard = ({
@@ -31,8 +31,8 @@ const ProductCard = ({
 
       {showImage && product?.imageUrl && (
         <div className="flex justify-center">
-          <img
-            src={`${process.env.AWS_S3_PRODUCT_IMAGE_URL}${product.imageUrl}`}
+          <StorageImage
+            path={product.imageUrl}
             alt={product.name}
             className="flex self-center object-scale-down w-full"
           />

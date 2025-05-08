@@ -9,12 +9,13 @@ specifies that any user authenticated via an API key can "create", "read",
 const schema = a.schema({
   Product: a
     .model({
+      id: a.string().required(),
       name: a.string().required(),
       description: a.string().required(),
       price: a.integer().required(),
       imageUrl: a.string(),
       category: a.string(),
-      isFeatured: a.boolean(),
+      isFeatured: a.boolean().default(false),
       stock: a.integer().required(),
     })
     .authorization((allow) => [allow.publicApiKey()]),

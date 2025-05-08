@@ -8,6 +8,3 @@ const backend = defineBackend({
   data,
   storage,
 });
-
-const { cfnBucket: defaultBucket } = backend.storage.resources.cfnResources;
-defaultBucket.bucketName = "wizzington-image-storage";

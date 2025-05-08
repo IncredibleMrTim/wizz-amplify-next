@@ -13,7 +13,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/shad/form";
-import { FileUploader } from "@aws-amplify/ui-react-storage";
+import { FileUploader, StorageImage } from "@aws-amplify/ui-react-storage";
 
 import { type Schema } from "amplify/data/resource";
 import { useEffect, useState } from "react";
@@ -22,6 +22,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { getUserCredentials } from "@/services/users";
 import { AuthSession } from "aws-amplify/auth";
+import { useParams } from "next/navigation";
+import { getProduct } from "@/services/products";
+import { ScrollView } from "@aws-amplify/ui-react";
 interface AddProductProps {
   onSubmit: (product: Schema["Product"]["type"]) => void;
 }
@@ -52,6 +55,26 @@ const AddProduct = ({ onSubmit }: AddProductProps) => {
   );
   const [creds, setCreds] = useState<AuthSession | null>(null);
 
+  const params = useParams();
+
+  const form = useForm<
+    z.infer<typeof formSchema>,
+    any,
+    z.infer<typeof formSchema>
+  >({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: product?.name || "",
+      description: product?.description || "",
+      price: product?.price || 0,
+      stock: product?.stock || 0,
+      imageUrl: product?.imageUrl || "",
+      isFeatured: product?.isFeatured || false,
+    },
+  });
+
+  const { reset } = form;
+
   useEffect(() => {
     const fetchUserCredentials = async () => {
       const { credentials, user, attrs } = await getUserCredentials();
@@ -59,23 +82,34 @@ const AddProduct = ({ onSubmit }: AddProductProps) => {
     };
 
     fetchUserCredentials();
+
+    if (params.productId) {
+      const fetchProduct = async () => {
+        if (params.productId) {
+          const fetchedProduct = await getProduct(
+            params.productId[0] as string
+          );
+          reset({
+            name: fetchedProduct?.name || "",
+            description: fetchedProduct?.description || "",
+            price: fetchedProduct?.price || 0,
+            stock: fetchedProduct?.stock || 0,
+            imageUrl: fetchedProduct?.imageUrl || "",
+            isFeatured: fetchedProduct?.isFeatured || false,
+          });
+          setProduct(fetchedProduct);
+        } else {
+          console.error("Invalid product ID:", params.productId);
+        }
+      };
+
+      fetchProduct();
+    }
   }, []);
 
   useEffect(() => {
     console.log("Product state changed:", product);
   }, [product]);
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-      description: "",
-      price: 0,
-      stock: 0,
-      imageUrl: "",
-      isFeatured: false,
-    },
-  });
 
   const handleSubmit = () => {
     if (product) {
@@ -247,28 +281,47 @@ const AddProduct = ({ onSubmit }: AddProductProps) => {
                     <FormLabel>Image</FormLabel>
                     <FormDescription>Upload a product image.</FormDescription>
                     <FormControl>
-                      <div>
-                        <FileUploader
-                          acceptedFileTypes={["image/*"]}
-                          path={`${process.env.AWS_S3_PRODUCT_IMAGE_PATH!}`}
-                          maxFileCount={1}
-                          isResumable
-                          showThumbnails
-                          onUploadSuccess={({ key }) => {
-                            if (!key) return;
-                            setProduct({
-                              ...product,
-                              imageUrl: key,
-                            } as unknown as Schema["Product"]["type"]);
-                          }}
-                        />
-                        <Input
-                          hidden
-                          readOnly
-                          {...field}
-                          placeholder="Stock"
-                          value={product?.imageUrl || ""}
-                        />
+                      <div className="flex justify-between gap-4">
+                        <div className="w-1/2">
+                          <FileUploader
+                            acceptedFileTypes={["image/*"]}
+                            path={`${process.env.AWS_S3_PRODUCT_IMAGE_PATH!}`}
+                            maxFileCount={1}
+                            isResumable
+                            showThumbnails
+                            onUploadSuccess={({ key }) => {
+                              if (!key) return;
+                              setProduct({
+                                ...product,
+                                imageUrl: key,
+                              } as unknown as Schema["Product"]["type"]);
+                            }}
+                          />
+                          <Input
+                            hidden
+                            readOnly
+                            {...field}
+                            placeholder="Stock"
+                            value={product?.imageUrl || ""}
+                          />
+                        </div>
+                        <div className="w-1/2 border-2 border-gray-200 p-2 rounded-sm">
+                          <ScrollView
+                            width="100%"
+                            height="100%"
+                            className="overflow-hidden"
+                          >
+                            {product?.imageUrl && (
+                              <div className="flex bg-white h-28 w-28 justify-center items-center border-1 border-gray-200">
+                                <StorageImage
+                                  path={`${product.imageUrl}`}
+                                  alt="Product"
+                                  className="!h-24"
+                                />
+                              </div>
+                            )}
+                          </ScrollView>
+                        </div>
                       </div>
                     </FormControl>
 
