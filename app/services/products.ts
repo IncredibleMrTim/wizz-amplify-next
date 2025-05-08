@@ -1,7 +1,7 @@
 import { type Schema } from "amplify/data/resource";
 import { generateClient } from "aws-amplify/data";
 
-const client = generateClient<Schema>();
+const client = generateClient();
 
 export const addProduct = async (product: Schema["Product"]["type"]) => {
   const result = await client.models.Product.create(product);

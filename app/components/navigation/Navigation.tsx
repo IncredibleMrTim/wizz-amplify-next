@@ -30,7 +30,7 @@ const Navigation = ({ type = "user" }: NavigationProps) => {
   return (
     <div>
       <div
-        className={` w-full bg-white box-border z-100 ${type === "user" && "absolute  shadow-md"} ${selected && "h-auto"} `}
+        className={` w-full bg-white box-border z-1 ${type === "user" && "absolute  shadow-md"} ${selected && "h-auto"} `}
         onMouseLeave={(e) => {
           setSelected(null);
         }}
@@ -67,7 +67,7 @@ const Navigation = ({ type = "user" }: NavigationProps) => {
           </div>
         )}
         <div
-          className={`overflow-hidden bg-white !z-100 ${selected?.content && "fade-in-scale border-t-1 border-gray-100 "}`}
+          className={`overflow-hidden bg-white !z-1 ${selected?.content && "fade-in-scale border-t-1 border-gray-100 "}`}
         >
           {selected?.content}
         </div>

@@ -12,7 +12,37 @@ import CheckAuth from "./components/auth/Auth";
 import { Amplify } from "aws-amplify";
 import outputs from "amplify_outputs.json";
 
+const config = Amplify.getConfig();
+console.log("Amplify config", config);
+
 Amplify.configure(outputs);
+// Amplify.configure({
+//   ...config.API,
+//   Auth: {
+//     Cognito: {
+//       userPoolId: "eu-west-2_gfbLL7Ptx",
+//       userPoolClientId: "52oocm94ic97aj0mv2hrpj6ae2",
+//       identityPoolId: "eu-west-2:636d5105-cb13-485a-a429-f1d78b8a5c22",
+//       loginWith: {
+//         email: true,
+//       },
+//       signUpVerificationMethod: "code",
+//       userAttributes: {
+//         email: {
+//           required: true,
+//         },
+//       },
+//       allowGuestAccess: true,
+//       passwordFormat: {
+//         minLength: 8,
+//         requireLowercase: true,
+//         requireUppercase: true,
+//         requireNumbers: true,
+//         requireSpecialCharacters: true,
+//       },
+//     },
+//   },
+// });
 
 export const metadata: Metadata = {
   title: "Create Next App",
