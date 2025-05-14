@@ -20,7 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getProducts } from "@/services/products";
+
 import { Schema } from "amplify/data/resource";
 
 import { columns } from "./productListColumnDefs";
@@ -28,6 +28,7 @@ import { ProductTableFooter } from "./ProductTableFooter";
 import { ProductFilter } from "./ProductFilter";
 import { useAppDispatch, STORE_PATHS } from "@/stores/redux/store";
 import { generateClient } from "aws-amplify/api";
+import { useRouter } from "next/navigation";
 
 const ProductList = () => {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -35,9 +36,11 @@ const ProductList = () => {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
   const [data, setData] = useState<Schema["Product"]["type"][]>([]);
-  const client = generateClient<Schema>();
 
   const dispatch = useAppDispatch();
+  const router = useRouter();
+
+  const client = generateClient<Schema>();
 
   useEffect(() => {
     const sub = client.models.Product.observeQuery().subscribe({
@@ -132,11 +135,15 @@ const ProductList = () => {
                 >
                   {flexRender(cell.column.columnDef.cell, {
                     ...cell.getContext(),
-                    onClick: () => {
+                    onClick: (viewProduct: boolean) => {
                       dispatch({
                         type: STORE_PATHS.SET_CURRENT_PRODUCT,
                         payload: cell.row.original,
                       });
+
+                      if (viewProduct) {
+                        router.push(`/admin/products/${cell.row.original.id}`);
+                      }
                     },
                   })}
                 </TableCell>

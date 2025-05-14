@@ -1,9 +1,10 @@
+import { Separator } from "@radix-ui/themes";
 import { CellContext, ColumnDef, RowData } from "@tanstack/react-table";
 import { Schema } from "amplify/data/resource";
 import Link from "next/link";
 
 type CustomCellContext<TData, TValue> = CellContext<TData, TValue> & {
-  onClick?: () => void; // Add the onClick handler type
+  onClick?: ({ viewProduct }: { viewProduct: boolean }) => void; // Add the onClick handler type
 };
 
 export const columns: ColumnDef<Schema["Product"]["type"]>[] = [
@@ -85,20 +86,32 @@ export const columns: ColumnDef<Schema["Product"]["type"]>[] = [
   },
   {
     accessorKey: "edit",
-    header: "Edit",
+    header: "Edit/View",
     size: 20, // Explicit size
     cell: ({
       row,
       onClick,
     }: CustomCellContext<Schema["Product"]["type"], unknown>) => {
       return (
-        <Link
-          href={`/admin/product/${row.getValue("id")}`}
-          onClick={onClick}
-          prefetch
-        >
-          Edit
-        </Link>
+        <div className="flex gap-1 items-center">
+          <Link
+            href={`/admin/product/${row.getValue("id")}`}
+            onClick={() => onClick?.({ viewProduct: false })}
+            prefetch
+          >
+            Edit
+          </Link>
+          <div className="-mt-1 border-r-1 border-gray-400 h-4 text-transparent">
+            .
+          </div>
+          <Link
+            href={`/admin/product/${row.getValue("id")}`}
+            onClick={() => onClick?.({ viewProduct: true })}
+            prefetch
+          >
+            View
+          </Link>
+        </div>
       );
     },
   },

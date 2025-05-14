@@ -1,7 +1,13 @@
 "use client";
 import { Schema } from "amplify/data/resource";
 import { StorageImage } from "@aws-amplify/ui-react-storage";
-
+import { Button } from "@radix-ui/themes";
+import {
+  useAppSelector,
+  useAppDispatch,
+  STORE_PATHS,
+} from "@/stores/redux/store";
+import { useRouter } from "next/navigation";
 interface ProductCardProps {
   product: Schema["Product"]["type"];
   showTitle?: boolean;
@@ -20,6 +26,10 @@ const ProductCard = ({
   showImage = true,
   showPrice = true,
 }: ProductCardProps) => {
+  const isAdmin = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+
   return (
     <div
       key={product.id}
@@ -49,16 +59,24 @@ const ProductCard = ({
       </div>
 
       <div className="mt-4 bottom-4 flex justify-between">
-        {/* <Button
-          className="mt-4 bg-blue-500 text-white p-2 rounded-md"
-          onClick={() => {
-            if (onClick) {
-              onClick(product);
-            }
-          }}
-        >
+        {isAdmin && (
+          <Button
+            variant="soft"
+            className="mt-4 bg-blue-500 text-white p-2 rounded-md"
+            onClick={() => {
+              dispatch({
+                type: STORE_PATHS.SET_CURRENT_PRODUCT,
+                payload: product,
+              });
+              router.push(`/admin/product/${product.id}`);
+            }}
+          >
+            Edit Product
+          </Button>
+        )}
+        <Button className="mt-4 bg-blue-500 text-white p-2 rounded-md">
           Place Order
-        </Button> */}
+        </Button>
       </div>
     </div>
   );
