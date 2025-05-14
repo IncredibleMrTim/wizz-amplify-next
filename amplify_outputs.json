@@ -1,12 +1,14 @@
 {
   "auth": {
-    "user_pool_id": "eu-west-2_gfbLL7Ptx",
+    "user_pool_id": "eu-west-2_KEr7HuSqr",
     "aws_region": "eu-west-2",
-    "user_pool_client_id": "52oocm94ic97aj0mv2hrpj6ae2",
-    "identity_pool_id": "eu-west-2:636d5105-cb13-485a-a429-f1d78b8a5c22",
+    "user_pool_client_id": "57bgds8ce803s314ra0qpkdan1",
+    "identity_pool_id": "eu-west-2:1d37d1cf-3839-4ba2-ac1a-c2e749dc53d9",
     "mfa_methods": [],
     "standard_required_attributes": [
-      "email"
+      "email",
+      "given_name",
+      "family_name"
     ],
     "username_attributes": [
       "email"
@@ -26,9 +28,9 @@
     "unauthenticated_identities_enabled": true
   },
   "data": {
-    "url": "https://gmywsoo6w5axbmorq5anlnrsfu.appsync-api.eu-west-2.amazonaws.com/graphql",
+    "url": "https://2cwuejj4wreg3ns4pdnypn4nee.appsync-api.eu-west-2.amazonaws.com/graphql",
     "aws_region": "eu-west-2",
-    "api_key": "da2-nwotqq6jjjhxddjugahb4rgw2q",
+    "api_key": "da2-rzb2tkmmzjgx5jct5w77ud3moy",
     "default_authorization_type": "API_KEY",
     "authorization_types": [
       "AMAZON_COGNITO_USER_POOLS",
@@ -245,11 +247,11 @@
   },
   "storage": {
     "aws_region": "eu-west-2",
-    "bucket_name": "amplify-awsamplifygen2-ti-wizzingtonproductimagesb-6tec0zyalwm7",
+    "bucket_name": "amplify-awsamplifygen2-wi-wizzingtonproductimages2-7yi7heoaw8lm",
     "buckets": [
       {
-        "name": "wizzington_product_images",
-        "bucket_name": "amplify-awsamplifygen2-ti-wizzingtonproductimagesb-6tec0zyalwm7",
+        "name": "wizzington_product_images2",
+        "bucket_name": "amplify-awsamplifygen2-wi-wizzingtonproductimages2-7yi7heoaw8lm",
         "aws_region": "eu-west-2",
         "paths": {
           "public/*": {

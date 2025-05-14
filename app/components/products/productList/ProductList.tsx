@@ -26,11 +26,8 @@ import { Schema } from "amplify/data/resource";
 import { columns } from "./productListColumnDefs";
 import { ProductTableFooter } from "./ProductTableFooter";
 import { ProductFilter } from "./ProductFilter";
-import {
-  useAppDispatch,
-  useAppSelector,
-  STORE_PATHS,
-} from "@/stores/redux/store";
+import { useAppDispatch, STORE_PATHS } from "@/stores/redux/store";
+import { generateClient } from "aws-amplify/api";
 
 const ProductList = () => {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -38,23 +35,31 @@ const ProductList = () => {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
   const [data, setData] = useState<Schema["Product"]["type"][]>([]);
+  const client = generateClient<Schema>();
 
   const dispatch = useAppDispatch();
-  const products = useAppSelector((state) => state.products.allProducts);
 
   useEffect(() => {
-    const getData = async () => {
-      const d = await getProducts();
-      console.log("d", d);
-      return d;
-    };
-    getData().then((d) =>
-      dispatch({ type: STORE_PATHS.SET_PRODUCTS, payload: d })
-    );
+    const sub = client.models.Product.observeQuery().subscribe({
+      next: ({
+        items,
+        isSynced,
+      }: {
+        items: Schema["Product"]["type"][];
+        isSynced: boolean;
+      }) => {
+        setData(items);
+        if (isSynced) {
+          dispatch({ type: STORE_PATHS.SET_PRODUCTS, payload: items });
+        }
+      },
+    });
+
+    return () => sub.unsubscribe();
   }, []);
 
   const table = useReactTable({
-    data: products,
+    data,
     columns,
     defaultColumn: {
       minSize: 50,
@@ -115,17 +120,28 @@ const ProductList = () => {
             data-state={row.getIsSelected() && "selected"}
             className="border-0 odd:bg-stone-100 even:bg-stone-50"
           >
-            {row.getVisibleCells().map((cell) => (
-              <TableCell
-                key={cell.id}
-                style={{
-                  width: `${cell.column.columnDef.size}px`, // Apply explicit size
-                }}
-                className="overflow-hidden text-ellipsis whitespace-nowrap py-4"
-              >
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </TableCell>
-            ))}
+            {row.getVisibleCells().map((cell) => {
+              console.log("cell", cell);
+              return (
+                <TableCell
+                  key={cell.id}
+                  style={{
+                    width: `${cell.column.columnDef.size}px`, // Apply explicit size
+                  }}
+                  className="overflow-hidden text-ellipsis whitespace-nowrap py-4"
+                >
+                  {flexRender(cell.column.columnDef.cell, {
+                    ...cell.getContext(),
+                    onClick: () => {
+                      dispatch({
+                        type: STORE_PATHS.SET_CURRENT_PRODUCT,
+                        payload: cell.row.original,
+                      });
+                    },
+                  })}
+                </TableCell>
+              );
+            })}
           </TableRow>
         ))
       ) : (

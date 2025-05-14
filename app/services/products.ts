@@ -1,7 +1,7 @@
 import { type Schema } from "amplify/data/resource";
 import { generateClient } from "aws-amplify/data";
 
-const client = generateClient();
+const client = generateClient<Schema>();
 
 export const addProduct = async (product: Schema["Product"]["type"]) => {
   const result = await client.models.Product.create(product);
@@ -21,7 +21,6 @@ export const getFeaturedProducts = async (count?: number) => {
 };
 
 export const updateProduct = async (product: Schema["Product"]["type"]) => {
-  console.log("update", product);
   const result = await client.models.Product.update(product);
 
   return result;
@@ -29,7 +28,7 @@ export const updateProduct = async (product: Schema["Product"]["type"]) => {
 
 export const getProduct = async (id: string) => {
   const result = await client.models.Product.get({ id: id });
-  console.log("result", result.data);
+
   return result.data;
 };
 

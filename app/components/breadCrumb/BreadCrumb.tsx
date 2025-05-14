@@ -1,35 +1,49 @@
 "use client";
+import Link from "next/link";
 import {
   Breadcrumb,
   BreadcrumbItem,
-  BreadcrumbLink,
   BreadcrumbList,
-  BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { useParams, usePathname } from "next/navigation";
+import { useAppSelector } from "@/stores/redux/store";
+import { segmentMappings, isActiveBreadcrumb } from "@/utils/breadcrumb-utils";
 
 export const BreadCrumb = () => {
-  const params = useParams();
-  const searchParams = usePathname();
-  console.log(params);
-  console.log(searchParams);
+  const product = useAppSelector((state) => state.products.currentProduct);
+  const { productId } = useParams();
+  const segments = usePathname()
+    .split("/")
+    .filter((item) => item !== "");
 
   return (
     <div className="flex items-center justify-between text-black p-4">
       <Breadcrumb>
         <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink href="/">Home</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbLink href="/components">Components</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
-          </BreadcrumbItem>
+          {segments.map((segment, index) => {
+            return (
+              <BreadcrumbItem key={index}>
+                <Link
+                  className={`${isActiveBreadcrumb(segment, productId?.[0]) ? "cursor-pointer" : "cursor-default"}`}
+                  href={
+                    isActiveBreadcrumb(segment, productId?.[0])
+                      ? `/${segment}`
+                      : ""
+                  }
+                >
+                  {segmentMappings[segment] ||
+                    product?.name ||
+                    segment.charAt(0).toUpperCase() + segment.slice(1)}
+                </Link>
+                {index !== segments.length - 1 && (
+                  <div>
+                    <BreadcrumbSeparator />
+                  </div>
+                )}
+              </BreadcrumbItem>
+            );
+          })}
         </BreadcrumbList>
       </Breadcrumb>
     </div>

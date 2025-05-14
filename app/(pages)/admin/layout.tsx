@@ -1,6 +1,5 @@
 "use client";
 import { Authenticator } from "@aws-amplify/ui-react";
-import Logout from "@/components/logout/logout";
 import CheckAuth from "@/components/auth/Auth";
 import Navigation from "@/components/navigation/Navigation";
 import { useRouter } from "next/navigation";
@@ -13,7 +12,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
       <main className="flex-grow p-4">
         <Authenticator
           variation="modal"
-          hideSignUp
+          // hideSignUp
           components={{
             Footer: () => (
               <div className="flex w-full justify-end -mt-8 pr-4 ">
@@ -30,7 +29,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
           }}
         >
           <CheckAuth />
-          <Navigation type="admin" />
+
           {children}
         </Authenticator>
       </main>

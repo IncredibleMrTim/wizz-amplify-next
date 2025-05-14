@@ -6,6 +6,7 @@ import { productReducer } from "../product/productSlice";
 
 export const STORE_PATHS = {
   SET_PRODUCTS: "PRODUCTS/setProducts",
+  SET_CURRENT_PRODUCT: "PRODUCTS/setCurrentProduct",
 };
 
 export const store = configureStore({

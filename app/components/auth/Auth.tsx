@@ -1,21 +1,22 @@
 "use client";
-
+import { cognitoUserPoolsTokenProvider } from "aws-amplify/auth/cognito";
 import { AuthGetCurrentUserServer } from "@/utils/amplify-utils";
 import { usePathname } from "next/navigation";
 
 import { useEffect } from "react";
-import { useAppDispatch } from "@/stores/redux/store";
+import { useAppDispatch, useAppSelector } from "@/stores/redux/store";
 import { AUTH_TYPES } from "@/stores/auth/authSlice";
 
 const CheckAuth = () => {
   const pathname = usePathname();
   const dispatch = useAppDispatch();
+  const auth = useAppSelector((state) => state.auth);
   useEffect(() => {
     async function checkAuth() {
       try {
         const currentUser = await AuthGetCurrentUserServer();
+
         if (currentUser) {
-          console.log("User is authenticated:", currentUser);
           dispatch({
             type: AUTH_TYPES.SET_CURRENT_USER,
             payload: currentUser,

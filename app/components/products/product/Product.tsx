@@ -2,8 +2,8 @@
 
 import { Input } from "@/components/shad/input";
 import { Textarea } from "@/components/shad/textarea";
-import { Button } from "@/components/shad/button";
 
+import { Button } from "@radix-ui/themes";
 import {
   Form,
   FormControl,
@@ -106,10 +106,6 @@ const AddProduct = ({ onSubmit }: AddProductProps) => {
       fetchProduct();
     }
   }, []);
-
-  useEffect(() => {
-    console.log("Product state changed:", product);
-  }, [product]);
 
   const handleSubmit = () => {
     if (product) {
@@ -258,7 +254,6 @@ const AddProduct = ({ onSubmit }: AddProductProps) => {
                         type="checkbox"
                         checked={field.value}
                         onChange={(e) => {
-                          console.log(e);
                           field.onChange(e);
                           setProduct({
                             ...product,
@@ -330,8 +325,10 @@ const AddProduct = ({ onSubmit }: AddProductProps) => {
                 )}
               />
             </div>
-            <Button type="submit" className="mt-2">
-              Add Product
+          </div>
+          <div className="flex justify-end pt-4">
+            <Button type="submit" variant="solid">
+              {params.productId ? "Update" : "Create"} Product
             </Button>
           </div>
         </form>
