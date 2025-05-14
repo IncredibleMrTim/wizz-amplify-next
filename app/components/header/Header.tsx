@@ -1,6 +1,10 @@
+"use client";
 import Navigation from "@/components/navigation/Navigation";
+import { useRouter } from "next/navigation";
+import { BreadCrumb } from "../breadCrumb/BreadCrumb";
 
 const Header = () => {
+  const router = useRouter();
   return (
     <div>
       <header className="h-48 relative">
@@ -14,12 +18,14 @@ const Header = () => {
             src="wizz-logo-trans.png"
             alt="Wizzington Moos Boutique Logo"
             className="w-96 object-right absolute top-0 right-0 mt-4 mr-4"
+            onClick={() => router.push("/")}
           />
         </div>
       </header>
-      <div className="w-full border-b border-gray-300">
+      <div className="w-full border-b border-gray-300 h-10">
         <Navigation />
       </div>
+      <BreadCrumb />
     </div>
   );
 };

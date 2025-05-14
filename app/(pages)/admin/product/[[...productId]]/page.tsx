@@ -18,10 +18,6 @@ const AdminProductsPage = () => {
     router.push("/admin");
   };
 
-  return (
-    <div>
-      <AddProduct onSubmit={(p) => handleSubmit(p)} />
-    </div>
-  );
+  return <AddProduct onSubmit={(p) => handleSubmit(p)} />;
 };
 export default AdminProductsPage;

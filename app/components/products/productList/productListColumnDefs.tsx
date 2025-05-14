@@ -1,6 +1,10 @@
-import { ColumnDef } from "@tanstack/react-table";
+import { CellContext, ColumnDef, RowData } from "@tanstack/react-table";
 import { Schema } from "amplify/data/resource";
 import Link from "next/link";
+
+type CustomCellContext<TData, TValue> = CellContext<TData, TValue> & {
+  onClick?: () => void; // Add the onClick handler type
+};
 
 export const columns: ColumnDef<Schema["Product"]["type"]>[] = [
   {
@@ -83,9 +87,16 @@ export const columns: ColumnDef<Schema["Product"]["type"]>[] = [
     accessorKey: "edit",
     header: "Edit",
     size: 20, // Explicit size
-    cell: ({ row }) => {
+    cell: ({
+      row,
+      onClick,
+    }: CustomCellContext<Schema["Product"]["type"], unknown>) => {
       return (
-        <Link href={`/admin/product/${row.getValue("id")}`} prefetch>
+        <Link
+          href={`/admin/product/${row.getValue("id")}`}
+          onClick={onClick}
+          prefetch
+        >
           Edit
         </Link>
       );
