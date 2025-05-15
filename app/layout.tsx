@@ -5,7 +5,7 @@ import "@radix-ui/themes/styles.css";
 import "./globals.css";
 
 import "@aws-amplify/ui-react/styles.css";
-import ConfigureAmplifyClientSide from "@/components/configureAmplifyClientSide/ConfigureAmplifyClientSide";
+import ConfigureAmplifyClientSide from "@/components/auth/configureAmplifyClientSide/ConfigureAmplifyClientSide";
 import Header from "./components/header/Header";
 import ReduxProvider from "./stores/redux/provider";
 import CheckAuth from "./components/auth/Auth";

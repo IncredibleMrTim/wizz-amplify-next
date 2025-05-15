@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@radix-ui/themes";
 import { Table } from "@tanstack/react-table/build/lib/";
 import { Schema } from "amplify/data/resource";
 
@@ -14,18 +14,16 @@ export const ProductTableFooter = ({
       Showing {table.getFilteredRowModel().rows.length} of {allRowCount}{" "}
       products
     </div>
-    <div className="space-x-2">
+    <div className="flex gap-2">
       <Button
-        variant="outline"
-        size="sm"
+        variant="solid"
         onClick={() => table.previousPage()}
         disabled={!table.getCanPreviousPage()}
       >
         Previous
       </Button>
       <Button
-        variant="outline"
-        size="sm"
+        variant="solid"
         onClick={() => table.nextPage()}
         disabled={!table.getCanNextPage()}
       >

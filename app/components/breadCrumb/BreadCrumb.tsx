@@ -13,15 +13,17 @@ import { segmentMappings, isActiveBreadcrumb } from "@/utils/breadcrumb-utils";
 export const BreadCrumb = () => {
   const product = useAppSelector((state) => state.products.currentProduct);
   const { productId } = useParams();
-  const segments = usePathname()
-    .split("/")
-    .filter((item) => item !== "");
+
+  const pathname = usePathname();
+  const segments = pathname.split("/").filter((segment) => segment !== "");
 
   return (
     <div className="flex items-center justify-between text-black p-4">
       <Breadcrumb>
         <BreadcrumbList>
           {segments.map((segment, index) => {
+            if (pathname.includes("admin")) return null; // don't show breadcrumb in admin
+
             return (
               <BreadcrumbItem key={index}>
                 <Link

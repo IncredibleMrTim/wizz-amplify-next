@@ -1,5 +1,5 @@
 export const segmentMappings: { [key: string]: string } = {
-  admin: "Product List",
+  admin: "Admin Home",
   product: "Product",
 };
 
