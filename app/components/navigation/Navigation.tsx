@@ -6,7 +6,7 @@ import { useAppSelector } from "@/stores/redux/store";
 import { AuthUserMenu } from "../auth/authUserMenu/AuthUserMenu";
 import adminComponents from "./adminComponents";
 import userComponents from "./userComponents";
-import { Button } from "@radix-ui/themes";
+import { Button, IconButton } from "@radix-ui/themes";
 import { Avatar } from "@aws-amplify/ui-react";
 import {
   Popover,
@@ -14,6 +14,7 @@ import {
   PopoverContent,
 } from "@/components/ui/popover";
 import { PopoverClose } from "@radix-ui/react-popover";
+import { FiPlus } from "react-icons/fi";
 
 export type NavComponent = {
   id: string;
@@ -21,6 +22,7 @@ export type NavComponent = {
   title: string;
   href: string;
   content?: string | React.ReactNode;
+  icon?: React.ReactNode;
 };
 
 interface NavigationProps {
@@ -65,7 +67,7 @@ const Navigation = ({ type = "user" }: NavigationProps) => {
                 ) : (
                   <Link href={component.href} prefetch>
                     <Button variant="solid" className="px-2 py-2">
-                      {component.title}
+                      <FiPlus /> {component.title}
                     </Button>
                   </Link>
                 )}
@@ -73,7 +75,7 @@ const Navigation = ({ type = "user" }: NavigationProps) => {
             ))}
         </ul>
         {type === "user" && (
-          <div className="absolute top-0 right-0  mt-1 mr-4">
+          <div className="flex absolute top-0 right-0 h-10 mr-4 items-center">
             {currentUser ? (
               <Popover onOpenChange={setAdminMenuOpen} open={adminMenuOpen}>
                 <PopoverTrigger>

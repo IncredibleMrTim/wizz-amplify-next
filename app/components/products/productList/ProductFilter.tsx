@@ -7,10 +7,11 @@ import {
 import { Button } from "@/components/ui/button";
 
 import { ChevronDown } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { TextField } from "@radix-ui/themes";
 import { Table } from "@tanstack/react-table/build/lib/";
 import { Schema } from "amplify/data/resource";
 import { Check, X } from "lucide-react";
+import { FiSearch } from "react-icons/fi";
 
 export const ProductFilter = ({
   table,
@@ -18,24 +19,28 @@ export const ProductFilter = ({
   table: Table<Schema["Product"]["type"]>;
 }) => {
   return (
-    <div className="flex items-center py-4">
-      <Input
+    <div className="flex items-center py-4 justify-between">
+      <TextField.Root
         placeholder="Filter products..."
         value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
         onChange={(event) =>
           table.getColumn("name")?.setFilterValue(event.target.value)
         }
-        className="max-w-sm"
-      />
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline" className="ml-auto">
+      >
+        <TextField.Slot>
+          <FiSearch />
+        </TextField.Slot>
+      </TextField.Root>
+
+      <DropdownMenu modal>
+        <DropdownMenuTrigger>
+          <Button variant="outline" className="!ml-auto !text-sm" size="sm">
             Columns <ChevronDown />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="end"
-          className="bg-white shadow-md p-4 gap-2"
+          className="bg-white shadow-md rounded-sm p-4 gap-2 z-100"
         >
           {table
             .getAllColumns()
