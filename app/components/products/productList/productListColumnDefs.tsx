@@ -2,6 +2,7 @@ import { Separator } from "@radix-ui/themes";
 import { CellContext, ColumnDef, RowData } from "@tanstack/react-table";
 import { Schema } from "amplify/data/resource";
 import Link from "next/link";
+import { FiEdit, FiArrowRightCircle, FiCheck, FiX } from "react-icons/fi";
 
 type CustomCellContext<TData, TValue> = CellContext<TData, TValue> & {
   onClick?: ({ viewProduct }: { viewProduct: boolean }) => void; // Add the onClick handler type
@@ -79,13 +80,17 @@ export const columns: ColumnDef<Schema["Product"]["type"]>[] = [
     cell: ({ row }) => {
       return (
         <div className="overflow-hidden text-ellipsis whitespace-nowrap">
-          {row.getValue("isFeatured") ? "Yes" : "No"}
+          {row.getValue("isFeatured") ? (
+            <FiCheck size={20} className="text-green-600" />
+          ) : (
+            <FiX size={20} className="text-red-600" />
+          )}
         </div>
       );
     },
   },
   {
-    accessorKey: "edit",
+    accessorKey: "edit/view",
     header: "Edit/View",
     size: 20, // Explicit size
     cell: ({
@@ -93,23 +98,21 @@ export const columns: ColumnDef<Schema["Product"]["type"]>[] = [
       onClick,
     }: CustomCellContext<Schema["Product"]["type"], unknown>) => {
       return (
-        <div className="flex gap-1 items-center">
+        <div className="flex gap-4 items-center">
           <Link
             href={`/admin/product/${row.getValue("id")}`}
             onClick={() => onClick?.({ viewProduct: false })}
             prefetch
           >
-            Edit
+            <FiEdit size={20} />
           </Link>
-          <div className="-mt-1 border-r-1 border-gray-400 h-4 text-transparent">
-            .
-          </div>
+
           <Link
             href={`/admin/product/${row.getValue("id")}`}
             onClick={() => onClick?.({ viewProduct: true })}
             prefetch
           >
-            View
+            <FiArrowRightCircle size={20} />
           </Link>
         </div>
       );

@@ -7,10 +7,11 @@ import {
 import { Button } from "@/components/ui/button";
 
 import { ChevronDown } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { TextField } from "@radix-ui/themes";
 import { Table } from "@tanstack/react-table/build/lib/";
 import { Schema } from "amplify/data/resource";
 import { Check, X } from "lucide-react";
+import { FiSearch } from "react-icons/fi";
 
 export const ProductFilter = ({
   table,
@@ -18,24 +19,28 @@ export const ProductFilter = ({
   table: Table<Schema["Product"]["type"]>;
 }) => {
   return (
-    <div className="flex items-center py-4">
-      <Input
+    <div className="flex items-center py-4 justify-between">
+      <TextField.Root
         placeholder="Filter products..."
         value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
         onChange={(event) =>
           table.getColumn("name")?.setFilterValue(event.target.value)
         }
-        className="max-w-sm"
-      />
+      >
+        <TextField.Slot>
+          <FiSearch />
+        </TextField.Slot>
+      </TextField.Root>
+
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" className="ml-auto">
+          <Button variant="outline" className="!ml-auto !text-sm" size="sm">
             Columns <ChevronDown />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="end"
-          className="bg-white shadow-md p-4 gap-2"
+          className="bg-white shadow-md rounded-sm p-4 gap-2 z-100"
         >
           {table
             .getAllColumns()
@@ -47,9 +52,9 @@ export const ProductFilter = ({
                   className="grid grid-cols-[20%_80%] items-center border-b-1 border-b-stone-200 py-2"
                 >
                   {column.getIsVisible() ? (
-                    <Check size={16} className="mr-2 text text-green-500" />
+                    <Check size={16} className="mr-2 text text-green-600" />
                   ) : (
-                    <X size={16} className="mr-2 text text-red-500" />
+                    <X size={16} className="mr-2 text text-red-600" />
                   )}
                   <p
                     className="ml-2 capitalize !text-sm text-stone-800 cursor-pointer"

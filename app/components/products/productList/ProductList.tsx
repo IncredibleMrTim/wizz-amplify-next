@@ -162,9 +162,9 @@ const ProductList = () => {
   );
 
   return (
-    <div className="w-full bg-gray-50 mt-4 p-4 rounded-sm">
+    <div className="w-full">
       <ProductFilter table={table} />
-      <div className="mt-4">
+      <div className="bg-gray-50 p-4 rounded-sm">
         <div>
           <Table className="table-fixed">{renderHeaders()}</Table>
           <div className="min-h-124 overflow-scroll  border-1 border-stone-100 rounded-sm">
