@@ -32,8 +32,8 @@ export const ProductFilter = ({
         </TextField.Slot>
       </TextField.Root>
 
-      <DropdownMenu modal>
-        <DropdownMenuTrigger>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
           <Button variant="outline" className="!ml-auto !text-sm" size="sm">
             Columns <ChevronDown />
           </Button>
@@ -52,9 +52,9 @@ export const ProductFilter = ({
                   className="grid grid-cols-[20%_80%] items-center border-b-1 border-b-stone-200 py-2"
                 >
                   {column.getIsVisible() ? (
-                    <Check size={16} className="mr-2 text text-green-500" />
+                    <Check size={16} className="mr-2 text text-green-600" />
                   ) : (
-                    <X size={16} className="mr-2 text text-red-500" />
+                    <X size={16} className="mr-2 text text-red-600" />
                   )}
                   <p
                     className="ml-2 capitalize !text-sm text-stone-800 cursor-pointer"

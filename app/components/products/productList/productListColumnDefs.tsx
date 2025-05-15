@@ -83,14 +83,14 @@ export const columns: ColumnDef<Schema["Product"]["type"]>[] = [
           {row.getValue("isFeatured") ? (
             <FiCheck size={20} className="text-green-600" />
           ) : (
-            <FiX size={20} className="text-red-500" />
+            <FiX size={20} className="text-red-600" />
           )}
         </div>
       );
     },
   },
   {
-    accessorKey: "edit",
+    accessorKey: "edit/view",
     header: "Edit/View",
     size: 20, // Explicit size
     cell: ({
