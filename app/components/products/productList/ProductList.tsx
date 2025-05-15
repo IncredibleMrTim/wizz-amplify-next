@@ -162,7 +162,7 @@ const ProductList = () => {
   );
 
   return (
-    <div className="w-full">
+    <div className="w-full bg-gray-50 mt-4 p-4 rounded-sm">
       <ProductFilter table={table} />
       <div className="mt-4">
         <div>

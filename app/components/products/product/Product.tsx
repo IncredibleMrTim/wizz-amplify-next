@@ -119,8 +119,8 @@ const AddProduct = ({ onSubmit }: AddProductProps) => {
     <div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)}>
-          <div className="flex flex-col gap-4">
-            <div className="bg-gray-100 p-4 rounded-md shadow-md">
+          <div className="flex flex-col gap-4 bg-gray-100 p-4 rounded-md shadow-md">
+            <div>
               <FormField
                 control={form.control}
                 name="name"
@@ -150,7 +150,7 @@ const AddProduct = ({ onSubmit }: AddProductProps) => {
                 )}
               />
             </div>
-            <div className="bg-gray-100 p-4 rounded-md shadow-md">
+            <div>
               <FormField
                 control={form.control}
                 name="description"
@@ -180,7 +180,7 @@ const AddProduct = ({ onSubmit }: AddProductProps) => {
                 )}
               />
             </div>
-            <div className="bg-gray-100 p-4 rounded-md shadow-md">
+            <div>
               <FormField
                 control={form.control}
                 name="price"
@@ -208,7 +208,7 @@ const AddProduct = ({ onSubmit }: AddProductProps) => {
                 )}
               />
             </div>
-            <div className="bg-gray-100 p-4 rounded-md shadow-md">
+            <div>
               <FormField
                 control={form.control}
                 name="stock"
@@ -239,7 +239,7 @@ const AddProduct = ({ onSubmit }: AddProductProps) => {
                 )}
               />
             </div>
-            <div className="bg-gray-100 p-4 rounded-md shadow-md">
+            <div>
               <FormField
                 control={form.control}
                 name="isFeatured"
@@ -267,7 +267,7 @@ const AddProduct = ({ onSubmit }: AddProductProps) => {
               ></FormField>
             </div>
 
-            <div className="bg-gray-100 p-4 rounded-md shadow-md">
+            <div>
               <FormField
                 control={form.control}
                 name="imageUrl"

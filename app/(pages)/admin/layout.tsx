@@ -12,14 +12,13 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
       <main className="flex-grow p-4">
         <Authenticator
           variation="modal"
-          // hideSignUp
           components={{
             Footer: () => (
               <div className="flex w-full justify-end -mt-8 pr-4 ">
                 <Button
                   variant="ghost"
                   onClick={() => {
-                    router.push("/"); // Redirect to home page
+                    router.push("/");
                   }}
                 >
                   Cancel

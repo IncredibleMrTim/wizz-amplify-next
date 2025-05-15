@@ -3,11 +3,17 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useAppSelector } from "@/stores/redux/store";
-import Logout from "../logout/logout";
+import { AuthUserMenu } from "../auth/authUserMenu/AuthUserMenu";
 import adminComponents from "./adminComponents";
 import userComponents from "./userComponents";
 import { Button } from "@radix-ui/themes";
-import { useRouter } from "next/navigation";
+import { Avatar } from "@aws-amplify/ui-react";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
+import { PopoverClose } from "@radix-ui/react-popover";
 
 export type NavComponent = {
   id: string;
@@ -23,15 +29,20 @@ interface NavigationProps {
 
 const Navigation = ({ type = "user" }: NavigationProps) => {
   const [selected, setSelected] = useState<NavComponent | null>(null);
+  const [adminMenuOpen, setAdminMenuOpen] = useState(false);
   const currentUser = useAppSelector((state) => state.auth.currentUser);
-  const router = useRouter();
+
   const components = type === "admin" ? adminComponents : userComponents;
+
+  const handleAdminMenuItemClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    setAdminMenuOpen(false);
+  };
 
   return (
     <div>
       <div
         className={` w-full bg-white box-border z-1 ${type === "user" && "absolute  shadow-md"} ${selected && "h-auto"} `}
-        onMouseLeave={(e) => {
+        onMouseLeave={() => {
           setSelected(null);
         }}
       >
@@ -53,7 +64,7 @@ const Navigation = ({ type = "user" }: NavigationProps) => {
                   </div>
                 ) : (
                   <Link href={component.href} prefetch>
-                    <Button variant="soft" className="px-2 py-2">
+                    <Button variant="solid" className="px-2 py-2">
                       {component.title}
                     </Button>
                   </Link>
@@ -62,8 +73,24 @@ const Navigation = ({ type = "user" }: NavigationProps) => {
             ))}
         </ul>
         {type === "user" && (
-          <div className="absolute top-0 right-0 px-4 py-2">
-            {currentUser ? <Logout /> : <Link href="/admin">Login</Link>}
+          <div className="absolute top-0 right-0  mt-1 mr-4">
+            {currentUser ? (
+              <Popover onOpenChange={setAdminMenuOpen} open={adminMenuOpen}>
+                <PopoverTrigger>
+                  <Avatar>
+                    {currentUser?.given_name[0]}
+                    {currentUser?.family_name[0]}
+                  </Avatar>
+                </PopoverTrigger>
+                <PopoverContent className="mr-4 mt-1 bg-white rounded-sm !border-gray-200">
+                  <PopoverClose asChild>
+                    <AuthUserMenu onMenuItemClick={handleAdminMenuItemClick} />
+                  </PopoverClose>
+                </PopoverContent>
+              </Popover>
+            ) : (
+              <Link href="/admin">Login</Link>
+            )}
           </div>
         )}
         <div

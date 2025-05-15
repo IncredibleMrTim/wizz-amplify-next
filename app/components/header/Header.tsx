@@ -2,9 +2,11 @@
 import Navigation from "@/components/navigation/Navigation";
 import { useRouter } from "next/navigation";
 import { BreadCrumb } from "../breadCrumb/BreadCrumb";
+import { usePathname } from "next/navigation";
 
 const Header = () => {
   const router = useRouter();
+  const pathname = usePathname();
   return (
     <div>
       <header className="h-48 relative">
@@ -25,6 +27,7 @@ const Header = () => {
       <div className="w-full border-b border-gray-300 h-10">
         <Navigation />
       </div>
+
       <BreadCrumb />
     </div>
   );
