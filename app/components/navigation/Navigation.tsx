@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAppSelector } from "@/stores/redux/store";
+import { useAppSelector } from "@/stores/store";
 import { AuthUserMenu } from "../auth/authUserMenu/AuthUserMenu";
 import adminComponents from "./adminComponents";
 import userComponents from "./userComponents";

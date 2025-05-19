@@ -1,21 +1,21 @@
-"use server";
+"use client";
 
 import "@/app.css";
 
-import { getFeaturedProducts } from "@/services/products";
 import { Flex } from "@radix-ui/themes";
 import ProductCard from "@/components/products/productCard/ProductCard";
 import { Schema } from "amplify/data/resource";
+import { useGetProductsQuery } from "./services/product/useGetProductsQuery";
 
-export default async function App() {
-  const featuredProducts = await getFeaturedProducts();
+export default function App() {
+  const { data: productsData } = useGetProductsQuery(3);
 
   return (
     <main>
       <Flex>
         <div className="flex flex-col md:flex-row gap-4 p-4 justify-between w-full">
-          {featuredProducts?.length ? (
-            featuredProducts.map((product: Schema["Product"]["type"]) => (
+          {productsData?.data?.length ? (
+            productsData.data.map((product: Schema["Product"]["type"]) => (
               <ProductCard
                 showDescription={false}
                 key={product.id}
@@ -23,7 +23,7 @@ export default async function App() {
               />
             ))
           ) : (
-            <p>No featured products available</p>
+            <p>No products available</p>
           )}
         </div>
       </Flex>

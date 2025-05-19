@@ -26,7 +26,7 @@ import { Schema } from "amplify/data/resource";
 import { columns } from "./productListColumnDefs";
 import { ProductTableFooter } from "./ProductTableFooter";
 import { ProductFilter } from "./ProductFilter";
-import { useAppDispatch, STORE_PATHS } from "@/stores/redux/store";
+import { useAppDispatch, STORE_PATHS } from "@/stores/store";
 import { generateClient } from "aws-amplify/api";
 import { useRouter } from "next/navigation";
 
@@ -124,7 +124,6 @@ const ProductList = () => {
             className="border-0 odd:bg-stone-100 even:bg-stone-50"
           >
             {row.getVisibleCells().map((cell) => {
-              console.log("cell", cell);
               return (
                 <TableCell
                   key={cell.id}

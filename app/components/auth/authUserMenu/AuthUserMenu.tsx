@@ -3,7 +3,7 @@
 import { signOut } from "aws-amplify/auth";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useAppDispatch, useAppSelector } from "@/stores/redux/store";
+import { useAppDispatch, useAppSelector } from "@/stores/store";
 import { AUTH_TYPES } from "@/stores/auth/authSlice";
 import { FiLogOut, FiHome, FiSettings } from "react-icons/fi";
 import Link from "next/link";

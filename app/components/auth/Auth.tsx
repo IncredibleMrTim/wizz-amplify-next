@@ -4,7 +4,7 @@ import { AuthGetCurrentUserServer } from "@/utils/amplify-utils";
 import { usePathname } from "next/navigation";
 
 import { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "@/stores/redux/store";
+import { useAppDispatch, useAppSelector } from "@/stores/store";
 import { AUTH_TYPES } from "@/stores/auth/authSlice";
 
 const CheckAuth = () => {

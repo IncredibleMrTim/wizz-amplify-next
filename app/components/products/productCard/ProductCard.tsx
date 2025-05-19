@@ -2,11 +2,7 @@
 import { Schema } from "amplify/data/resource";
 import { StorageImage } from "@aws-amplify/ui-react-storage";
 import { Button } from "@radix-ui/themes";
-import {
-  useAppSelector,
-  useAppDispatch,
-  STORE_PATHS,
-} from "@/stores/redux/store";
+import { useAppSelector, useAppDispatch, STORE_PATHS } from "@/stores/store";
 import { useRouter } from "next/navigation";
 interface ProductCardProps {
   product: Schema["Product"]["type"];

@@ -7,10 +7,11 @@ import "./globals.css";
 import "@aws-amplify/ui-react/styles.css";
 import ConfigureAmplifyClientSide from "@/components/auth/configureAmplifyClientSide/ConfigureAmplifyClientSide";
 import Header from "./components/header/Header";
-import ReduxProvider from "./stores/redux/provider";
+import ReduxProvider from "./providers/reduxProvider";
 import CheckAuth from "./components/auth/Auth";
 import { Amplify } from "aws-amplify";
 import outputs from "../amplify_outputs.json";
+import { ReactQueryProvider } from "./providers/reactQueryProvider";
 
 Amplify.configure(outputs);
 
@@ -29,12 +30,14 @@ export default function RootLayout({
       <body>
         <ConfigureAmplifyClientSide />
         <Theme>
-          <ReduxProvider>
-            <CheckAuth />
-            <Header />
+          <ReactQueryProvider>
+            <ReduxProvider>
+              <CheckAuth />
+              <Header />
 
-            <Container size="4">{children}</Container>
-          </ReduxProvider>
+              <Container size="4">{children}</Container>
+            </ReduxProvider>
+          </ReactQueryProvider>
         </Theme>
       </body>
     </html>
