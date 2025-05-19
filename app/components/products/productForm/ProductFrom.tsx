@@ -79,7 +79,6 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
     if (productData) {
       const fetchProduct = async () => {
         if (productData?.data) {
-          console.log("Product data:", productData.data);
           resetForm({
             ...productData.data,
           });
