@@ -19,7 +19,7 @@ export const useUpdateProductMutation = (): UseMutationResult<
     }
 
     // Handle error case
-    throw new Error(`Failed to create product: ${result.errors}`);
+    throw new Error(`Failed to update product: ${result.errors}`);
   };
 
   return useMutation({
