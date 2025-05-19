@@ -1,23 +1,26 @@
 "use client";
 import { type Schema } from "amplify/data/resource";
-import AddProduct from "@/components/products/product/Product";
-import { addProduct, updateProduct } from "@/services/products";
+import { useAddProductMutation } from "@/services/product/useAddProductMutation";
+import { useUpdateProductMutation } from "@/services/product/useUpdateProductMutation";
 import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
+import { ProductForm } from "@/components/products/productForm/ProductFrom";
 
 const AdminProductsPage = () => {
+  const addProductMutation = useAddProductMutation();
+  const updateProductMutation = useUpdateProductMutation();
   const router = useRouter();
   const params = useParams();
 
   const handleSubmit = (p: Schema["Product"]["type"]) => {
     if (params.productId) {
-      updateProduct(p);
+      updateProductMutation.mutateAsync(p);
     } else {
-      addProduct(p);
+      addProductMutation.mutateAsync(p);
     }
     router.push("/admin");
   };
 
-  return <AddProduct onSubmit={(p) => handleSubmit(p)} />;
+  return <ProductForm onSubmit={(p) => handleSubmit(p)} />;
 };
 export default AdminProductsPage;

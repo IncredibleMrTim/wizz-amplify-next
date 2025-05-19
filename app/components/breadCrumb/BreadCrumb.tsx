@@ -7,7 +7,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { useParams, usePathname } from "next/navigation";
-import { useAppSelector } from "@/stores/redux/store";
+import { useAppSelector } from "@/stores/store";
 import { segmentMappings, isActiveBreadcrumb } from "@/utils/breadcrumb-utils";
 
 export const BreadCrumb = () => {

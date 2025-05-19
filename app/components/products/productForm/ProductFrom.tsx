@@ -20,12 +20,11 @@ import { useEffect, useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { getUserCredentials } from "@/services/users";
-import { AuthSession } from "aws-amplify/auth";
 import { useParams } from "next/navigation";
-import { getProduct } from "@/services/products";
+import { useGetProductQuery } from "@/services/product/useGetProductQuery";
 import { ScrollView } from "@aws-amplify/ui-react";
-interface AddProductProps {
+
+interface ProductFormProps {
   onSubmit: (product: Schema["Product"]["type"]) => void;
 }
 
@@ -49,13 +48,14 @@ const formSchema = z.object({
   isFeatured: z.boolean(),
 });
 
-const AddProduct = ({ onSubmit }: AddProductProps) => {
+export const ProductForm = ({ onSubmit }: ProductFormProps) => {
+  const params = useParams();
+  const { data: productData } = useGetProductQuery(
+    params.productId?.[0] as string
+  );
   const [product, setProduct] = useState<Schema["Product"]["type"] | null>(
     null
   );
-  const [creds, setCreds] = useState<AuthSession | null>(null);
-
-  const params = useParams();
 
   const form = useForm<
     z.infer<typeof formSchema>,
@@ -73,31 +73,17 @@ const AddProduct = ({ onSubmit }: AddProductProps) => {
     },
   });
 
-  const { reset } = form;
+  const { reset: resetForm } = form;
 
   useEffect(() => {
-    const fetchUserCredentials = async () => {
-      const { credentials, user, attrs } = await getUserCredentials();
-      setCreds(credentials);
-    };
-
-    fetchUserCredentials();
-
-    if (params.productId) {
+    if (productData) {
       const fetchProduct = async () => {
-        if (params.productId) {
-          const fetchedProduct = await getProduct(
-            params.productId[0] as string
-          );
-          reset({
-            name: fetchedProduct?.name || "",
-            description: fetchedProduct?.description || "",
-            price: fetchedProduct?.price || 0,
-            stock: fetchedProduct?.stock || 0,
-            imageUrl: fetchedProduct?.imageUrl || "",
-            isFeatured: fetchedProduct?.isFeatured || false,
+        if (productData?.data) {
+          console.log("Product data:", productData.data);
+          resetForm({
+            ...productData.data,
           });
-          setProduct(fetchedProduct);
+          setProduct(productData.data);
         } else {
           console.error("Invalid product ID:", params.productId);
         }
@@ -105,7 +91,7 @@ const AddProduct = ({ onSubmit }: AddProductProps) => {
 
       fetchProduct();
     }
-  }, []);
+  }, [productData]);
 
   const handleSubmit = () => {
     if (product) {
@@ -336,4 +322,3 @@ const AddProduct = ({ onSubmit }: AddProductProps) => {
     </div>
   );
 };
-export default AddProduct;
