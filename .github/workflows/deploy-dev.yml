@@ -10,9 +10,7 @@ jobs:
     steps:
       - name: Run curl command
         uses: actions/checkout@dev
-
-        run:
-          run: |
-            echo "Running curl command..."
-            curl -X POST -d {} "https://webhooks.amplify.eu-west-2.amazonaws.com/prod/webhooks?id=bef90eb2-cc95-4096-983f-7c3e0e9eb646&token=tnYS9AGc7TLdlitkA2gRGXeamlPNS1oae77xrRfBqWg&operation=startbuild" -H "Content-Type:application/json"
-            echo "Curl command completed."
+        run: |
+          echo "Running curl command..."
+          curl -X POST -d {} "https://webhooks.amplify.eu-west-2.amazonaws.com/prod/webhooks?id=bef90eb2-cc95-4096-983f-7c3e0e9eb646&token=tnYS9AGc7TLdlitkA2gRGXeamlPNS1oae77xrRfBqWg&operation=startbuild" -H "Content-Type:application/json"
+          echo "Curl command completed."
