@@ -268,6 +268,7 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
                             path={`${process.env.AWS_S3_PRODUCT_IMAGE_PATH!}`}
                             maxFileCount={1}
                             isResumable
+                            maxFileSize={2000000}
                             showThumbnails
                             onUploadSuccess={({ key }) => {
                               if (!key) return;
@@ -293,8 +294,8 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
                           >
                             {product?.imageUrl && (
                               <div className="flex bg-white h-28 w-28 justify-center items-center border-1 border-gray-200">
-                                <StorageImage
-                                  path={`${product.imageUrl}`}
+                                <img
+                                  src={`${process.env.AWS_S3_PRODUCT_IMAGE_URL}${product.imageUrl}`}
                                   alt="Product"
                                   className="!h-24"
                                 />

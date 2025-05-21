@@ -93,6 +93,22 @@
   overflow: hidden; /* Ensure content doesn't overflow during animation */
 }
 
+@keyframes product-fade-in {
+  0% {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.fade-in-product {
+  animation: product-fade-in 0.5s ease-in-out;
+}
+
 p {
   font-family: "NunitoSans", sans-serif;
   font-size: 1rem !important;
