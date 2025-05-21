@@ -1,4 +1,3 @@
-import { Separator } from "@radix-ui/themes";
 import { CellContext, ColumnDef, RowData } from "@tanstack/react-table";
 import { Schema } from "amplify/data/resource";
 import Link from "next/link";
