@@ -13,19 +13,17 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/shad/form";
-import { FileUploader, StorageImage } from "@aws-amplify/ui-react-storage";
-
+import { FileUploader } from "@aws-amplify/ui-react-storage";
 import { type Schema } from "amplify/data/resource";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { getUserCredentials } from "@/services/users";
-import { AuthSession } from "aws-amplify/auth";
 import { useParams } from "next/navigation";
-import { getProduct } from "@/services/products";
 import { ScrollView } from "@aws-amplify/ui-react";
-interface AddProductProps {
+import { useAppDispatch, useAppSelector, STORE_PATHS } from "@/stores/store";
+
+interface ProductFormProps {
   onSubmit: (product: Schema["Product"]["type"]) => void;
 }
 
@@ -49,13 +47,15 @@ const formSchema = z.object({
   isFeatured: z.boolean(),
 });
 
-const AddProduct = ({ onSubmit }: AddProductProps) => {
+export const ProductForm = ({ onSubmit }: ProductFormProps) => {
+  const params = useParams();
+  const dispatch = useAppDispatch();
+  const productData = useAppSelector((state) => state.products.currentProduct);
+  const allProducts = useAppSelector((state) => state.products.allProducts);
+
   const [product, setProduct] = useState<Schema["Product"]["type"] | null>(
     null
   );
-  const [creds, setCreds] = useState<AuthSession | null>(null);
-
-  const params = useParams();
 
   const form = useForm<
     z.infer<typeof formSchema>,
@@ -73,31 +73,21 @@ const AddProduct = ({ onSubmit }: AddProductProps) => {
     },
   });
 
-  const { reset } = form;
+  const { reset: resetForm } = form;
 
   useEffect(() => {
-    const fetchUserCredentials = async () => {
-      const { credentials, user, attrs } = await getUserCredentials();
-      setCreds(credentials);
-    };
-
-    fetchUserCredentials();
-
-    if (params.productId) {
+    if (productData) {
       const fetchProduct = async () => {
-        if (params.productId) {
-          const fetchedProduct = await getProduct(
-            params.productId[0] as string
-          );
-          reset({
-            name: fetchedProduct?.name || "",
-            description: fetchedProduct?.description || "",
-            price: fetchedProduct?.price || 0,
-            stock: fetchedProduct?.stock || 0,
-            imageUrl: fetchedProduct?.imageUrl || "",
-            isFeatured: fetchedProduct?.isFeatured || false,
+        if (productData) {
+          resetForm({
+            name: productData.name,
+            description: productData.description,
+            price: productData.price,
+            stock: productData.stock,
+            imageUrl: productData.imageUrl || "",
+            isFeatured: productData.isFeatured ?? false,
           });
-          setProduct(fetchedProduct);
+          setProduct(productData);
         } else {
           console.error("Invalid product ID:", params.productId);
         }
@@ -105,15 +95,47 @@ const AddProduct = ({ onSubmit }: AddProductProps) => {
 
       fetchProduct();
     }
-  }, []);
+  }, [productData]);
 
   const handleSubmit = () => {
     if (product) {
+      // if a new product, add it to te product list
+      if (!product.id) {
+        dispatch({
+          type: STORE_PATHS.SET_PRODUCTS,
+          payload: [...allProducts, product],
+        });
+      } else {
+        // if an existing product, update it in the product list
+        const updatedProducts = allProducts.map((p) =>
+          p.id === product.id ? product : p
+        );
+        dispatch({
+          type: STORE_PATHS.SET_PRODUCTS,
+          payload: updatedProducts,
+        });
+      }
+
+      setProduct(null);
+      form.reset();
+
       onSubmit(product);
     } else {
       console.error("Product is null and cannot be submitted.");
     }
   };
+
+  useEffect(() => {
+    return () => {
+      // Clean up function to reset the form and product state
+      setProduct(null);
+      form.reset();
+      dispatch({
+        type: STORE_PATHS.SET_CURRENT_PRODUCT,
+        payload: null,
+      });
+    };
+  }, []);
 
   return (
     <div>
@@ -283,6 +305,7 @@ const AddProduct = ({ onSubmit }: AddProductProps) => {
                             path={`${process.env.AWS_S3_PRODUCT_IMAGE_PATH!}`}
                             maxFileCount={1}
                             isResumable
+                            maxFileSize={2000000}
                             showThumbnails
                             onUploadSuccess={({ key }) => {
                               if (!key) return;
@@ -308,8 +331,8 @@ const AddProduct = ({ onSubmit }: AddProductProps) => {
                           >
                             {product?.imageUrl && (
                               <div className="flex bg-white h-28 w-28 justify-center items-center border-1 border-gray-200">
-                                <StorageImage
-                                  path={`${product.imageUrl}`}
+                                <img
+                                  src={`${process.env.AWS_S3_PRODUCT_IMAGE_URL}${product.imageUrl}`}
                                   alt="Product"
                                   className="!h-24"
                                 />
@@ -336,4 +359,3 @@ const AddProduct = ({ onSubmit }: AddProductProps) => {
     </div>
   );
 };
-export default AddProduct;

@@ -1,4 +1,5 @@
 import { NavComponent } from "./Navigation";
+import { FiPlus } from "react-icons/fi";
 
 const components: NavComponent[] = [
   {
@@ -6,6 +7,7 @@ const components: NavComponent[] = [
     type: "button",
     title: "New Product",
     href: "/admin/product",
+    icon: <FiPlus className="text-white" />,
   },
 ];
 

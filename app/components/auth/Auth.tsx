@@ -1,28 +1,41 @@
 "use client";
-import { cognitoUserPoolsTokenProvider } from "aws-amplify/auth/cognito";
 import { AuthGetCurrentUserServer } from "@/utils/amplify-utils";
 import { usePathname } from "next/navigation";
 
 import { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "@/stores/redux/store";
+import { useAppDispatch, useAppSelector } from "@/stores/store";
 import { AUTH_TYPES } from "@/stores/auth/authSlice";
 
 const CheckAuth = () => {
   const pathname = usePathname();
   const dispatch = useAppDispatch();
-  const auth = useAppSelector((state) => state.auth);
+  const currentUser = useAppSelector((state) => state.auth.currentUser);
+
   useEffect(() => {
     async function checkAuth() {
       try {
-        const currentUser = await AuthGetCurrentUserServer();
+        const authorized = await AuthGetCurrentUserServer();
 
-        if (currentUser) {
+        // if we are not authorized user, we need to set the current user to null
+        // so that user cannot access the protected routes
+        if (!authorized) {
+          console.log("User is not authenticated");
           dispatch({
             type: AUTH_TYPES.SET_CURRENT_USER,
-            payload: currentUser,
+            payload: null,
           });
-        } else {
-          console.log("User is not authenticated");
+        }
+
+        console.log("auth && !currentUser", authorized, currentUser);
+
+        // only set the user if it is not already set
+        // so that we don't continuously update the state
+        if (authorized && !currentUser) {
+          console.log("User is logged in", currentUser);
+          dispatch({
+            type: AUTH_TYPES.SET_CURRENT_USER,
+            payload: authorized,
+          });
         }
       } catch (error) {
         console.error("Error checking authentication:", error);
