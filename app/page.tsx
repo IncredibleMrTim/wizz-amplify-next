@@ -10,16 +10,17 @@ import { useGetProductsQuery } from "./services/product/useGetProductsQuery";
 const FEATURE_PRODUCTS_PER_PAGE = 4;
 
 export default function App() {
-  const { data: productsData, isLoading } = useGetProductsQuery({
-    count: FEATURE_PRODUCTS_PER_PAGE,
+  const { data: productsData, isFetched } = useGetProductsQuery({
     isFeatured: true,
   });
+
+  console.log(productsData);
 
   return (
     <main>
       <Flex>
-        {!isLoading && (
-          <div className="flex flex-col md:flex-row gap-4 justify-between">
+        {isFetched && (
+          <div className="flex flex-col md:flex-row gap-6 justify-between">
             {productsData.data.map((product: Schema["Product"]["type"]) => (
               <ProductCard
                 showDescription={false}

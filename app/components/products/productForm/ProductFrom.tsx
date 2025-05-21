@@ -13,16 +13,15 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/shad/form";
-import { FileUploader, StorageImage } from "@aws-amplify/ui-react-storage";
-
+import { FileUploader } from "@aws-amplify/ui-react-storage";
 import { type Schema } from "amplify/data/resource";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useParams } from "next/navigation";
-import { useGetProductQuery } from "@/services/product/useGetProductQuery";
 import { ScrollView } from "@aws-amplify/ui-react";
+import { useAppDispatch, useAppSelector, STORE_PATHS } from "@/stores/store";
 
 interface ProductFormProps {
   onSubmit: (product: Schema["Product"]["type"]) => void;
@@ -50,9 +49,10 @@ const formSchema = z.object({
 
 export const ProductForm = ({ onSubmit }: ProductFormProps) => {
   const params = useParams();
-  const { data: productData } = useGetProductQuery(
-    params.productId?.[0] as string
-  );
+  const dispatch = useAppDispatch();
+  const productData = useAppSelector((state) => state.products.currentProduct);
+  const allProducts = useAppSelector((state) => state.products.allProducts);
+
   const [product, setProduct] = useState<Schema["Product"]["type"] | null>(
     null
   );
@@ -78,11 +78,16 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
   useEffect(() => {
     if (productData) {
       const fetchProduct = async () => {
-        if (productData?.data) {
+        if (productData) {
           resetForm({
-            ...productData.data,
+            name: productData.name,
+            description: productData.description,
+            price: productData.price,
+            stock: productData.stock,
+            imageUrl: productData.imageUrl || "",
+            isFeatured: productData.isFeatured ?? false,
           });
-          setProduct(productData.data);
+          setProduct(productData);
         } else {
           console.error("Invalid product ID:", params.productId);
         }
@@ -94,11 +99,43 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
 
   const handleSubmit = () => {
     if (product) {
+      // if a new product, add it to te product list
+      if (!product.id) {
+        dispatch({
+          type: STORE_PATHS.SET_PRODUCTS,
+          payload: [...allProducts, product],
+        });
+      } else {
+        // if an existing product, update it in the product list
+        const updatedProducts = allProducts.map((p) =>
+          p.id === product.id ? product : p
+        );
+        dispatch({
+          type: STORE_PATHS.SET_PRODUCTS,
+          payload: updatedProducts,
+        });
+      }
+
+      setProduct(null);
+      form.reset();
+
       onSubmit(product);
     } else {
       console.error("Product is null and cannot be submitted.");
     }
   };
+
+  useEffect(() => {
+    return () => {
+      // Clean up function to reset the form and product state
+      setProduct(null);
+      form.reset();
+      dispatch({
+        type: STORE_PATHS.SET_CURRENT_PRODUCT,
+        payload: null,
+      });
+    };
+  }, []);
 
   return (
     <div>

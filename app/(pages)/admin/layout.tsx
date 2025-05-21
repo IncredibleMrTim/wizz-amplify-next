@@ -1,7 +1,7 @@
 "use client";
 import { Authenticator } from "@aws-amplify/ui-react";
 import CheckAuth from "@/components/auth/Auth";
-import Navigation from "@/components/navigation/Navigation";
+
 import { useRouter } from "next/navigation";
 import { Button } from "@radix-ui/themes";
 

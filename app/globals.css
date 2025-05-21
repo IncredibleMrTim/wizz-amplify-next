@@ -70,6 +70,12 @@
 }
 
 @font-face {
+  font-family: "LeagueSpartan";
+  display: swap;
+  src: url("./fonts/LeagueSpartan-VariableFont_wght.ttf");
+}
+
+@font-face {
   font-family: "NunitoSans";
   display: swap;
   src: url("./fonts/NunitoSans-VariableFont_YTLC.ttf");
@@ -110,8 +116,8 @@
 }
 
 p {
-  font-family: "NunitoSans", sans-serif;
-  font-size: 1rem !important;
+  font-family: "LeagueSpartan", sans-serif;
+  font-size: 14px !important;
   font-weight: 400;
   line-height: 1.5;
   letter-spacing: 0.08em;
@@ -128,7 +134,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: "NunitoSans", sans-serif !important;
+  font-family: "LeagueSpartan", sans-serif !important;
 }
 
 h1 {
