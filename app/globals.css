@@ -81,6 +81,12 @@
   src: url("./fonts/NunitoSans-VariableFont_YTLC.ttf");
 }
 
+@font-face {
+  font-family: "PetitFormalScript";
+  display: swap;
+  src: url("./fonts/Allura-Regular.ttf");
+}
+
 @keyframes fade-in-scale {
   0% {
     max-height: 0;
@@ -115,6 +121,10 @@
   animation: product-fade-in 0.5s ease-in-out;
 }
 
+.font-petitFormalScript {
+  font-family: "PetitFormalScript", sans-serif !important;
+}
+
 p {
   font-family: "LeagueSpartan", sans-serif;
   font-size: 14px !important;
@@ -134,7 +144,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: "LeagueSpartan", sans-serif !important;
+  font-family: "LeagueSpartan", sans-serif;
 }
 
 h1 {

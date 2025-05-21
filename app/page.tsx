@@ -2,7 +2,6 @@
 
 import "@/app.css";
 
-import { Flex } from "@radix-ui/themes";
 import ProductCard from "@/components/products/productCard/ProductCard";
 import { Schema } from "amplify/data/resource";
 import { useGetProductsQuery } from "./services/product/useGetProductsQuery";
@@ -18,7 +17,12 @@ export default function App() {
 
   return (
     <main>
-      <Flex>
+      <div className="flex flex-col gap-6">
+        <p className="px-48 !text-lg text-black opacity-80 font-bold w-full text-center border-y-1 border-gray-200 py-6">
+          Costumes that transform every performance into an unforgettable
+          spectacle, embracing individuality and artistry.
+        </p>
+
         {isFetched && (
           <div className="flex flex-col md:flex-row gap-6 justify-between">
             {productsData.data.map((product: Schema["Product"]["type"]) => (
@@ -30,7 +34,7 @@ export default function App() {
             ))}
           </div>
         )}
-      </Flex>
+      </div>
     </main>
   );
 }
