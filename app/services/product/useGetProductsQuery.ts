@@ -1,10 +1,12 @@
 "use client";
+
 import { useQuery } from "@tanstack/react-query";
 import { generateClient } from "aws-amplify/data";
 import { type Schema } from "amplify/data/resource";
 import { ProductQueryKeys } from "./keys";
 
 const client = generateClient<Schema>();
+
 interface UseGetProductsQueryProps {
   count?: number;
   isFeatured?: boolean;
@@ -30,7 +32,5 @@ export const useGetProductsQuery = ({
     queryFn: async () => {
       return await getProducts();
     },
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    refetchOnWindowFocus: false,
   });
 };
