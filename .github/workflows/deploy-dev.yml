@@ -12,4 +12,9 @@ jobs:
       - name: deploy-to-amplify-dev
         uses: enflo/curl-action@1.3
         with:
-          curl: {{curl -X POST -d {} "https://webhooks.amplify.eu-west-2.amazonaws.com/prod/webhooks?id=09abede2-c444-4de5-86ef-842ccbb7bea1&token=8mQRUwAVvVJ19HetuotCU61nW74KREPnfI3vIrbPRhk&operation=startbuild" -H "Content-Type:application/json"}}
+          curl:
+            {
+              {
+                'curl -X POST -d {} "https://webhooks.amplify.eu-west-2.amazonaws.com/prod/webhooks?id=09abede2-c444-4de5-86ef-842ccbb7bea1&token=8mQRUwAVvVJ19HetuotCU61nW74KREPnfI3vIrbPRhk&operation=startbuild" -H "Content-Type:application/json"',
+              },
+            }
