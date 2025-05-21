@@ -1,4 +1,4 @@
-import { CellContext, ColumnDef, RowData } from "@tanstack/react-table";
+import { CellContext, ColumnDef } from "@tanstack/react-table";
 import { Schema } from "amplify/data/resource";
 import Link from "next/link";
 import { FiEdit, FiArrowRightCircle, FiCheck, FiX } from "react-icons/fi";
