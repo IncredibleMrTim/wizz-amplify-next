@@ -47,7 +47,9 @@ const ProductCard = ({
               className="flex self-center w-full h-96   object-cover"
             />
             <div className="flex w-full align-bottom absolute bottom-2 px-2">
-              <div className="flex gap-1 justify-between w-full">
+              <div
+                className={`flex gap-1 w-full ${isAdmin ? `justify-between` : `justify-end`}`}
+              >
                 {isAdmin && (
                   <Link
                     prefetch
@@ -65,7 +67,7 @@ const ProductCard = ({
                   </Link>
                 )}
                 <button
-                  className="p-3 flex self-end rounded-full bg-gray-50 opacity-70"
+                  className="p-3 flex self-end justify-self-end rounded-full bg-gray-50 opacity-70"
                   aria-label="Add to cart"
                   onClick={() => {
                     // Add functionality for adding the product to the cart
