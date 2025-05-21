@@ -8,12 +8,12 @@ import { Schema } from "amplify/data/resource";
 import { useGetProductsQuery } from "./services/product/useGetProductsQuery";
 
 export default function App() {
-  const { data: productsData } = useGetProductsQuery(3);
+  const { data: productsData } = useGetProductsQuery(4);
 
   return (
     <main>
       <Flex>
-        <div className="flex flex-col md:flex-row gap-4 p-4 justify-between w-full">
+        <div className="flex flex-col md:flex-row gap-4 p-4 justify-between w-full h-full">
           {productsData?.data?.length ? (
             productsData.data.map((product: Schema["Product"]["type"]) => (
               <ProductCard
