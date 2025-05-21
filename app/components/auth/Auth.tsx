@@ -1,5 +1,4 @@
 "use client";
-import { cognitoUserPoolsTokenProvider } from "aws-amplify/auth/cognito";
 import { AuthGetCurrentUserServer } from "@/utils/amplify-utils";
 import { usePathname } from "next/navigation";
 

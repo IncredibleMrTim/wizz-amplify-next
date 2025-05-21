@@ -5,20 +5,17 @@ import { type Schema } from "amplify/data/resource";
 import { ProductQueryKeys } from "./keys";
 
 const client = generateClient<Schema>();
+interface UseGetProductsQueryProps {
+  count?: number;
+  isFeatured?: boolean;
+}
 
-export const useGetProductsQuery = (count?: number, isFeatured?: boolean) => {
+export const useGetProductsQuery = ({
+  count,
+  isFeatured,
+}: UseGetProductsQueryProps) => {
   const getProducts = async (): Promise<any> => {
     return await client.models.Product.list({
-      selectionSet: [
-        "id",
-        "name",
-        "description",
-        "price",
-        "imageUrl",
-        "category",
-        "isFeatured",
-        "stock",
-      ],
       filter: isFeatured
         ? {
             isFeatured: { eq: isFeatured },
@@ -33,5 +30,7 @@ export const useGetProductsQuery = (count?: number, isFeatured?: boolean) => {
     queryFn: async () => {
       return await getProducts();
     },
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    refetchOnWindowFocus: false,
   });
 };
