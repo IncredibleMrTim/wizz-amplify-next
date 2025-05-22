@@ -26,39 +26,37 @@ import { Schema } from "amplify/data/resource";
 import { columns } from "./productListColumnDefs";
 import { ProductTableFooter } from "./ProductTableFooter";
 import { ProductFilter } from "./ProductFilter";
-import { useAppDispatch, STORE_PATHS } from "@/stores/store";
+import { useAppDispatch, useAppSelector, STORE_PATHS } from "@/stores/store";
 import { generateClient } from "aws-amplify/api";
 import { useRouter } from "next/navigation";
 
 const ProductList = () => {
+  const client = generateClient<Schema>();
+  const products = useAppSelector((state) => state.products);
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
   const [data, setData] = useState<Schema["Product"]["type"][]>([]);
 
-  const dispatch = useAppDispatch();
-  const router = useRouter();
-
-  const client = generateClient<Schema>();
-
   useEffect(() => {
-    const sub = client.models.Product.observeQuery().subscribe({
-      next: ({
-        items,
-        isSynced,
-      }: {
-        items: Schema["Product"]["type"][];
-        isSynced: boolean;
-      }) => {
-        setData(items);
-        if (isSynced) {
-          dispatch({ type: STORE_PATHS.SET_PRODUCTS, payload: items });
-        }
-      },
-    });
+    const fetchData = async () => {
+      const { data } = await client.models.Product.list();
+      setData(data);
+      dispatch({ type: STORE_PATHS.SET_PRODUCTS, payload: data });
+    };
 
-    return () => sub.unsubscribe();
+    // Check if products are already in the store
+    // If not, fetch data from the API
+    // If yes, set the data from the store
+    if (products.allProducts.length === 0) {
+      fetchData();
+    } else {
+      setData(products.allProducts);
+    }
   }, []);
 
   const table = useReactTable({
@@ -67,7 +65,7 @@ const ProductList = () => {
     defaultColumn: {
       minSize: 50,
       maxSize: 300,
-      size: 100, // Default size
+      size: 100,
     },
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,

@@ -34,7 +34,6 @@ const Navigation = ({ type = "user" }: NavigationProps) => {
   const [selected, setSelected] = useState<NavComponent | null>(null);
   const [adminMenuOpen, setAdminMenuOpen] = useState(false);
   const currentUser = useAppSelector((state) => state.auth.currentUser);
-  const router = useRouter();
   const components = type === "admin" ? adminComponents : userComponents;
 
   const handleAdminMenuItemClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
