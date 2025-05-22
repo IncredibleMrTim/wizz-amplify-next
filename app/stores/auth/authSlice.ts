@@ -4,7 +4,6 @@ import { AuthUser } from "aws-amplify/auth";
 export const AUTH_TYPES = {
   SET_CURRENT_USER: "AUTH/setCurrentUser",
 };
-
 type User = {
   sub: string;
   iss: string;
