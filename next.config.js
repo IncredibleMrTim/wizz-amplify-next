@@ -1,14 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   env: {
-    AWS_S3_PRODUCT_IMAGE_PATH: "public/",
-    AWS_S3_PRODUCT_IMAGE_URL:
-      "https://amplify-awsamplifygen2-wi-wizzingtonproductimages2-8a0hbugzfqjz.s3.eu-west-2.amazonaws.com/",
+    ROOT_URL: process.env.ROOT_URL,
+    AWS_S3_PRODUCT_IMAGE_PATH: process.env.AWS_S3_PRODUCT_IMAGE_PATH,
+    AWS_S3_PRODUCT_IMAGE_URL: process.env.AWS_S3_PRODUCT_IMAGE_URL,
   },
   images: {
-    domains: [
-      "amplify-awsamplifygen2-wi-wizzingtonproductimages2-8a0hbugzfqjz.s3.eu-west-2.amazonaws.com/",
-    ],
+    domains: [process.env.AWS_S3_IMAGE_DOMAIN],
   },
 };
 export default nextConfig;
