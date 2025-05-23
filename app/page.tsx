@@ -1,19 +1,28 @@
 "use client";
 
 import "@/app.css";
-
+import { useEffect } from "react";
 import ProductCard from "@/components/products/productCard/ProductCard";
 import { Schema } from "amplify/data/resource";
 import { useGetProductsQuery } from "./services/product/useGetProductsQuery";
+import { useAppDispatch, STORE_PATHS } from "@/stores/store";
 
 const FEATURE_PRODUCTS_PER_PAGE = 4;
 
 export default function App() {
-  const { data: productsData, isFetched } = useGetProductsQuery({
-    isFeatured: true,
-  });
+  const dispatch = useAppDispatch();
+  const { getProducts } = useGetProductsQuery();
 
-  console.log(productsData);
+  const { data: productsData, isFetched } = getProducts({});
+
+  useEffect(() => {
+    if (productsData && isFetched) {
+      dispatch({
+        type: STORE_PATHS.SET_PRODUCTS,
+        payload: productsData,
+      });
+    }
+  }, [productsData, isFetched]);
 
   return (
     <main>
@@ -25,13 +34,15 @@ export default function App() {
 
         {isFetched && (
           <div className="flex flex-col md:flex-row gap-6 justify-between">
-            {productsData.data.map((product: Schema["Product"]["type"]) => (
-              <ProductCard
-                showDescription={false}
-                key={product.id}
-                product={product}
-              />
-            ))}
+            {productsData
+              ?.filter((p) => p.isFeatured)
+              .map((product: Schema["Product"]["type"]) => (
+                <ProductCard
+                  showDescription={false}
+                  key={product.id}
+                  product={product}
+                />
+              ))}
           </div>
         )}
       </div>

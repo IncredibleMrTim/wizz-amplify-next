@@ -3,17 +3,43 @@ import { generateClient } from "aws-amplify/data";
 import { type Schema } from "amplify/data/resource";
 import { ProductQueryKeys } from "./keys";
 
-export const useGetProductQuery = (id: string) => {
+export const useGetProductQuery = () => {
   const client = generateClient<Schema>();
 
-  const getProduct = async (): Promise<any> => {
+  const fetchProductById = async (id: string): Promise<any> => {
     return await client.models.Product.get({ id });
   };
 
-  return useQuery({
-    queryKey: [ProductQueryKeys.GET_PRODUCT],
-    queryFn: async () => {
-      return await getProduct();
-    },
-  });
+  const fetchProductByName = async (name: string): Promise<any> => {
+    console.log(name);
+    return await client.models.Product.list({
+      filter: {
+        name: { eq: name },
+      },
+    });
+  };
+
+  const getProductById = (id: string) =>
+    useQuery({
+      queryKey: [ProductQueryKeys.GET_PRODUCT],
+      queryFn: async (context) => {
+        return await fetchProductById(id);
+      },
+      staleTime: 1000 * 60 * 5, // 5 minutes
+    });
+
+  const getProductByName = (name: string) =>
+    useQuery({
+      queryKey: [ProductQueryKeys.GET_PRODUCT],
+      queryFn: async (context) => {
+        const data = await fetchProductByName(name);
+        return data?.data?.[0] ?? null;
+      },
+      staleTime: 1000 * 60 * 5, // 5 minutes
+    });
+
+  return {
+    getProductById,
+    getProductByName,
+  };
 };

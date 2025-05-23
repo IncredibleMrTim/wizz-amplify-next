@@ -6,18 +6,15 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { useParams, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useAppSelector } from "@/stores/store";
-import { segmentMappings } from "@/components/breadCrumb/breadcrumb-utils";
+import { segmentMappings } from "@/components/breadCrumb/breadcrumbMappings";
 
 export const BreadCrumb = () => {
   const product = useAppSelector((state) => state.products.currentProduct);
-  const { productId } = useParams();
-
   const pathname = usePathname();
 
   const segments = pathname.split("/").filter((segment) => segment !== "");
-  console.log("segments", segments);
   return (
     <div className="flex items-center justify-between text-black p-4">
       <Breadcrumb>

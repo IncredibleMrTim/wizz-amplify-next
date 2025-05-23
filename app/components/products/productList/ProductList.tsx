@@ -35,7 +35,7 @@ import { useRouter } from "next/navigation";
 
 const ProductList = () => {
   const client = generateClient<Schema>();
-  const products = useAppSelector((state) => state.products);
+  const allProducts = useAppSelector((state) => state.products.allProducts);
   const dispatch = useAppDispatch();
   const router = useRouter();
 
@@ -55,10 +55,10 @@ const ProductList = () => {
     // Check if products are already in the store
     // If not, fetch data from the API
     // If yes, set the data from the store
-    if (products.allProducts.length === 0) {
+    if (!allProducts.length) {
       fetchData();
     } else {
-      setData(products.allProducts);
+      setData(allProducts);
     }
   }, []);
 
@@ -144,6 +144,7 @@ const ProductList = () => {
                         payload: cell.row.original,
                       });
 
+                      // TODO: Need to add conformation modal for delete
                       if (deleteProduct) {
                         client.models.Product.delete({
                           id: cell.row.original.id,
@@ -165,10 +166,10 @@ const ProductList = () => {
                         });
                         setData(updatedProductList);
                       }
-                      console.log("deleteProduct", deleteProduct, viewProduct);
-                      // if (viewProduct && !deleteProduct) {
-                      //   router.push(`/admin/products/${cell.row.original.id}`);
-                      // }
+
+                      if (viewProduct && !deleteProduct) {
+                        router.push(`/admin/products/${cell.row.original.id}`);
+                      }
                     },
                   })}
                 </TableCell>

@@ -1,11 +1,10 @@
 "use client";
 import { Schema } from "amplify/data/resource";
-import { StorageImage } from "@aws-amplify/ui-react-storage";
-import { Button } from "@radix-ui/themes";
 import { useAppSelector, useAppDispatch, STORE_PATHS } from "@/stores/store";
 import { useRouter } from "next/navigation";
 import { FiShoppingCart, FiEdit } from "react-icons/fi";
 import Link from "next/link";
+
 interface ProductCardProps {
   product: Schema["Product"]["type"];
   showTitle?: boolean;
@@ -45,6 +44,10 @@ const ProductCard = ({
               src={`${process.env.AWS_S3_PRODUCT_IMAGE_URL}${product.imageUrl}`}
               alt={product.name}
               onClick={() => {
+                dispatch({
+                  type: STORE_PATHS.SET_CURRENT_PRODUCT,
+                  payload: product,
+                });
                 router.push(`/product/${product.name.replace(/\s+/g, "-")}`);
               }}
               className="flex self-center w-full h-96   object-cover"
