@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from "@/stores/store";
 import { AUTH_TYPES } from "@/stores/auth/authSlice";
 import { FiLogOut, FiHome, FiSettings } from "react-icons/fi";
 import Link from "next/link";
+import { cookies } from "next/headers";
 
 export const AuthUserMenu = ({
   onMenuItemClick,
@@ -26,6 +27,7 @@ export const AuthUserMenu = ({
         type: AUTH_TYPES.SET_CURRENT_USER,
         payload: null,
       });
+
       router.push("/"); // Redirect after sign-out
     } catch (error) {
       console.error("Error signing out:", error);

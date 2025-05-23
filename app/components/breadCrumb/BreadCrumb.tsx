@@ -6,17 +6,15 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { useParams, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useAppSelector } from "@/stores/store";
-import { segmentMappings, isActiveBreadcrumb } from "@/utils/breadcrumb-utils";
+import { segmentMappings } from "@/components/breadCrumb/breadcrumbMappings";
 
 export const BreadCrumb = () => {
   const product = useAppSelector((state) => state.products.currentProduct);
-  const { productId } = useParams();
-
   const pathname = usePathname();
-  const segments = pathname.split("/").filter((segment) => segment !== "");
 
+  const segments = pathname.split("/").filter((segment) => segment !== "");
   return (
     <div className="flex items-center justify-between text-black p-4">
       <Breadcrumb>
@@ -25,25 +23,21 @@ export const BreadCrumb = () => {
             if (pathname.includes("admin")) return null; // don't show breadcrumb in admin
 
             return (
-              <BreadcrumbItem key={index}>
-                <Link
-                  className={`${isActiveBreadcrumb(segment, productId?.[0]) ? "cursor-pointer" : "cursor-default"}`}
-                  href={
-                    isActiveBreadcrumb(segment, productId?.[0])
-                      ? `/${segment}`
-                      : ""
-                  }
+              <div key={index} className="flex place-items-center gap-2">
+                <BreadcrumbItem key={index}>
+                  <Link href={`/${segments.slice(0, index + 1).join("/")}`}>
+                    {segmentMappings[segment] ||
+                      product?.name ||
+                      segment.charAt(0).toUpperCase() + segment.slice(1)}
+                  </Link>
+                </BreadcrumbItem>
+
+                <BreadcrumbSeparator
+                  className={`${index === segments.length - 1 && "hidden"}`}
                 >
-                  {segmentMappings[segment] ||
-                    product?.name ||
-                    segment.charAt(0).toUpperCase() + segment.slice(1)}
-                </Link>
-                {index !== segments.length - 1 && (
-                  <div>
-                    <BreadcrumbSeparator />
-                  </div>
-                )}
-              </BreadcrumbItem>
+                  <p>/</p>
+                </BreadcrumbSeparator>
+              </div>
             );
           })}
         </BreadcrumbList>

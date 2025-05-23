@@ -27,8 +27,6 @@ const Header = () => {
       <div className="w-full border-b border-gray-300 h-10">
         <Navigation />
       </div>
-
-      <BreadCrumb />
     </div>
   );
 };

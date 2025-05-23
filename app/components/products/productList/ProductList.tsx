@@ -22,8 +22,11 @@ import {
 } from "@/components/ui/table";
 
 import { Schema } from "amplify/data/resource";
-
-import { columns } from "./productListColumnDefs";
+import { remove } from "aws-amplify/storage";
+import {
+  columns,
+  ProductListCustomCellContextProps,
+} from "./productListColumnDefs";
 import { ProductTableFooter } from "./ProductTableFooter";
 import { ProductFilter } from "./ProductFilter";
 import { useAppDispatch, useAppSelector, STORE_PATHS } from "@/stores/store";
@@ -32,7 +35,7 @@ import { useRouter } from "next/navigation";
 
 const ProductList = () => {
   const client = generateClient<Schema>();
-  const products = useAppSelector((state) => state.products);
+  const allProducts = useAppSelector((state) => state.products.allProducts);
   const dispatch = useAppDispatch();
   const router = useRouter();
 
@@ -52,10 +55,10 @@ const ProductList = () => {
     // Check if products are already in the store
     // If not, fetch data from the API
     // If yes, set the data from the store
-    if (products.allProducts.length === 0) {
+    if (!allProducts.length) {
       fetchData();
     } else {
-      setData(products.allProducts);
+      setData(allProducts);
     }
   }, []);
 
@@ -132,13 +135,39 @@ const ProductList = () => {
                 >
                   {flexRender(cell.column.columnDef.cell, {
                     ...cell.getContext(),
-                    onClick: (viewProduct: boolean) => {
+                    onClick: async ({
+                      viewProduct,
+                      deleteProduct,
+                    }: ProductListCustomCellContextProps) => {
                       dispatch({
                         type: STORE_PATHS.SET_CURRENT_PRODUCT,
                         payload: cell.row.original,
                       });
 
-                      if (viewProduct) {
+                      // TODO: Need to add conformation modal for delete
+                      if (deleteProduct) {
+                        client.models.Product.delete({
+                          id: cell.row.original.id,
+                        });
+
+                        if (cell.row.original?.imageUrl) {
+                          await remove({
+                            path: cell.row.original.imageUrl,
+                          });
+                        }
+
+                        const updatedProductList = data.filter(
+                          (product) => product.id !== cell.row.original.id
+                        );
+
+                        dispatch({
+                          type: STORE_PATHS.SET_PRODUCTS,
+                          payload: updatedProductList,
+                        });
+                        setData(updatedProductList);
+                      }
+
+                      if (viewProduct && !deleteProduct) {
                         router.push(`/admin/products/${cell.row.original.id}`);
                       }
                     },

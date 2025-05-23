@@ -1,10 +1,24 @@
 import { CellContext, ColumnDef } from "@tanstack/react-table";
 import { Schema } from "amplify/data/resource";
 import Link from "next/link";
-import { FiEdit, FiArrowRightCircle, FiCheck, FiX } from "react-icons/fi";
+import {
+  FiEdit,
+  FiArrowRightCircle,
+  FiCheck,
+  FiX,
+  FiTrash2,
+} from "react-icons/fi";
+
+export interface ProductListCustomCellContextProps {
+  viewProduct: boolean;
+  deleteProduct?: boolean;
+}
 
 type CustomCellContext<TData, TValue> = CellContext<TData, TValue> & {
-  onClick?: ({ viewProduct }: { viewProduct: boolean }) => void; // Add the onClick handler type
+  onClick?: ({
+    viewProduct,
+    deleteProduct,
+  }: ProductListCustomCellContextProps) => void; // Add the onClick handler type
 };
 
 export const columns: ColumnDef<Schema["Product"]["type"]>[] = [
@@ -27,7 +41,7 @@ export const columns: ColumnDef<Schema["Product"]["type"]>[] = [
   {
     accessorKey: "description",
     header: "Description",
-    size: 100, // Explicit size
+    size: 80, // Explicit size
     cell: ({ row }) => {
       return (
         <div className="overflow-hidden text-ellipsis whitespace-nowrap">
@@ -36,22 +50,22 @@ export const columns: ColumnDef<Schema["Product"]["type"]>[] = [
       );
     },
   },
-  {
-    accessorKey: "category",
-    header: "Category",
-    size: 30, // Explicit size
-    cell: ({ row }) => {
-      return (
-        <div className="overflow-hidden text-ellipsis whitespace-nowrap">
-          {row.getValue("category")}
-        </div>
-      );
-    },
-  },
+  // {
+  //   accessorKey: "category",
+  //   header: "Category",
+  //   size: 30, // Explicit size
+  //   cell: ({ row }) => {
+  //     return (
+  //       <div className="overflow-hidden text-ellipsis whitespace-nowrap">
+  //         {row.getValue("category")}
+  //       </div>
+  //     );
+  //   },
+  // },
   {
     accessorKey: "price",
     header: "Price",
-    size: 20, // Explicit size
+    size: 10, // Explicit size
     cell: ({ row }) => {
       return (
         <div className="overflow-hidden text-ellipsis whitespace-nowrap">
@@ -63,7 +77,7 @@ export const columns: ColumnDef<Schema["Product"]["type"]>[] = [
   {
     accessorKey: "stock",
     header: "Stock",
-    size: 20, // Explicit size
+    size: 5, // Explicit size
     cell: ({ row }) => {
       return (
         <div className="overflow-hidden text-ellipsis whitespace-nowrap">
@@ -75,7 +89,7 @@ export const columns: ColumnDef<Schema["Product"]["type"]>[] = [
   {
     accessorKey: "isFeatured",
     header: "Featured",
-    size: 20, // Explicit size
+    size: 5, // Explicit size
     cell: ({ row }) => {
       return (
         <div className="overflow-hidden text-ellipsis whitespace-nowrap">
@@ -113,6 +127,14 @@ export const columns: ColumnDef<Schema["Product"]["type"]>[] = [
           >
             <FiArrowRightCircle size={20} />
           </Link>
+
+          <button
+            onClick={() =>
+              onClick?.({ viewProduct: false, deleteProduct: true })
+            }
+          >
+            <FiTrash2 size={20} />
+          </button>
         </div>
       );
     },
