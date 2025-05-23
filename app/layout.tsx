@@ -12,6 +12,7 @@ import CheckAuth from "./components/auth/Auth";
 import { Amplify } from "aws-amplify";
 import outputs from "../amplify_outputs.json";
 import { ReactQueryProvider } from "./providers/reactQueryProvider";
+import { BreadCrumb } from "./components/breadCrumb/BreadCrumb";
 
 Amplify.configure(outputs);
 
@@ -35,7 +36,10 @@ export default function RootLayout({
               <CheckAuth />
               <Header />
 
-              <Container size="4">{children}</Container>
+              <Container size="4">
+                <BreadCrumb />
+                {children}
+              </Container>
             </ReduxProvider>
           </ReactQueryProvider>
         </Theme>

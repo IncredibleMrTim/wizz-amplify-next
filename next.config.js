@@ -1,13 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   env: {
+    ROOT_URL: "https://main.d3nzem3wi6drcl.amplifyapp.com/",
     AWS_S3_PRODUCT_IMAGE_PATH: "public/",
     AWS_S3_PRODUCT_IMAGE_URL:
-      "https://amplify-awsamplifygen2-wi-wizzingtonproductimages2-8a0hbugzfqjz.s3.eu-west-2.amazonaws.com/",
+      "https://amplify-d3nzem3wi6drcl-ma-wizzingtonproductimages2-n1ubggik41v2.s3.eu-west-2.amazonaws.com/",
   },
   images: {
     domains: [
-      "amplify-awsamplifygen2-wi-wizzingtonproductimages2-8a0hbugzfqjz.s3.eu-west-2.amazonaws.com/",
+      "amplify-d3nzem3wi6drcl-ma-wizzingtonproductimages2-n1ubggik41v2.s3.eu-west-2.amazonaws.com/",
     ],
   },
 };

@@ -44,6 +44,9 @@ const ProductCard = ({
             <img
               src={`${process.env.AWS_S3_PRODUCT_IMAGE_URL}${product.imageUrl}`}
               alt={product.name}
+              onClick={() => {
+                router.push(`/product/${product.name.replace(/\s+/g, "-")}`);
+              }}
               className="flex self-center w-full h-96   object-cover"
             />
             <div className="flex w-full align-bottom absolute bottom-2 px-2">
@@ -69,9 +72,7 @@ const ProductCard = ({
                 <button
                   className="p-3 flex self-end justify-self-end rounded-full bg-gray-50 opacity-70"
                   aria-label="Add to cart"
-                  onClick={() => {
-                    // Add functionality for adding the product to the cart
-                  }}
+                  onClick={() => {}}
                 >
                   <FiShoppingCart />
                 </button>
