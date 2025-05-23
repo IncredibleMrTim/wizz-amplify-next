@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { useParams, usePathname } from "next/navigation";
 import { useAppSelector } from "@/stores/store";
-import { segmentMappings } from "@/utils/breadcrumb-utils";
+import { segmentMappings } from "@/components/breadCrumb/breadcrumb-utils";
 
 export const BreadCrumb = () => {
   const product = useAppSelector((state) => state.products.currentProduct);
