@@ -27,8 +27,8 @@ export const BreadCrumb = () => {
                 <BreadcrumbItem key={index}>
                   <Link href={`/${segments.slice(0, index + 1).join("/")}`}>
                     {segmentMappings[segment] ||
-                      product?.name ||
-                      segment.charAt(0).toUpperCase() + segment.slice(1)}
+                      product?.name.replace(/ /g, "-") ||
+                      segment.replace(/-/g, " ")}
                   </Link>
                 </BreadcrumbItem>
 

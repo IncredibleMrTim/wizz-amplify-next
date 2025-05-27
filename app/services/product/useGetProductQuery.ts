@@ -11,10 +11,12 @@ export const useGetProductQuery = () => {
   };
 
   const fetchProductByName = async (name: string): Promise<any> => {
-    console.log(name);
+    console.log("Name:", name);
     return await client.models.Product.list({
       filter: {
-        name: { eq: name },
+        name: {
+          eq: name.replace(/-/g, " "),
+        },
       },
     });
   };
@@ -28,7 +30,7 @@ export const useGetProductQuery = () => {
       staleTime: 1000 * 60 * 5, // 5 minutes
     });
 
-  const getProductByName = (name: string) =>
+  const getProductByName = (name: string, enabled?: boolean) =>
     useQuery({
       queryKey: [ProductQueryKeys.GET_PRODUCT],
       queryFn: async (context) => {
@@ -36,6 +38,10 @@ export const useGetProductQuery = () => {
         return data?.data?.[0] ?? null;
       },
       staleTime: 1000 * 60 * 5, // 5 minutes
+      select: (data) => {
+        return data ?? null;
+      },
+      enabled: enabled,
     });
 
   return {
