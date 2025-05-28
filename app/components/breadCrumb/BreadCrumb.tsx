@@ -21,13 +21,15 @@ export const BreadCrumb = () => {
         <BreadcrumbList>
           {segments.map((segment, index) => {
             if (pathname.includes("admin")) return null; // don't show breadcrumb in admin
-
+            // don't show breadcrumb for product page
             return (
               <div key={index} className="flex place-items-center gap-2">
                 <BreadcrumbItem key={index}>
-                  <Link href={`/${segments.slice(0, index + 1).join("/")}`}>
+                  <Link
+                    href={`/${segmentMappings[segment] === "Products" ? "/" : segments.slice(0, index + 1).join("/")}`}
+                  >
                     {segmentMappings[segment] ||
-                      product?.name.replace(/ /g, "-") ||
+                      product?.name.replace(/-/g, " ") ||
                       segment.replace(/-/g, " ")}
                   </Link>
                 </BreadcrumbItem>
