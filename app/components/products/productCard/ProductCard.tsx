@@ -40,18 +40,22 @@ const ProductCard = ({
         )}
         {showImage && product?.imageUrl && (
           <div className="flex justify-center align-top relative">
-            <img
-              src={`${process.env.AWS_S3_PRODUCT_IMAGE_URL}${product.imageUrl}`}
-              alt={product.name}
+            <Link
+              prefetch
+              href={`/product/${product.name.replace(/\s+/g, "-")}`}
               onClick={() => {
                 dispatch({
                   type: STORE_PATHS.SET_CURRENT_PRODUCT,
                   payload: product,
                 });
-                router.push(`/product/${product.name.replace(/\s+/g, "-")}`);
               }}
-              className="flex self-center w-full h-96   object-cover"
-            />
+            >
+              <img
+                src={`${process.env.AWS_S3_PRODUCT_IMAGE_URL}${product.imageUrl}`}
+                alt={product.name}
+                className="flex self-center w-full h-96   object-cover"
+              />
+            </Link>
             <div className="flex w-full align-bottom absolute bottom-2 px-2">
               <div
                 className={`flex gap-1 w-full ${isAdmin ? `justify-between` : `justify-end`}`}
