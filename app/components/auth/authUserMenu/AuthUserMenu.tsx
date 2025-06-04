@@ -20,21 +20,21 @@ export const AuthUserMenu = ({
   const currentUser = useAppSelector((state) => state.auth.currentUser);
 
   const handleSignOut = async () => {
-    setIsSigningOut(true); // Set loading state
     try {
-      await signOut(); // Ensure sign-out completes
+      setIsSigningOut(true);
+
+      await signOut();
+      await caches.delete("auth");
+
       dispatch({
         type: AUTH_TYPES.SET_CURRENT_USER,
         payload: null,
       });
-
-      caches.delete("auth"); // Clear auth cache if needed
-
-      router.push("/"); // Redirect after sign-out
     } catch (error) {
       console.error("Error signing out:", error);
     } finally {
-      setIsSigningOut(false); // Reset loading state (optional)
+      setIsSigningOut(false);
+      router.push("/");
     }
   };
 
