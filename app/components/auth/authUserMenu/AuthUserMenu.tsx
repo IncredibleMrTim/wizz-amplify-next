@@ -28,6 +28,8 @@ export const AuthUserMenu = ({
         payload: null,
       });
 
+      caches.delete("auth"); // Clear auth cache if needed
+
       router.push("/"); // Redirect after sign-out
     } catch (error) {
       console.error("Error signing out:", error);
