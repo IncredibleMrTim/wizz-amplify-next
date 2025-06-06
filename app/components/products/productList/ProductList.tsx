@@ -48,7 +48,7 @@ const ProductList = () => {
   useEffect(() => {
     const fetchData = async () => {
       const { data } = await client.models.Product.list();
-      console.log("data", data);
+
       setData(data);
       dispatch({ type: STORE_PATHS.SET_PRODUCTS, payload: data });
     };

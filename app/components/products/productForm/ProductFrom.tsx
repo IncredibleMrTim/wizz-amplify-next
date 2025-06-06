@@ -103,17 +103,6 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
     }
   }, [productData]);
 
-  useEffect(() => {
-    // If the product is not set, reset the form
-    console.log("ProductForm useEffect - product:", product);
-    console.log(
-      "p",
-      product?.images?.map((img) => ({
-        key: img!.url?.replace("public/", "") as string,
-      })) || []
-    );
-  }, [product]);
-
   const handleSubmit = () => {
     if (product) {
       // if a new product, add it to te product list
@@ -325,6 +314,7 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
                     </FormDescription>
                     <FormControl>
                       <div className="flex justify-between gap-4 w-full">
+                        {/* TODO: Make this its own component */}
                         <FileUploader
                           acceptedFileTypes={["image/*"]}
                           path={`${process.env.AWS_S3_PRODUCT_IMAGE_PATH!}`}
@@ -332,7 +322,6 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
                           isResumable
                           defaultFiles={
                             product?.images?.map((img) => {
-                              console.log("img url", img?.url);
                               return {
                                 key: img!.url?.replace("public/", "") as string,
                               };
@@ -404,8 +393,7 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
                           }}
                           onUploadSuccess={({ key }) => {
                             if (!key) return;
-                            console.log("key", key);
-                            console.log("Product Images", product?.images);
+
                             setProduct((prev) => {
                               // ensure there are no duplicates
                               if (
@@ -413,10 +401,6 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
                                   return img?.url === key;
                                 })
                               ) {
-                                console.log(
-                                  "Image already exists in product images",
-                                  prev?.images
-                                );
                                 return prev;
                               }
 
@@ -427,46 +411,6 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
                             });
                           }}
                         />
-
-                        {/* <div className="w-1/2 border-2 border-gray-200 p-2 rounded-sm">
-                          <ScrollView
-                            width="100%"
-                            height="100%"
-                            className="overflow-hidden"
-                          >
-                            <div className="flex flex-wrap gap-2">
-                              {product?.images?.map((img) => (
-                                <div className="flex bg-white h-28 w-28 justify-center items-center border-1 border-gray-200">
-                                  <img
-                                    src={`${process.env.AWS_S3_PRODUCT_IMAGE_URL}${img?.url}`}
-                                    key={img?.url}
-                                    alt={
-                                      img?.altText ||
-                                      `${product?.name} product image`
-                                    }
-                                    className="!h-24"
-                                  />
-                                  <button
-                                    className=""
-                                    onClick={() => {
-                                      setProduct(
-                                        (prev) =>
-                                          ({
-                                            ...prev,
-                                            images: prev?.images?.filter(
-                                              (image) => image?.url !== img?.url
-                                            ),
-                                          }) as unknown as Schema["Product"]["type"]
-                                      );
-                                    }}
-                                  >
-                                    Delete
-                                  </button>
-                                </div>
-                              ))}
-                            </div>
-                          </ScrollView>
-                        </div> */}
                       </div>
                     </FormControl>
 

@@ -11,7 +11,6 @@ export const useGetProductQuery = () => {
   };
 
   const fetchProductByName = async (name: string): Promise<any> => {
-    console.log("Name:", name);
     return await client.models.Product.list({
       filter: {
         name: {
