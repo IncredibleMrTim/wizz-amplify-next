@@ -7,19 +7,20 @@ import { ProductMutationKeys } from "./keys";
 const client = generateClient<Schema>();
 
 export const useAddProductMutation = (): UseMutationResult<
-  Schema["Product"]["type"],
+  Schema["Product"]["type"] | null,
   unknown,
   Schema["Product"]["type"]
 > => {
   const addProduct = async (product: Schema["Product"]["type"]) => {
-    const result = await client.models.Product.create(product);
-
-    if (result?.data) {
+    try {
+      const result = await client.models.Product.create(product);
+      console.log("result", result);
+      console.log("Product product:", product);
       return result.data;
+    } catch (error) {
+      console.error("Error creating product:", error);
+      throw new Error(`Failed to create product: ${error}`);
     }
-
-    // Handle error case
-    throw new Error(`Failed to create product: ${result.errors}`);
   };
 
   return useMutation({

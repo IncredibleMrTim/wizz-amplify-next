@@ -48,6 +48,7 @@ const ProductList = () => {
   useEffect(() => {
     const fetchData = async () => {
       const { data } = await client.models.Product.list();
+      console.log("data", data);
       setData(data);
       dispatch({ type: STORE_PATHS.SET_PRODUCTS, payload: data });
     };
@@ -150,11 +151,11 @@ const ProductList = () => {
                           id: cell.row.original.id,
                         });
 
-                        if (cell.row.original?.imageUrl) {
-                          await remove({
-                            path: cell.row.original.imageUrl,
-                          });
-                        }
+                        // if (cell.row.original?.images) {
+                        //   await remove({
+                        //     path: cell.row.original.images,
+                        //   });
+                        // }
 
                         const updatedProductList = data.filter(
                           (product) => product.id !== cell.row.original.id

@@ -7,18 +7,27 @@ specifies that any user authenticated via an API key can "create", "read",
 "update", and "delete" any "Todo" records.
 =========================================================================*/
 const schema = a.schema({
+  Images: a.customType({
+    url: a.string().required(),
+    altText: a.string(),
+    caption: a.string(),
+    order: a.integer(),
+  }),
+
   Product: a
     .model({
       id: a.string().required(),
       name: a.string().required(),
       description: a.string().required(),
       price: a.integer().required(),
-      imageUrl: a.string(),
       category: a.string(),
       isFeatured: a.boolean().default(false),
       stock: a.integer().required(),
+      images: a.ref("Images").array(), // Reference to Images
     })
+
     .authorization((allow) => [allow.publicApiKey()]),
+
   pageSettings: a
     .model({
       strapLine: a.string(),

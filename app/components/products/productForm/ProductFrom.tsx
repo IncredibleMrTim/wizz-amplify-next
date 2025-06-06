@@ -20,12 +20,26 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useParams } from "next/navigation";
-import { ScrollView } from "@aws-amplify/ui-react";
+import { ScrollView, ThemeProvider } from "@aws-amplify/ui-react";
 import { useAppDispatch, useAppSelector, STORE_PATHS } from "@/stores/store";
+import { FiX } from "react-icons/fi";
 
 interface ProductFormProps {
   onSubmit: (product: Schema["Product"]["type"]) => void;
 }
+
+const theme = {
+  name: "my-theme",
+  tokens: {
+    components: {
+      fileuploader: {
+        previewer: {
+          display: "flex",
+        },
+      },
+    },
+  },
+};
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
@@ -68,7 +82,6 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
       description: product?.description || "",
       price: product?.price || 0,
       stock: product?.stock || 0,
-      imageUrl: product?.imageUrl || "",
       isFeatured: product?.isFeatured || false,
     },
   });
@@ -79,14 +92,7 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
     if (productData) {
       const fetchProduct = async () => {
         if (productData) {
-          resetForm({
-            name: productData.name,
-            description: productData.description,
-            price: productData.price,
-            stock: productData.stock,
-            imageUrl: productData.imageUrl || "",
-            isFeatured: productData.isFeatured ?? false,
-          });
+          resetForm(productData as z.infer<typeof formSchema>);
           setProduct(productData);
         } else {
           console.error("Invalid product ID:", params.productId);
@@ -96,6 +102,17 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
       fetchProduct();
     }
   }, [productData]);
+
+  useEffect(() => {
+    // If the product is not set, reset the form
+    console.log("ProductForm useEffect - product:", product);
+    console.log(
+      "p",
+      product?.images?.map((img) => ({
+        key: img!.url?.replace("public/", "") as string,
+      })) || []
+    );
+  }, [product]);
 
   const handleSubmit = () => {
     if (product) {
@@ -141,7 +158,7 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
     <div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)}>
-          <div className="flex flex-col gap-4 bg-gray-100 p-4 rounded-md shadow-md">
+          <div className="flex flex-col gap-6  p-4 bg-gray-50">
             <div>
               <FormField
                 control={form.control}
@@ -178,7 +195,7 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description</FormLabel>
+                    <FormLabel className="text-xl">Description</FormLabel>
                     <FormDescription>
                       Enter the product description.
                     </FormDescription>
@@ -202,14 +219,16 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
                 )}
               />
             </div>
-            <div>
+            <div className="flex flex-row gap-4 justify-between">
               <FormField
                 control={form.control}
                 name="price"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Price</FormLabel>
-                    <FormDescription>Enter the product price.</FormDescription>
+                  <FormItem className="w-1/2">
+                    <FormLabel className="text-xl">Price</FormLabel>
+                    <FormDescription>
+                      Enter the product price (£).
+                    </FormDescription>
                     <FormControl>
                       <div className="bg-white">
                         <Input
@@ -229,14 +248,13 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
                   </FormItem>
                 )}
               />
-            </div>
-            <div>
+
               <FormField
                 control={form.control}
                 name="stock"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Stock Level</FormLabel>
+                  <FormItem className="w-1/2">
+                    <FormLabel className="text-xl">Stock Level</FormLabel>
                     <FormDescription>
                       Enter the product stock level
                     </FormDescription>
@@ -267,22 +285,27 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
                 name="isFeatured"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Feature Product</FormLabel>
+                    <FormLabel className="text-xl">Feature Product</FormLabel>
                     <FormDescription>
-                      Check this box to feature the product.
+                      Marking a product as Featured will display it on the home
+                      page
                     </FormDescription>
                     <FormControl>
-                      <input
-                        type="checkbox"
-                        checked={field.value}
-                        onChange={(e) => {
-                          field.onChange(e);
-                          setProduct({
-                            ...product,
-                            isFeatured: e.target.checked,
-                          } as unknown as Schema["Product"]["type"]);
-                        }}
-                      />
+                      <div className="flex items-center gap-2">
+                        <p>Check this box to feature the product.</p>
+                        <input
+                          type="checkbox"
+                          checked={field.value}
+                          onChange={(e) => {
+                            field.onChange(e);
+                            setProduct({
+                              ...product,
+                              isFeatured: e.target.checked,
+                            } as unknown as Schema["Product"]["type"]);
+                          }}
+                          className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        />
+                      </div>
                     </FormControl>
                   </FormItem>
                 )}
@@ -295,51 +318,155 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
                 name="imageUrl"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Image</FormLabel>
-                    <FormDescription>Upload a product image.</FormDescription>
+                    <FormLabel className="text-xl">Product Images</FormLabel>
+                    <FormDescription>
+                      Upload product images. You can upload a maximum of 10
+                      images
+                    </FormDescription>
                     <FormControl>
-                      <div className="flex justify-between gap-4">
-                        <div className="w-1/2">
-                          <FileUploader
-                            acceptedFileTypes={["image/*"]}
-                            path={`${process.env.AWS_S3_PRODUCT_IMAGE_PATH!}`}
-                            maxFileCount={1}
-                            isResumable
-                            maxFileSize={2000000}
-                            showThumbnails
-                            onUploadSuccess={({ key }) => {
-                              if (!key) return;
-                              setProduct({
-                                ...product,
-                                imageUrl: key,
-                              } as unknown as Schema["Product"]["type"]);
-                            }}
-                          />
-                          <Input
-                            hidden
-                            readOnly
-                            {...field}
-                            placeholder="Stock"
-                            value={product?.imageUrl || ""}
-                          />
-                        </div>
-                        <div className="w-1/2 border-2 border-gray-200 p-2 rounded-sm">
+                      <div className="flex justify-between gap-4 w-full">
+                        <FileUploader
+                          acceptedFileTypes={["image/*"]}
+                          path={`${process.env.AWS_S3_PRODUCT_IMAGE_PATH!}`}
+                          maxFileCount={10}
+                          isResumable
+                          defaultFiles={
+                            product?.images?.map((img) => {
+                              console.log("img url", img?.url);
+                              return {
+                                key: img!.url?.replace("public/", "") as string,
+                              };
+                            }) || []
+                          }
+                          maxFileSize={2000000}
+                          components={{
+                            Container({ children }) {
+                              return (
+                                <div className="flex flex-row gap-2 w-full">
+                                  {children}
+                                </div>
+                              );
+                            },
+                            DropZone({ children }) {
+                              return (
+                                <div className="flex flex-col gap-2 w-1/2">
+                                  <div className="flex flex-col gap-4 justify-center items-center border-2 border-dashed border-gray-300 rounded-md h-64 bg-white">
+                                    {children}
+                                    <p className="text-sm text-gray-500">
+                                      Drag and drop files here, or click to
+                                      select files.
+                                    </p>
+                                  </div>
+                                </div>
+                              );
+                            },
+                            FileListHeader({ fileCount }) {
+                              return null;
+                            },
+                            FileList() {
+                              return (
+                                <div className="flex flex-col gap-2 w-1/2">
+                                  <div className="flex flex-wrap gap-2 border-1 border-gray-300 bg-white h-64 p-4 overflow-scroll w-full">
+                                    {product?.images?.map((file) => (
+                                      <div
+                                        key={file?.url}
+                                        className="flex flex-col bg-white h-32 w-1/5  justify-center items-center border-1 border-gray-200 p-2 relative"
+                                      >
+                                        <img
+                                          src={`${process.env.AWS_S3_PRODUCT_IMAGE_URL}${file?.url}`}
+                                          alt={`${product?.name} product image`}
+                                          className="object-cover"
+                                        />
+                                        <div
+                                          className="ml-2 text-gray-300 hover:text-gray-400 !rounded-full !border-1 !absolute !-top-2 !-right-2 bg-white p-1 cursor-pointer"
+                                          onClick={() => {
+                                            // Remove the image from the product images
+                                            setProduct(
+                                              (prev) =>
+                                                ({
+                                                  ...prev,
+                                                  images: prev?.images?.filter(
+                                                    (img) =>
+                                                      img?.url !== file?.url
+                                                  ),
+                                                }) as unknown as Schema["Product"]["type"]
+                                            );
+                                          }}
+                                        >
+                                          <FiX />
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              );
+                            },
+                          }}
+                          onUploadSuccess={({ key }) => {
+                            if (!key) return;
+                            console.log("key", key);
+                            console.log("Product Images", product?.images);
+                            setProduct((prev) => {
+                              // ensure there are no duplicates
+                              if (
+                                prev?.images?.find((img) => {
+                                  return img?.url === key;
+                                })
+                              ) {
+                                console.log(
+                                  "Image already exists in product images",
+                                  prev?.images
+                                );
+                                return prev;
+                              }
+
+                              return {
+                                ...prev,
+                                images: [...(prev?.images || []), { url: key }],
+                              } as unknown as Schema["Product"]["type"];
+                            });
+                          }}
+                        />
+
+                        {/* <div className="w-1/2 border-2 border-gray-200 p-2 rounded-sm">
                           <ScrollView
                             width="100%"
                             height="100%"
                             className="overflow-hidden"
                           >
-                            {product?.imageUrl && (
-                              <div className="flex bg-white h-28 w-28 justify-center items-center border-1 border-gray-200">
-                                <img
-                                  src={`${process.env.AWS_S3_PRODUCT_IMAGE_URL}${product.imageUrl}`}
-                                  alt="Product"
-                                  className="!h-24"
-                                />
-                              </div>
-                            )}
+                            <div className="flex flex-wrap gap-2">
+                              {product?.images?.map((img) => (
+                                <div className="flex bg-white h-28 w-28 justify-center items-center border-1 border-gray-200">
+                                  <img
+                                    src={`${process.env.AWS_S3_PRODUCT_IMAGE_URL}${img?.url}`}
+                                    key={img?.url}
+                                    alt={
+                                      img?.altText ||
+                                      `${product?.name} product image`
+                                    }
+                                    className="!h-24"
+                                  />
+                                  <button
+                                    className=""
+                                    onClick={() => {
+                                      setProduct(
+                                        (prev) =>
+                                          ({
+                                            ...prev,
+                                            images: prev?.images?.filter(
+                                              (image) => image?.url !== img?.url
+                                            ),
+                                          }) as unknown as Schema["Product"]["type"]
+                                      );
+                                    }}
+                                  >
+                                    Delete
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
                           </ScrollView>
-                        </div>
+                        </div> */}
                       </div>
                     </FormControl>
 
