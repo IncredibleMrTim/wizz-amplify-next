@@ -3,7 +3,7 @@
 import { Input } from "@/components/shad/input";
 import { Textarea } from "@/components/shad/textarea";
 
-import { Button } from "@radix-ui/themes";
+import { Button, DropdownMenu } from "@radix-ui/themes";
 import {
   Form,
   FormControl,
@@ -13,33 +13,20 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/shad/form";
-import { FileUploader } from "@aws-amplify/ui-react-storage";
 import { type Schema } from "amplify/data/resource";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useParams } from "next/navigation";
-import { ScrollView, ThemeProvider } from "@aws-amplify/ui-react";
 import { useAppDispatch, useAppSelector, STORE_PATHS } from "@/stores/store";
-import { FiX } from "react-icons/fi";
+import { FileUploader } from "@/components/fileUploader/FileUploader";
+import { useGetProductQuery } from "@/services/product/useGetProductQuery";
+import { get, set } from "lodash";
 
 interface ProductFormProps {
   onSubmit: (product: Schema["Product"]["type"]) => void;
 }
-
-const theme = {
-  name: "my-theme",
-  tokens: {
-    components: {
-      fileuploader: {
-        previewer: {
-          display: "flex",
-        },
-      },
-    },
-  },
-};
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
@@ -62,14 +49,18 @@ const formSchema = z.object({
 });
 
 export const ProductForm = ({ onSubmit }: ProductFormProps) => {
+  const { getProductById } = useGetProductQuery();
   const params = useParams();
   const dispatch = useAppDispatch();
-  const productData = useAppSelector((state) => state.products.currentProduct);
   const allProducts = useAppSelector((state) => state.products.allProducts);
 
   const [product, setProduct] = useState<Schema["Product"]["type"] | null>(
     null
   );
+
+  const data = params?.productId?.[0]
+    ? getProductById(params?.productId?.[0]).data
+    : null;
 
   const form = useForm<
     z.infer<typeof formSchema>,
@@ -86,22 +77,26 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
     },
   });
 
-  const { reset: resetForm } = form;
-
   useEffect(() => {
-    if (productData) {
-      const fetchProduct = async () => {
-        if (productData) {
-          resetForm(productData as z.infer<typeof formSchema>);
-          setProduct(productData);
-        } else {
-          console.error("Invalid product ID:", params.productId);
-        }
-      };
+    if (!data) return;
 
-      fetchProduct();
-    }
-  }, [productData]);
+    setProduct(data as Schema["Product"]["type"]);
+    form.reset(data as z.infer<typeof formSchema>);
+    dispatch({
+      type: STORE_PATHS.SET_CURRENT_PRODUCT,
+      payload: data as Schema["Product"]["type"],
+    });
+
+    return () => {
+      // Clean up function to reset the form and product state
+      setProduct(null);
+      form.reset();
+      dispatch({
+        type: STORE_PATHS.SET_CURRENT_PRODUCT,
+        payload: null,
+      });
+    };
+  }, [data]);
 
   const handleSubmit = () => {
     if (product) {
@@ -122,26 +117,22 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
         });
       }
 
-      setProduct(null);
-      form.reset();
-
       onSubmit(product);
     } else {
       console.error("Product is null and cannot be submitted.");
     }
   };
 
-  useEffect(() => {
-    return () => {
-      // Clean up function to reset the form and product state
-      setProduct(null);
-      form.reset();
-      dispatch({
-        type: STORE_PATHS.SET_CURRENT_PRODUCT,
-        payload: null,
-      });
-    };
-  }, []);
+  const updateProductImages = (images: Schema["Product"]["type"]["images"]) => {
+    console.log("Updating product images:", images);
+    setProduct(
+      (prev) =>
+        ({
+          ...prev,
+          images: images,
+        }) as unknown as Schema["Product"]["type"]
+    );
+  };
 
   return (
     <div>
@@ -313,103 +304,11 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
                       images
                     </FormDescription>
                     <FormControl>
-                      <div className="flex justify-between gap-4 w-full">
-                        {/* TODO: Make this its own component */}
+                      <div key={product?.id}>
+                        {/* FileUploader component for uploading images */}
                         <FileUploader
-                          acceptedFileTypes={["image/*"]}
-                          path={`${process.env.AWS_S3_PRODUCT_IMAGE_PATH!}`}
-                          maxFileCount={10}
-                          isResumable
-                          defaultFiles={
-                            product?.images?.map((img) => {
-                              return {
-                                key: img!.url?.replace("public/", "") as string,
-                              };
-                            }) || []
-                          }
-                          maxFileSize={2000000}
-                          components={{
-                            Container({ children }) {
-                              return (
-                                <div className="flex flex-row gap-2 w-full">
-                                  {children}
-                                </div>
-                              );
-                            },
-                            DropZone({ children }) {
-                              return (
-                                <div className="flex flex-col gap-2 w-1/2">
-                                  <div className="flex flex-col gap-4 justify-center items-center border-2 border-dashed border-gray-300 rounded-md h-64 bg-white">
-                                    {children}
-                                    <p className="text-sm text-gray-500">
-                                      Drag and drop files here, or click to
-                                      select files.
-                                    </p>
-                                  </div>
-                                </div>
-                              );
-                            },
-                            FileListHeader({ fileCount }) {
-                              return null;
-                            },
-                            FileList() {
-                              return (
-                                <div className="flex flex-col gap-2 w-1/2">
-                                  <div className="flex flex-wrap gap-2 border-1 border-gray-300 bg-white h-64 p-4 overflow-scroll w-full">
-                                    {product?.images?.map((file) => (
-                                      <div
-                                        key={file?.url}
-                                        className="flex flex-col bg-white h-32 w-1/5  justify-center items-center border-1 border-gray-200 p-2 relative"
-                                      >
-                                        <img
-                                          src={`${process.env.AWS_S3_PRODUCT_IMAGE_URL}${file?.url}`}
-                                          alt={`${product?.name} product image`}
-                                          className="object-cover"
-                                        />
-                                        <div
-                                          className="ml-2 text-gray-300 hover:text-gray-400 !rounded-full !border-1 !absolute !-top-2 !-right-2 bg-white p-1 cursor-pointer"
-                                          onClick={() => {
-                                            // Remove the image from the product images
-                                            setProduct(
-                                              (prev) =>
-                                                ({
-                                                  ...prev,
-                                                  images: prev?.images?.filter(
-                                                    (img) =>
-                                                      img?.url !== file?.url
-                                                  ),
-                                                }) as unknown as Schema["Product"]["type"]
-                                            );
-                                          }}
-                                        >
-                                          <FiX />
-                                        </div>
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
-                              );
-                            },
-                          }}
-                          onUploadSuccess={({ key }) => {
-                            if (!key) return;
-
-                            setProduct((prev) => {
-                              // ensure there are no duplicates
-                              if (
-                                prev?.images?.find((img) => {
-                                  return img?.url === key;
-                                })
-                              ) {
-                                return prev;
-                              }
-
-                              return {
-                                ...prev,
-                                images: [...(prev?.images || []), { url: key }],
-                              } as unknown as Schema["Product"]["type"];
-                            });
-                          }}
+                          product={product || ({} as Schema["Product"]["type"])}
+                          updateProductImages={updateProductImages}
                         />
                       </div>
                     </FormControl>

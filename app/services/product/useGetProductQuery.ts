@@ -7,6 +7,7 @@ export const useGetProductQuery = () => {
   const client = generateClient<Schema>();
 
   const fetchProductById = async (id: string): Promise<any> => {
+    console.log(id);
     return await client.models.Product.get({ id });
   };
 
@@ -23,16 +24,20 @@ export const useGetProductQuery = () => {
   const getProductById = (id: string) =>
     useQuery({
       queryKey: [ProductQueryKeys.GET_PRODUCT],
-      queryFn: async (context) => {
+      queryFn: async () => {
         return await fetchProductById(id);
       },
       staleTime: 1000 * 60 * 5, // 5 minutes
+      select: (data) => {
+        return data?.data ?? null;
+      },
+      enabled: !!id,
     });
 
-  const getProductByName = (name: string, enabled?: boolean) =>
+  const getProductByName = (name: string) =>
     useQuery({
       queryKey: [ProductQueryKeys.GET_PRODUCT],
-      queryFn: async (context) => {
+      queryFn: async () => {
         const data = await fetchProductByName(name);
         return data?.data?.[0] ?? null;
       },
@@ -40,7 +45,7 @@ export const useGetProductQuery = () => {
       select: (data) => {
         return data ?? null;
       },
-      enabled: enabled,
+      enabled: !!name,
     });
 
   return {
