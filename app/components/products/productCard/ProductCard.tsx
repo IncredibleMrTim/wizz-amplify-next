@@ -38,7 +38,7 @@ const ProductCard = ({
             <p>{product.description}</p>
           </div>
         )}
-        {showImage && product?.imageUrl && (
+        {showImage && product?.images?.[0] && (
           <div className="flex justify-center align-top relative">
             <Link
               prefetch
@@ -51,7 +51,7 @@ const ProductCard = ({
               }}
             >
               <img
-                src={`${process.env.AWS_S3_PRODUCT_IMAGE_URL}${product.imageUrl}`}
+                src={`${process.env.AWS_S3_PRODUCT_IMAGE_URL}${product.images?.[0].url}`}
                 alt={product.name}
                 className="flex self-center w-full h-96   object-cover"
               />

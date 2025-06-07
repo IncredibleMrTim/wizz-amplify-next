@@ -3,7 +3,7 @@
 import { Input } from "@/components/shad/input";
 import { Textarea } from "@/components/shad/textarea";
 
-import { Button } from "@radix-ui/themes";
+import { Button, DropdownMenu } from "@radix-ui/themes";
 import {
   Form,
   FormControl,
@@ -13,15 +13,16 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/shad/form";
-import { FileUploader } from "@aws-amplify/ui-react-storage";
 import { type Schema } from "amplify/data/resource";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useParams } from "next/navigation";
-import { ScrollView } from "@aws-amplify/ui-react";
 import { useAppDispatch, useAppSelector, STORE_PATHS } from "@/stores/store";
+import { FileUploader } from "@/components/fileUploader/FileUploader";
+import { useGetProductQuery } from "@/services/product/useGetProductQuery";
+import { get, set } from "lodash";
 
 interface ProductFormProps {
   onSubmit: (product: Schema["Product"]["type"]) => void;
@@ -48,14 +49,18 @@ const formSchema = z.object({
 });
 
 export const ProductForm = ({ onSubmit }: ProductFormProps) => {
+  const { getProductById } = useGetProductQuery();
   const params = useParams();
   const dispatch = useAppDispatch();
-  const productData = useAppSelector((state) => state.products.currentProduct);
   const allProducts = useAppSelector((state) => state.products.allProducts);
 
   const [product, setProduct] = useState<Schema["Product"]["type"] | null>(
     null
   );
+
+  const data = params?.productId?.[0]
+    ? getProductById(params?.productId?.[0]).data
+    : null;
 
   const form = useForm<
     z.infer<typeof formSchema>,
@@ -68,34 +73,30 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
       description: product?.description || "",
       price: product?.price || 0,
       stock: product?.stock || 0,
-      imageUrl: product?.imageUrl || "",
       isFeatured: product?.isFeatured || false,
     },
   });
 
-  const { reset: resetForm } = form;
-
   useEffect(() => {
-    if (productData) {
-      const fetchProduct = async () => {
-        if (productData) {
-          resetForm({
-            name: productData.name,
-            description: productData.description,
-            price: productData.price,
-            stock: productData.stock,
-            imageUrl: productData.imageUrl || "",
-            isFeatured: productData.isFeatured ?? false,
-          });
-          setProduct(productData);
-        } else {
-          console.error("Invalid product ID:", params.productId);
-        }
-      };
+    if (!data) return;
 
-      fetchProduct();
-    }
-  }, [productData]);
+    setProduct(data as Schema["Product"]["type"]);
+    form.reset(data as z.infer<typeof formSchema>);
+    dispatch({
+      type: STORE_PATHS.SET_CURRENT_PRODUCT,
+      payload: data as Schema["Product"]["type"],
+    });
+
+    return () => {
+      // Clean up function to reset the form and product state
+      setProduct(null);
+      form.reset();
+      dispatch({
+        type: STORE_PATHS.SET_CURRENT_PRODUCT,
+        payload: null,
+      });
+    };
+  }, [data]);
 
   const handleSubmit = () => {
     if (product) {
@@ -116,32 +117,27 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
         });
       }
 
-      setProduct(null);
-      form.reset();
-
       onSubmit(product);
     } else {
       console.error("Product is null and cannot be submitted.");
     }
   };
 
-  useEffect(() => {
-    return () => {
-      // Clean up function to reset the form and product state
-      setProduct(null);
-      form.reset();
-      dispatch({
-        type: STORE_PATHS.SET_CURRENT_PRODUCT,
-        payload: null,
-      });
-    };
-  }, []);
+  const updateProductImages = (images: Schema["Product"]["type"]["images"]) => {
+    setProduct(
+      (prev) =>
+        ({
+          ...prev,
+          images: images,
+        }) as unknown as Schema["Product"]["type"]
+    );
+  };
 
   return (
     <div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)}>
-          <div className="flex flex-col gap-4 bg-gray-100 p-4 rounded-md shadow-md">
+          <div className="flex flex-col gap-6  p-4 bg-gray-50">
             <div>
               <FormField
                 control={form.control}
@@ -178,7 +174,7 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description</FormLabel>
+                    <FormLabel className="text-xl">Description</FormLabel>
                     <FormDescription>
                       Enter the product description.
                     </FormDescription>
@@ -202,14 +198,16 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
                 )}
               />
             </div>
-            <div>
+            <div className="flex flex-row gap-4 justify-between">
               <FormField
                 control={form.control}
                 name="price"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Price</FormLabel>
-                    <FormDescription>Enter the product price.</FormDescription>
+                  <FormItem className="w-1/2">
+                    <FormLabel className="text-xl">Price</FormLabel>
+                    <FormDescription>
+                      Enter the product price (£).
+                    </FormDescription>
                     <FormControl>
                       <div className="bg-white">
                         <Input
@@ -229,14 +227,13 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
                   </FormItem>
                 )}
               />
-            </div>
-            <div>
+
               <FormField
                 control={form.control}
                 name="stock"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Stock Level</FormLabel>
+                  <FormItem className="w-1/2">
+                    <FormLabel className="text-xl">Stock Level</FormLabel>
                     <FormDescription>
                       Enter the product stock level
                     </FormDescription>
@@ -267,22 +264,27 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
                 name="isFeatured"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Feature Product</FormLabel>
+                    <FormLabel className="text-xl">Feature Product</FormLabel>
                     <FormDescription>
-                      Check this box to feature the product.
+                      Marking a product as Featured will display it on the home
+                      page
                     </FormDescription>
                     <FormControl>
-                      <input
-                        type="checkbox"
-                        checked={field.value}
-                        onChange={(e) => {
-                          field.onChange(e);
-                          setProduct({
-                            ...product,
-                            isFeatured: e.target.checked,
-                          } as unknown as Schema["Product"]["type"]);
-                        }}
-                      />
+                      <div className="flex items-center gap-2">
+                        <p>Check this box to feature the product.</p>
+                        <input
+                          type="checkbox"
+                          checked={field.value}
+                          onChange={(e) => {
+                            field.onChange(e);
+                            setProduct({
+                              ...product,
+                              isFeatured: e.target.checked,
+                            } as unknown as Schema["Product"]["type"]);
+                          }}
+                          className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        />
+                      </div>
                     </FormControl>
                   </FormItem>
                 )}
@@ -295,51 +297,18 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
                 name="imageUrl"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Image</FormLabel>
-                    <FormDescription>Upload a product image.</FormDescription>
+                    <FormLabel className="text-xl">Product Images</FormLabel>
+                    <FormDescription>
+                      Upload product images. You can upload a maximum of 10
+                      images
+                    </FormDescription>
                     <FormControl>
-                      <div className="flex justify-between gap-4">
-                        <div className="w-1/2">
-                          <FileUploader
-                            acceptedFileTypes={["image/*"]}
-                            path={`${process.env.AWS_S3_PRODUCT_IMAGE_PATH!}`}
-                            maxFileCount={1}
-                            isResumable
-                            maxFileSize={2000000}
-                            showThumbnails
-                            onUploadSuccess={({ key }) => {
-                              if (!key) return;
-                              setProduct({
-                                ...product,
-                                imageUrl: key,
-                              } as unknown as Schema["Product"]["type"]);
-                            }}
-                          />
-                          <Input
-                            hidden
-                            readOnly
-                            {...field}
-                            placeholder="Stock"
-                            value={product?.imageUrl || ""}
-                          />
-                        </div>
-                        <div className="w-1/2 border-2 border-gray-200 p-2 rounded-sm">
-                          <ScrollView
-                            width="100%"
-                            height="100%"
-                            className="overflow-hidden"
-                          >
-                            {product?.imageUrl && (
-                              <div className="flex bg-white h-28 w-28 justify-center items-center border-1 border-gray-200">
-                                <img
-                                  src={`${process.env.AWS_S3_PRODUCT_IMAGE_URL}${product.imageUrl}`}
-                                  alt="Product"
-                                  className="!h-24"
-                                />
-                              </div>
-                            )}
-                          </ScrollView>
-                        </div>
+                      <div key={product?.id}>
+                        {/* FileUploader component for uploading images */}
+                        <FileUploader
+                          product={product || ({} as Schema["Product"]["type"])}
+                          updateProductImages={updateProductImages}
+                        />
                       </div>
                     </FormControl>
 
