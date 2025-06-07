@@ -124,7 +124,6 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
   };
 
   const updateProductImages = (images: Schema["Product"]["type"]["images"]) => {
-    console.log("Updating product images:", images);
     setProduct(
       (prev) =>
         ({

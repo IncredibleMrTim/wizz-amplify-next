@@ -12,8 +12,6 @@ export const FileUploader = ({
   product,
   updateProductImages,
 }: FileUploaderProps) => {
-  console.log("FileUploader product", product);
-
   return (
     <div className="flex justify-between gap-4 w-full">
       {/* TODO: Make this its own component */}

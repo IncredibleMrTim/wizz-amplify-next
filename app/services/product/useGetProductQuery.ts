@@ -7,7 +7,6 @@ export const useGetProductQuery = () => {
   const client = generateClient<Schema>();
 
   const fetchProductById = async (id: string): Promise<any> => {
-    console.log(id);
     return await client.models.Product.get({ id });
   };
 
