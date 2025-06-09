@@ -14,7 +14,7 @@ import {
   FormMessage,
 } from "@/components/shad/form";
 import { type Schema } from "amplify/data/resource";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -52,6 +52,7 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
   const params = useParams();
   const dispatch = useAppDispatch();
   const allProducts = useAppSelector((state) => state.products.allProducts);
+  const productImagesRef = useRef<Schema["Product"]["type"]["images"]>([]);
 
   const [product, setProduct] = useState<Schema["Product"]["type"] | null>(
     null
@@ -97,6 +98,13 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
     };
   }, [data]);
 
+  // update the imagesRef when product images change
+  // this is used so that we always have an upto date reference to the images
+  // when the FileUploader component is used
+  useEffect(() => {
+    productImagesRef.current = product?.images || [];
+  }, [product?.images]);
+
   const handleSubmit = () => {
     if (product) {
       // if a new product, add it to te product list
@@ -122,29 +130,48 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
     }
   };
 
-  const updateProductImages = ({
-    key,
-    shouldDelete,
-  }: {
-    key: string;
-    shouldDelete?: boolean;
-  }) => {
-    // Check if the product already has the image
-    const hasImage = product?.images?.find((img) => img?.url == key);
-
-    // If the image already exists and we are not deleting it, do nothing
-    if (hasImage && !shouldDelete) return;
-
-    setProduct(
-      (prev) =>
-        ({
-          ...prev,
-          images: shouldDelete
-            ? (prev?.images || []).filter((img) => img?.url !== key)
-            : [...(prev?.images || []), { url: `${key}` }],
-        }) as unknown as Schema["Product"]["type"]
-    );
+  const updateProductImages = (images: Schema["Product"]["type"]["images"]) => {
+    setProduct((prev) => {
+      return {
+        ...prev,
+        images: images,
+      } as unknown as Schema["Product"]["type"];
+    });
   };
+
+  const updateProductImageOrder = useCallback(
+    (key: string, orderPosition: number) => {
+      setProduct((prev) => {
+        if (!prev || !Array.isArray(prev.images)) return prev;
+
+        const images = [...prev.images];
+
+        const imageIndex = images.findIndex((img) => img?.url === key);
+
+        const currentImage = images[imageIndex];
+
+        images.splice(imageIndex, 1);
+        if (currentImage?.url) {
+          images.splice(orderPosition, 0, {
+            ...currentImage,
+            order: orderPosition,
+            url: currentImage.url,
+          });
+        }
+
+        const orderedImages = images.map((img, index) => ({
+          ...img,
+          order: index,
+        }));
+
+        return {
+          ...prev,
+          images: orderedImages,
+        } as unknown as Schema["Product"]["type"];
+      });
+    },
+    [setProduct]
+  );
 
   return (
     <div>
@@ -320,7 +347,9 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
                         {/* FileUploader component for uploading images */}
                         <FileUploader
                           product={product!}
+                          imagesRef={productImagesRef}
                           updateProductImages={updateProductImages}
+                          updateProductImageOrder={updateProductImageOrder}
                         />
                       </div>
                     </FormControl>
