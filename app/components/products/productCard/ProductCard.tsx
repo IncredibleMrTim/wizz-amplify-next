@@ -1,4 +1,6 @@
 "use client";
+
+import { useState } from "react";
 import { Schema } from "amplify/data/resource";
 import { useAppSelector, useAppDispatch, STORE_PATHS } from "@/stores/store";
 import { useRouter } from "next/navigation";
@@ -12,7 +14,6 @@ interface ProductCardProps {
   showImage?: boolean;
   showPrice?: boolean;
   showQuantity?: boolean;
-
   onClick?: (product: Schema["Product"]) => void;
 }
 
@@ -26,6 +27,7 @@ const ProductCard = ({
   const isAdmin = useAppSelector((state) => state.auth.currentUser);
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   return (
     <div
@@ -56,6 +58,7 @@ const ProductCard = ({
                 className="flex self-center w-full h-96   object-cover"
               />
             </Link>
+
             <div className="flex w-full align-bottom absolute bottom-2 px-2">
               <div
                 className={`flex gap-1 w-full ${isAdmin ? `justify-between` : `justify-end`}`}
@@ -87,6 +90,19 @@ const ProductCard = ({
             </div>
           </div>
         )}
+        <div className="flex w-full h-16 gap-2 overflow-x-scroll">
+          {product.images?.map((image) => {
+            if (!image?.url) return null;
+
+            return (
+              <img
+                key={image?.url}
+                src={`${process.env.AWS_S3_PRODUCT_IMAGE_URL}${image?.url}`}
+                alt={product.name}
+              />
+            );
+          })}
+        </div>
         <div className="flex flex-col justify-between items-center w-full px-4 gap-2">
           {showTitle && <p className="text-center">{product.name}</p>}
           {showPrice && (

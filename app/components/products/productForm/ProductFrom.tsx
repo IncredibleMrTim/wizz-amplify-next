@@ -22,7 +22,6 @@ import { useParams } from "next/navigation";
 import { useAppDispatch, useAppSelector, STORE_PATHS } from "@/stores/store";
 import { FileUploader } from "@/components/fileUploader/FileUploader";
 import { useGetProductQuery } from "@/services/product/useGetProductQuery";
-import { get, set } from "lodash";
 
 interface ProductFormProps {
   onSubmit: (product: Schema["Product"]["type"]) => void;
@@ -53,6 +52,12 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
   const params = useParams();
   const dispatch = useAppDispatch();
   const allProducts = useAppSelector((state) => state.products.allProducts);
+  const currentProduct = useAppSelector(
+    (state) => state.products.currentProduct
+  );
+  const setCurrentProduct = useAppSelector(
+    (state) => state.products.setCurrentProduct
+  );
 
   const [product, setProduct] = useState<Schema["Product"]["type"] | null>(
     null
@@ -123,12 +128,26 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
     }
   };
 
-  const updateProductImages = (images: Schema["Product"]["type"]["images"]) => {
+  const updateProductImages = ({
+    key,
+    shouldDelete,
+  }: {
+    key: string;
+    shouldDelete?: boolean;
+  }) => {
+    // Check if the product already has the image
+    const hasImage = product?.images?.find((img) => img?.url == key);
+
+    // If the image already exists and we are not deleting it, do nothing
+    if (hasImage && !shouldDelete) return;
+
     setProduct(
       (prev) =>
         ({
           ...prev,
-          images: images,
+          images: shouldDelete
+            ? (prev?.images || []).filter((img) => img?.url !== key)
+            : [...(prev?.images || []), { url: `${key}` }],
         }) as unknown as Schema["Product"]["type"]
     );
   };
@@ -306,7 +325,7 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
                       <div key={product?.id}>
                         {/* FileUploader component for uploading images */}
                         <FileUploader
-                          product={product || ({} as Schema["Product"]["type"])}
+                          product={product!}
                           updateProductImages={updateProductImages}
                         />
                       </div>
