@@ -151,12 +151,6 @@ const ProductList = () => {
                           id: cell.row.original.id,
                         });
 
-                        // if (cell.row.original?.images) {
-                        //   await remove({
-                        //     path: cell.row.original.images,
-                        //   });
-                        // }
-
                         const updatedProductList = data.filter(
                           (product) => product.id !== cell.row.original.id
                         );
@@ -169,7 +163,9 @@ const ProductList = () => {
                       }
 
                       if (viewProduct && !deleteProduct) {
-                        router.push(`/admin/products/${cell.row.original.id}`);
+                        router.push(
+                          `/product/${cell.row.original.name.replace(/\s+/g, "-")}`
+                        );
                       }
                     },
                   })}

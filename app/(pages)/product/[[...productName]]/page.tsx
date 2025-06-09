@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAppSelector, useAppDispatch, STORE_PATHS } from "@/stores/store";
 import { useGetProductQuery } from "@/services/product/useGetProductQuery";
 import { useParams } from "next/navigation";
@@ -7,12 +7,13 @@ import { Form } from "@/components/shad/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TbRulerMeasure } from "react-icons/tb";
-import { FiCalendar } from "react-icons/fi";
+import { FiCalendar, FiEdit } from "react-icons/fi";
 import { PiBasket } from "react-icons/pi";
 import { z } from "zod";
 import Link from "next/link";
 import { FormField as FField } from "./FormField";
 import { FaFacebook } from "react-icons/fa6";
+import { Schema } from "amplify/data/resource";
 
 const formSchema = z.object({
   waistSize: z.coerce.number().min(0, { message: "Waist size is required" }),
@@ -37,12 +38,13 @@ const formSchema = z.object({
 
 const ProductPage = () => {
   const params = useParams();
-
+  const [selectedImageUrl, setSelectedImageUrl] = useState<string | null>(null);
   const { getProductByName } = useGetProductQuery();
   const dispatch = useAppDispatch();
   const currentProduct = useAppSelector(
     (state) => state.products.currentProduct
   );
+  const isAdmin = useAppSelector((state) => state.auth.currentUser);
 
   // Fetch current product is not already in state
   // this allows deep linking to product pages
@@ -124,7 +126,7 @@ const ProductPage = () => {
     <div className="flex flex-col gap-4">
       <meta
         name="og:image"
-        content={`${process.env.AWS_S3_PRODUCT_IMAGE_URL}${currentProduct?.imageUrl}`}
+        content={`${process.env.AWS_S3_PRODUCT_IMAGE_URL}${currentProduct?.images?.[0]?.url}`}
       />
       <meta
         name="og:title"
@@ -136,7 +138,7 @@ const ProductPage = () => {
       />
       <meta
         name="og:url"
-        content={`${process.env.ROOT_URL}/product/${currentProduct?.name.replace(
+        content={`${process.env.ROOT_URL}/product/${currentProduct?.name?.replace(
           /\s+/g,
           "-"
         )}`}
@@ -155,7 +157,7 @@ const ProductPage = () => {
                 </p>
                 <Link
                   href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-                    `${process.env.ROOT_URL}/product/${currentProduct?.name.replace(
+                    `${process.env.ROOT_URL}/product/${currentProduct?.name?.replace(
                       /\s+/g,
                       "-"
                     )}`
@@ -184,12 +186,37 @@ const ProductPage = () => {
             </Form>
           </div>
         </div>
-        <div className="flex justify-center w-2/5">
-          <img
-            src={`${process.env.AWS_S3_PRODUCT_IMAGE_URL}${currentProduct?.images?.[0]?.url}`}
-            alt={currentProduct?.name}
-            className="flex h-fit"
-          />
+        <div className="flex justify-around w-3/5 gap-2  h-164 overflow-hidden">
+          <div className="flex w-7/8 relative">
+            <img
+              src={`${process.env.AWS_S3_PRODUCT_IMAGE_URL}${selectedImageUrl ?? currentProduct?.images?.[0]?.url}`}
+              alt={currentProduct?.name}
+              className="flex w-full object-cover grow-0 shrink-0"
+            />
+            {isAdmin && (
+              <Link
+                prefetch
+                href={`/admin/product/${currentProduct?.id}`}
+                className="flex p-3 border-1 self-end rounded-full bg-pink-200 opacity-60 absolute bottom-2 right-2 hover:opacity-90  hover:bg-pink-200 duration-300 transition-all"
+                aria-label="Edit Product"
+              >
+                <FiEdit />
+              </Link>
+            )}
+          </div>
+          <div className="flex flex-col w-1/8 shrink-0 h-full gap-1 overflow-scroll">
+            {currentProduct?.images?.map((image) => {
+              return (
+                <img
+                  key={image?.url}
+                  src={`${process.env.AWS_S3_PRODUCT_IMAGE_URL}${image?.url}`}
+                  alt={image?.altText || currentProduct?.name}
+                  className="border-1 border-pink-100 p-1  cursor-pointer  hover:border-pink-200 hover:shadow-lg transition-all duration-300 rounded-sm flex-shrink-0"
+                  onClick={() => setSelectedImageUrl(image?.url || null)}
+                />
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>

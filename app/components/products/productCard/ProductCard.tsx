@@ -65,7 +65,7 @@ const ProductCard = ({
                   <Link
                     prefetch
                     href={`/admin/product/${product.id}`}
-                    className="p-3 flex self-end rounded-full bg-gray-50 opacity-70"
+                    className="flex p-3 mb-1 ml-1 self-end rounded-full bg-pink-200 opacity-60 hover:opacity-90  hover:bg-pink-200 duration-300 transition-all cursor-pointer"
                     aria-label="Edit Product"
                     onClick={() => {
                       dispatch({
@@ -78,7 +78,7 @@ const ProductCard = ({
                   </Link>
                 )}
                 <button
-                  className="p-3 flex self-end justify-self-end rounded-full bg-gray-50 opacity-70"
+                  className="flex p-3 mb-1 mr-1 self-end  rounded-full  bg-pink-200 opacity-60 hover:opacity-90  hover:bg-pink-200 duration-300 transition-all cursor-pointer"
                   aria-label="Add to cart"
                   onClick={() => {}}
                 >

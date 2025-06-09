@@ -29,7 +29,7 @@ export const BreadCrumb = () => {
                     href={`/${segmentMappings[segment] === "Products" ? "/" : segments.slice(0, index + 1).join("/")}`}
                   >
                     {segmentMappings[segment] ||
-                      product?.name.replace(/-/g, " ") ||
+                      product?.name?.replace(/-/g, " ") ||
                       segment.replace(/-/g, " ")}
                   </Link>
                 </BreadcrumbItem>
