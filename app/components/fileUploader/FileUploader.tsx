@@ -44,7 +44,7 @@ export const FileUploader = ({
           FileListHeader() {
             return null;
           },
-          FileList() {
+          FileList({}) {
             return (
               <div className="flex flex-col gap-2 w-1/2">
                 <div className="flex flex-wrap border-1 border-gray-300 bg-white h-64 p-3 overflow-scroll w-full">
@@ -123,23 +123,6 @@ export const FileUploader = ({
             ];
             updateProductImages(newImages);
           }
-
-          //   setNewProduct((prev) => {
-          //     // ensure there are no duplicates
-          //     if (
-          //       prev?.images?.find((img) => {
-          //         return img?.url === key;
-          //       })
-          //     ) {
-          //       return prev;
-          //     }
-
-          //     return {
-          //       ...prev,
-          //       images: [...(prev?.images || []), { url: key }],
-          //     } as unknown as Schema["Product"]["type"];
-          //   }
-          // );
         }}
       />
     </div>

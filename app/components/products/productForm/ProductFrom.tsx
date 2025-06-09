@@ -22,7 +22,6 @@ import { useParams } from "next/navigation";
 import { useAppDispatch, useAppSelector, STORE_PATHS } from "@/stores/store";
 import { FileUploader } from "@/components/fileUploader/FileUploader";
 import { useGetProductQuery } from "@/services/product/useGetProductQuery";
-import { get, set } from "lodash";
 
 interface ProductFormProps {
   onSubmit: (product: Schema["Product"]["type"]) => void;
@@ -342,7 +341,7 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
                       <div key={product?.id}>
                         {/* FileUploader component for uploading images */}
                         <FileUploader
-                          product={product || ({} as Schema["Product"]["type"])}
+                          product={product!}
                           updateProductImages={updateProductImages}
                           updateProductImageOrder={updateProductImageOrder}
                         />
