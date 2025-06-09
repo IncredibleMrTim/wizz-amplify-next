@@ -30,16 +30,16 @@ const ProductCard = ({
   return (
     <div
       key={product.id}
-      className="fade-in-product w-1/4 flex flex-col h-full bg-white"
+      className="fade-in-product w-1/4 flex flex-col h-full  p-2"
     >
-      <div className="flex h-full flex-col gap-4 justify-between">
+      <div className="flex h-full flex-col gap-4 justify-between ">
         {showDescription && (
           <div className="flex flex-col gap-4 ">
             <p>{product.description}</p>
           </div>
         )}
         {showImage && product?.images?.[0] && (
-          <div className="flex justify-center align-top relative">
+          <div className="flex justify-center align-top relative bg-gray-100 border-1 border-gray-200 p-1 rounded-sm">
             <Link
               prefetch
               href={`/product/${product.name.replace(/\s+/g, "-")}`}
@@ -88,19 +88,7 @@ const ProductCard = ({
             </div>
           </div>
         )}
-        <div className="flex w-full h-16 gap-2 overflow-x-scroll">
-          {product.images?.map((image) => {
-            if (!image?.url) return null;
 
-            return (
-              <img
-                key={image?.url}
-                src={`${process.env.AWS_S3_PRODUCT_IMAGE_URL}${image?.url}`}
-                alt={product.name}
-              />
-            );
-          })}
-        </div>
         <div className="flex flex-col justify-between items-center w-full px-4 gap-2">
           {showTitle && <p className="text-center">{product.name}</p>}
           {showPrice && (

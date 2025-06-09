@@ -6,6 +6,7 @@ import { FiX } from "react-icons/fi";
 
 interface FileUploaderProps {
   product: Schema["Product"]["type"];
+  imagesRef?: React.RefObject<Schema["Product"]["type"]["images"]>;
   updateProductImages: (product: Schema["Product"]["type"]["images"]) => void;
   updateProductImageOrder: (key: string, order: number) => void;
 }
@@ -14,6 +15,7 @@ export const FileUploader = ({
   product,
   updateProductImages,
   updateProductImageOrder,
+  imagesRef,
 }: FileUploaderProps) => {
   const dragKey = useRef<string | undefined>(undefined);
 
@@ -47,7 +49,7 @@ export const FileUploader = ({
           FileList({}) {
             return (
               <div className="flex flex-col gap-2 w-1/2">
-                <div className="flex flex-wrap border-1 border-gray-300 bg-white h-64 p-3 overflow-scroll w-full">
+                <div className="flex flex-wrap border-1 border-gray-300 bg-white h-64 p-2 overflow-scroll w-full">
                   {product?.images &&
                     [...product.images]
                       ?.sort((a, b) => (a?.order ?? 0) - (b?.order ?? 0))
@@ -55,11 +57,11 @@ export const FileUploader = ({
                         return (
                           <div
                             key={file?.url}
-                            className="flex flex-col bg-white w-1/5 items-center "
+                            className="flex flex-col bg-white w-1/5 items-center p-2"
                           >
                             <div
                               key={file?.url}
-                              className="flex border-1 border-gray-200 h-32 p-1 relative justify-center items-center"
+                              className="flex border-1 border-gray-200 h-32 p-2 relative justify-center items-center"
                               draggable
                               onDragStart={(e) => {
                                 dragKey.current = file?.url;
@@ -108,20 +110,13 @@ export const FileUploader = ({
           },
         }}
         onUploadSuccess={({ key }) => {
-          if (!key) return;
+          if (key) {
+            let newImages = [...(imagesRef?.current || [])];
 
-          let newImages = product?.images || [];
-
-          const hasImage = newImages.find((img) => {
-            return img?.url === key;
-          });
-
-          if (!hasImage) {
-            newImages = [
-              ...(newImages || []),
-              { url: key, order: newImages.length },
-            ];
-            updateProductImages(newImages);
+            if (!newImages.find((img) => img?.url === key)) {
+              newImages = [...newImages, { url: key, order: newImages.length }];
+              updateProductImages(newImages);
+            }
           }
         }}
       />

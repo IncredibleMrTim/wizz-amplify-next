@@ -47,7 +47,7 @@ const ProductPage = () => {
   // Fetch current product is not already in state
   // this allows deep linking to product pages
   const queryResult = params.productName?.[0]
-    ? getProductByName(params.productName[0], !currentProduct)
+    ? getProductByName(params.productName[0])
     : null;
 
   useEffect(() => {

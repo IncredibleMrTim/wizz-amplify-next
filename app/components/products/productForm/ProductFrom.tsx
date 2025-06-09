@@ -14,7 +14,7 @@ import {
   FormMessage,
 } from "@/components/shad/form";
 import { type Schema } from "amplify/data/resource";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -52,6 +52,7 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
   const params = useParams();
   const dispatch = useAppDispatch();
   const allProducts = useAppSelector((state) => state.products.allProducts);
+  const productImagesRef = useRef<Schema["Product"]["type"]["images"]>([]);
 
   const [product, setProduct] = useState<Schema["Product"]["type"] | null>(
     null
@@ -97,6 +98,13 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
     };
   }, [data]);
 
+  // update the imagesRef when product images change
+  // this is used so that we always have an upto date reference to the images
+  // when the FileUploader component is used
+  useEffect(() => {
+    productImagesRef.current = product?.images || [];
+  }, [product?.images]);
+
   const handleSubmit = () => {
     if (product) {
       // if a new product, add it to te product list
@@ -122,17 +130,14 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
     }
   };
 
-  const updateProductImages = useCallback(
-    (images: Schema["Product"]["type"]["images"]) => {
-      setProduct((prev) => {
-        return {
-          ...prev,
-          images: images,
-        } as unknown as Schema["Product"]["type"];
-      });
-    },
-    [setProduct]
-  );
+  const updateProductImages = (images: Schema["Product"]["type"]["images"]) => {
+    setProduct((prev) => {
+      return {
+        ...prev,
+        images: images,
+      } as unknown as Schema["Product"]["type"];
+    });
+  };
 
   const updateProductImageOrder = useCallback(
     (key: string, orderPosition: number) => {
@@ -342,6 +347,7 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
                         {/* FileUploader component for uploading images */}
                         <FileUploader
                           product={product!}
+                          imagesRef={productImagesRef}
                           updateProductImages={updateProductImages}
                           updateProductImageOrder={updateProductImageOrder}
                         />
