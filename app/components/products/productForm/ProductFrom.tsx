@@ -14,7 +14,7 @@ import {
   FormMessage,
 } from "@/components/shad/form";
 import { type Schema } from "amplify/data/resource";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -123,15 +123,51 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
     }
   };
 
-  const updateProductImages = (images: Schema["Product"]["type"]["images"]) => {
-    setProduct(
-      (prev) =>
-        ({
+  const updateProductImages = useCallback(
+    (images: Schema["Product"]["type"]["images"]) => {
+      setProduct((prev) => {
+        return {
           ...prev,
           images: images,
-        }) as unknown as Schema["Product"]["type"]
-    );
-  };
+        } as unknown as Schema["Product"]["type"];
+      });
+    },
+    [setProduct]
+  );
+
+  const updateProductImageOrder = useCallback(
+    (key: string, orderPosition: number) => {
+      setProduct((prev) => {
+        if (!prev || !Array.isArray(prev.images)) return prev;
+
+        const images = [...prev.images];
+
+        const imageIndex = images.findIndex((img) => img?.url === key);
+
+        const currentImage = images[imageIndex];
+
+        images.splice(imageIndex, 1);
+        if (currentImage?.url) {
+          images.splice(orderPosition, 0, {
+            ...currentImage,
+            order: orderPosition,
+            url: currentImage.url,
+          });
+        }
+
+        const orderedImages = images.map((img, index) => ({
+          ...img,
+          order: index,
+        }));
+
+        return {
+          ...prev,
+          images: orderedImages,
+        } as unknown as Schema["Product"]["type"];
+      });
+    },
+    [setProduct]
+  );
 
   return (
     <div>
@@ -308,6 +344,7 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
                         <FileUploader
                           product={product || ({} as Schema["Product"]["type"])}
                           updateProductImages={updateProductImages}
+                          updateProductImageOrder={updateProductImageOrder}
                         />
                       </div>
                     </FormControl>

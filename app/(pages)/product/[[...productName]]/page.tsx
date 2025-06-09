@@ -1,8 +1,7 @@
 "use client";
-import { useState, useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { useAppSelector, useAppDispatch, STORE_PATHS } from "@/stores/store";
 import { useGetProductQuery } from "@/services/product/useGetProductQuery";
-import { Schema } from "amplify/data/resource";
 import { useParams } from "next/navigation";
 import { Form } from "@/components/shad/form";
 import { useForm } from "react-hook-form";
@@ -10,7 +9,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { TbRulerMeasure } from "react-icons/tb";
 import { FiCalendar } from "react-icons/fi";
 import { PiBasket } from "react-icons/pi";
-import { HiShare } from "react-icons/hi2";
 import { z } from "zod";
 import Link from "next/link";
 import { FormField as FField } from "./FormField";
@@ -188,7 +186,7 @@ const ProductPage = () => {
         </div>
         <div className="flex justify-center w-2/5">
           <img
-            src={`${process.env.AWS_S3_PRODUCT_IMAGE_URL}${currentProduct?.imageUrl}`}
+            src={`${process.env.AWS_S3_PRODUCT_IMAGE_URL}${currentProduct?.images?.[0]?.url}`}
             alt={currentProduct?.name}
             className="flex h-fit"
           />

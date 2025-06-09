@@ -11,7 +11,7 @@ const schema = a.schema({
     url: a.string().required(),
     altText: a.string(),
     caption: a.string(),
-    order: a.integer(),
+    order: a.integer().required(),
   }),
 
   Product: a

@@ -26,7 +26,7 @@ export const useGetProductQuery = () => {
       queryFn: async () => {
         return await fetchProductById(id);
       },
-      staleTime: 1000 * 60 * 5, // 5 minutes
+
       select: (data) => {
         return data?.data ?? null;
       },
@@ -40,7 +40,7 @@ export const useGetProductQuery = () => {
         const data = await fetchProductByName(name);
         return data?.data?.[0] ?? null;
       },
-      staleTime: 1000 * 60 * 5, // 5 minutes
+
       select: (data) => {
         return data ?? null;
       },
