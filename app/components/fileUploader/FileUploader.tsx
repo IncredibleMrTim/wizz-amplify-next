@@ -21,9 +21,11 @@ export const FileUploader = ({
         path={`${process.env.AWS_S3_PRODUCT_IMAGE_PATH!}`}
         maxFileCount={10}
         isResumable
-        defaultFiles={product?.images?.map((img) => ({
-          key: img?.url?.replace("public/", "") as string,
-        }))}
+        defaultFiles={
+          product?.images?.map((img) => ({
+            key: img?.url?.replace("public/", "") as string,
+          })) ?? []
+        }
         maxFileSize={2000000}
         components={{
           Container({ children }) {

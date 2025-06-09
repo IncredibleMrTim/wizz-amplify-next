@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Schema } from "amplify/data/resource";
 import { useAppSelector, useAppDispatch, STORE_PATHS } from "@/stores/store";
 import { useRouter } from "next/navigation";
@@ -27,7 +26,6 @@ const ProductCard = ({
   const isAdmin = useAppSelector((state) => state.auth.currentUser);
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   return (
     <div

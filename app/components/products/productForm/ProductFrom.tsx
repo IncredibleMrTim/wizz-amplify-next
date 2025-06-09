@@ -52,12 +52,6 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
   const params = useParams();
   const dispatch = useAppDispatch();
   const allProducts = useAppSelector((state) => state.products.allProducts);
-  const currentProduct = useAppSelector(
-    (state) => state.products.currentProduct
-  );
-  const setCurrentProduct = useAppSelector(
-    (state) => state.products.setCurrentProduct
-  );
 
   const [product, setProduct] = useState<Schema["Product"]["type"] | null>(
     null
