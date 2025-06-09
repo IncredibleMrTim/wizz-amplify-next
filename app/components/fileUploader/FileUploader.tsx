@@ -13,10 +13,6 @@ export const FileUploader = ({
   product,
   updateProductImages,
 }: FileUploaderProps) => {
-  const [currentImages, setCurrentImages] = useState<
-    Schema["Product"]["type"]["images"]
-  >(Array.isArray(product?.images) ? product.images : []);
-
   return (
     <div className="flex justify-between gap-4 w-full">
       {/* TODO: Make this its own component */}
@@ -25,13 +21,9 @@ export const FileUploader = ({
         path={`${process.env.AWS_S3_PRODUCT_IMAGE_PATH!}`}
         maxFileCount={10}
         isResumable
-        defaultFiles={
-          Array.isArray(product?.images) && product?.images.length > 0
-            ? product.images.map((img) => ({
-                key: img?.url?.replace("public/", "") as string,
-              }))
-            : []
-        }
+        defaultFiles={product?.images?.map((img) => ({
+          key: img?.url?.replace("public/", "") as string,
+        }))}
         maxFileSize={2000000}
         components={{
           Container({ children }) {
@@ -56,7 +48,7 @@ export const FileUploader = ({
             return (
               <div className="flex flex-col gap-2 w-1/2">
                 <div className="flex flex-wrap gap-2 border-1 border-gray-300 bg-white h-64 p-4 overflow-scroll w-full">
-                  {Array.isArray(product?.images) &&
+                  {product?.images &&
                     (product?.images ?? [])?.map((file, index) => {
                       return (
                         <div
