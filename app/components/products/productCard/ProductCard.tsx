@@ -30,7 +30,7 @@ const ProductCard = ({
   return (
     <div
       key={product.id}
-      className="fade-in-product w-1/4 flex flex-col h-full  p-2"
+      className="fade-in-product w-1/4 flex flex-col h-full p-2"
     >
       <div className="flex h-full flex-col gap-4 justify-between ">
         {showDescription && (
