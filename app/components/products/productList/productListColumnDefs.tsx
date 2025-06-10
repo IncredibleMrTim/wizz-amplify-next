@@ -121,8 +121,7 @@ export const columns: ColumnDef<Schema["Product"]["type"]>[] = [
           </Link>
 
           <Link
-            href={`/admin/product/${row.getValue("id")}`}
-            onClick={() => onClick?.({ viewProduct: true })}
+            href={`/product/${(row.getValue("name") as string).replace(/\s+/g, "-")}`}
             prefetch
           >
             <FiArrowRightCircle size={20} />

@@ -2,8 +2,8 @@
 
 import { Input } from "@/components/shad/input";
 import { Textarea } from "@/components/shad/textarea";
-
-import { Button, DropdownMenu } from "@radix-ui/themes";
+import { useRouter } from "next/navigation";
+import { Button } from "@radix-ui/themes";
 import {
   Form,
   FormControl,
@@ -14,7 +14,7 @@ import {
   FormMessage,
 } from "@/components/shad/form";
 import { type Schema } from "amplify/data/resource";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -22,6 +22,7 @@ import { useParams } from "next/navigation";
 import { useAppDispatch, useAppSelector, STORE_PATHS } from "@/stores/store";
 import { FileUploader } from "@/components/fileUploader/FileUploader";
 import { useGetProductQuery } from "@/services/product/useGetProductQuery";
+import { FiCheck, FiArrowLeft, FiExternalLink } from "react-icons/fi";
 
 interface ProductFormProps {
   onSubmit: (product: Schema["Product"]["type"]) => void;
@@ -57,6 +58,7 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
   const [product, setProduct] = useState<Schema["Product"]["type"] | null>(
     null
   );
+  const router = useRouter();
 
   const data = params?.productId?.[0]
     ? getProductById(params?.productId?.[0]).data
@@ -173,11 +175,12 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
     [setProduct]
   );
 
+  const formRef = useRef<HTMLFormElement>(null);
   return (
-    <div>
+    <div className="-mt-8">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)}>
-          <div className="flex flex-col gap-6  p-4 bg-gray-50">
+        <form onSubmit={form.handleSubmit(handleSubmit)} ref={formRef}>
+          <div className="flex flex-col gap-6  p-4 bg-gray-100 rounded-md">
             <div>
               <FormField
                 control={form.control}
@@ -360,9 +363,19 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
               />
             </div>
           </div>
-          <div className="flex justify-end pt-4">
+          <div className="flex justify-between gap-2 pt-4">
+            <Button
+              variant="outline"
+              className="!mb-4"
+              onClick={() => router.push("/admin")}
+            >
+              <FiArrowLeft size={16} />
+              Cancel
+            </Button>
+
             <Button type="submit" variant="solid">
-              {params.productId ? "Update" : "Create"} Product
+              <FiCheck size={16} />
+              {params.productId?.[0] ? "Update" : "Create"} Product
             </Button>
           </div>
         </form>
