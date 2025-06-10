@@ -39,7 +39,7 @@ const ProductCard = ({
           </div>
         )}
         {showImage && product?.images?.[0] && (
-          <div className="flex justify-center align-top relative bg-gray-100 border-1 border-gray-200 p-1 rounded-sm">
+          <div className="flex justify-center align-top relative bg-gray-100 border-gray-200 p-1 rounded-sm">
             <Link
               prefetch
               href={`/product/${product.name.replace(/\s+/g, "-")}`}
