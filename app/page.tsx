@@ -33,7 +33,7 @@ export default function App() {
         </p>
 
         {isFetched && (
-          <div className="flex flex-col md:flex-row gap-6 justify-between">
+          <div className="flex flex-col md:flex-row flex-wrap justify-between">
             {productsData
               ?.filter((p) => p.isFeatured)
               .map((product: Schema["Product"]["type"]) => (

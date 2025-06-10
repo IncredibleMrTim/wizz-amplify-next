@@ -30,7 +30,7 @@ const ProductCard = ({
   return (
     <div
       key={product.id}
-      className="fade-in-product w-1/4 flex flex-col h-full  p-2"
+      className="fade-in-product w-1/4 flex flex-col h-full p-2"
     >
       <div className="flex h-full flex-col gap-4 justify-between ">
         {showDescription && (
@@ -39,7 +39,7 @@ const ProductCard = ({
           </div>
         )}
         {showImage && product?.images?.[0] && (
-          <div className="flex justify-center align-top relative bg-gray-100 border-1 border-gray-200 p-1 rounded-sm">
+          <div className="flex justify-center align-top relative bg-gray-100 border-gray-200 p-1 rounded-sm">
             <Link
               prefetch
               href={`/product/${product.name.replace(/\s+/g, "-")}`}
