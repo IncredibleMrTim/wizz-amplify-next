@@ -31,9 +31,9 @@ export const FileUploader = ({
           Container({ children }) {
             return <div className="flex flex-row gap-2 w-full">{children}</div>;
           },
-          DropZone({ children }) {
+          DropZone({ children, ...rest }) {
             return (
-              <div className="flex flex-col gap-2 w-1/2">
+              <div className="flex flex-col gap-2 w-1/2" {...rest}>
                 <div className="flex flex-col gap-4 justify-center items-center border-2 border-dashed border-gray-300 rounded-md h-64 bg-white">
                   {children}
                   <p className="text-sm text-gray-500">
