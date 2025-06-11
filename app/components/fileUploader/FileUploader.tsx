@@ -3,6 +3,7 @@ import { useRef } from "react";
 import { FileUploader as AmplifyFileUploader } from "@aws-amplify/ui-react-storage";
 import { Schema } from "amplify/data/resource";
 import { FiX } from "react-icons/fi";
+import { Flex } from "@radix-ui/themes";
 
 interface FileUploaderProps {
   product: Schema["Product"]["type"];
@@ -24,23 +25,27 @@ export const FileUploader = ({
       <AmplifyFileUploader
         acceptedFileTypes={["image/*"]}
         path={`${process.env.AWS_S3_PRODUCT_IMAGE_PATH!}`}
-        maxFileCount={10}
+        maxFileCount={20}
+        processFile={(file) => {
+          // Process the file if needed before uploading
+          return file;
+        }}
         isResumable
         maxFileSize={2000000}
         components={{
           Container({ children }) {
             return <div className="flex flex-row gap-2 w-full">{children}</div>;
           },
-          DropZone({ children, ...rest }) {
+          DropZone({ children, inDropZone, ...rest }) {
             return (
-              <div className="flex flex-col gap-2 w-1/2" {...rest}>
+              <Flex className="flex flex-col gap-2 w-1/2" {...rest}>
                 <div className="flex flex-col gap-4 justify-center items-center border-2 border-dashed border-gray-300 rounded-md h-64 bg-white">
                   {children}
                   <p className="text-sm text-gray-500">
                     Drag and drop files here, or click to select files.
                   </p>
                 </div>
-              </div>
+              </Flex>
             );
           },
           FileListHeader() {

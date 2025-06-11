@@ -22,7 +22,7 @@ import { useParams } from "next/navigation";
 import { useAppDispatch, useAppSelector, STORE_PATHS } from "@/stores/store";
 import { FileUploader } from "@/components/fileUploader/FileUploader";
 import { useGetProductQuery } from "@/services/product/useGetProductQuery";
-import { FiCheck, FiArrowLeft, FiExternalLink } from "react-icons/fi";
+import { FiCheck, FiArrowLeft } from "react-icons/fi";
 
 interface ProductFormProps {
   onSubmit: (product: Schema["Product"]["type"]) => void;
@@ -175,11 +175,10 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
     [setProduct]
   );
 
-  const formRef = useRef<HTMLFormElement>(null);
   return (
     <div className="-mt-8">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)} ref={formRef}>
+        <form onSubmit={form.handleSubmit(handleSubmit)}>
           <div className="flex flex-col gap-6  p-4 bg-gray-100 rounded-md">
             <div>
               <FormField
