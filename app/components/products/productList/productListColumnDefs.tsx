@@ -34,7 +34,7 @@ export const columns: ColumnDef<Schema["Product"]["type"]>[] = [
     size: 50, // Explicit size
     cell: ({ row }) => (
       <div className="overflow-hidden text-ellipsis whitespace-nowrap">
-        {row.getValue("name")}
+        {row.getValue?.("name") ?? "unknown"}
       </div>
     ),
   },
@@ -121,7 +121,10 @@ export const columns: ColumnDef<Schema["Product"]["type"]>[] = [
           </Link>
 
           <Link
-            href={`/product/${(row.getValue("name") as string).replace(/\s+/g, "-")}`}
+            href={`/product/${(row.getValue("name") as string).replace(
+              /\s+/g,
+              "-"
+            )}`}
             prefetch
           >
             <FiArrowRightCircle size={20} />
