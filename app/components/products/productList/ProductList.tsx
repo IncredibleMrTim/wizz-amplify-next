@@ -121,6 +121,11 @@ const ProductList = () => {
       {table.getRowModel().rows?.length ? (
         table.getRowModel().rows.map((row) => (
           <TableRow
+            draggable
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={(e) => {
+              console.log("Dropped row:", row.id);
+            }}
             key={row.id}
             data-state={row.getIsSelected() && "selected"}
             className="border-0 odd:bg-stone-100 even:bg-stone-50"

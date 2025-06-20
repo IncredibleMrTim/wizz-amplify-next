@@ -36,8 +36,8 @@ export default function RootLayout({
               <CheckAuth />
               <Header />
 
-              <Container size="4">
-                <BreadCrumb />
+              <Container size="4" className="!m-0 !p-0">
+                <BreadCrumb  />
                 {children}
               </Container>
             </ReduxProvider>
