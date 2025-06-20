@@ -38,7 +38,7 @@ export default function App() {
         {isFetched && (
           <div className="flex flex-row flex-wrap justify-between mt-2">
             {productsData
-              ?.filter((p) => p.isFeatured)
+              ?.filter((p) => p?.isFeatured ?? false)
               .map((product: Schema["Product"]["type"]) => (
                 <ProductCard
                   showDescription={false}
