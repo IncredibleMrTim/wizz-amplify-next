@@ -70,7 +70,8 @@ export const FormField = ({
             <Textarea
               maxLength={1000}
               placeholder="Describe any additional information you would like to provide"
-              className={`"w-full h-32 border-gray-300 focus-visible:ring-transparent shadow-none" ${classes?.control || ""}`}
+              className={`"w-full h-32 border-gray-300 focus-visible:ring-transparent shadow-none" ${classes?.control ||
+                ""}`}
               {...field}
             />
           </>
@@ -120,21 +121,23 @@ export const FormField = ({
           <>
             {icon &&
               createElement(icon, {
-                className: `absolute right-2 top-1/2 transform -translate-y-1/2 ${classes?.icon || ""}`,
+                className: `absolute right-2 top-1/2 transform -translate-y-1/2 ${classes?.icon ||
+                  ""}`,
                 size: 20,
               })}
             <Input
               type={variant}
               placeholder={placeholderText}
-              className={`"w-full !border-0 shadow-none !border-b-1 rounded-none border-b-gray-300 focus-visible:ring-transparent" ${classes?.control || ""}`}
+              className={`"w-full !border-0 shadow-none !border-b-1 rounded-none border-b-gray-300 focus-visible:ring-transparent" ${classes?.control ||
+                ""}`}
               {...field}
               onChange={(e) => {
                 if (e.target.value) {
-                  form.setValue(rest.name as string, e.target.value, {
+                  form.setValue(rest?.name as string, e.target.value, {
                     shouldValidate: true,
                   });
                 } else {
-                  form.setValue(rest.name as string, "", {
+                  form.setValue(rest?.name as string, "", {
                     shouldValidate: false,
                   });
                 }
@@ -147,13 +150,14 @@ export const FormField = ({
 
   return (
     <Controller
-      name={rest.name as string}
+      name={rest?.name as string}
       control={form.control}
       {...rest}
       render={({ field }) => {
         return (
           <FormItem
-            className={`flex flex-col items-start w-1/2 ${classes?.formItem || ""}`}
+            className={`flex flex-col items-start w-1/2 ${classes?.formItem ||
+              ""}`}
           >
             {label && (
               <FormLabel className={classes?.formLabel || ""}>
