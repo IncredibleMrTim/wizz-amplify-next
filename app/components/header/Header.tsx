@@ -18,7 +18,7 @@ const Header = () => {
           <img
             src="/wizz-logo-trans-full.webp"
             alt="Wizzington Moos Boutique Logo"
-            className="w-96 object-right absolute top-0 right-0 mt-4 mr-4"
+            className="w-64 md:w-96 object-right absolute top-0 right-0 mt-4 mr-4"
             onClick={() => router.push("/")}
           />
         </div>
