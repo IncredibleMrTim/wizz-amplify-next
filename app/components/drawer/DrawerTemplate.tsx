@@ -34,25 +34,27 @@ export const DrawerTemplate = ({ type }: DrawerTemplateProps) => {
         </div>
       </div>
 
-      <div className="p-4">
-        <ul>
+      <div className="p-4 w-full">
+        <ul className="w-full">
           {components &&
             components.map((component, i) => (
-              <li key={component.id}>
-                <Link
-                  href={component.href}
-                  className="text-lg text-gray-100"
-                  onClick={() => {
-                    dispatch({
-                      type: STORE_PATHS.SET_DRAWER_IS_OPEN,
-                      payload: false,
-                    });
-                  }}
-                >
-                  {component.title}
-                </Link>
+              <>
+                <li key={component.id} className="py-4 w-full h-full">
+                  <Link
+                    href={component.href}
+                    className="flex text-lg text-gray-100 w-full place-items-center"
+                    onClick={() => {
+                      dispatch({
+                        type: STORE_PATHS.SET_DRAWER_IS_OPEN,
+                        payload: false,
+                      });
+                    }}
+                  >
+                    {component.title}
+                  </Link>
+                </li>
                 <Separator />
-              </li>
+              </>
             ))}
         </ul>
       </div>

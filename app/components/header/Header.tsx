@@ -9,8 +9,8 @@ const Header = () => {
   const router = useRouter();
   const pathname = usePathname();
   return (
-    <div>
-      <header className="h-36 md:h-48 relative">
+    <>
+      <header className="h-48 relative">
         <div className="absolute top-0 left-0 w-full h-48 bg-gradient-to-r from-transparent from-40% to-black to-100%">
           <img
             src="/header-model.jpg"
@@ -28,10 +28,10 @@ const Header = () => {
       <div className="hidden w-full border-b border-gray-300 h-10 sho md:flex">
         <Navigation />
       </div>
-      <div className="flex w-full h-8 visible md:hidden">
+      <div className="flex w-full visible md:hidden">
         <Drawer />
       </div>
-    </div>
+    </>
   );
 };
 export default Header;

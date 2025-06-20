@@ -30,7 +30,7 @@ export const Drawer = () => {
         <DrawerTrigger className="flex justify-self-end p-4">
           <FiMenu size={24} className="" />
         </DrawerTrigger>
-        <DrawerHeader>
+        <DrawerHeader className="hidden">
           <DrawerTitle className="hidden">Navigation</DrawerTitle>
         </DrawerHeader>
         <DrawerContent className="border-none">
