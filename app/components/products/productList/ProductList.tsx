@@ -169,7 +169,7 @@ const ProductList = () => {
 
                       if (viewProduct && !deleteProduct) {
                         router.push(
-                          `/product/${cell.row.original.name.replace(/\s+/g, "-")}`
+                          `/product/${cell.row.original.name?.replace(/\s+/g, "-")}`
                         );
                       }
                     },
