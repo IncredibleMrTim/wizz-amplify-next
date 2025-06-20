@@ -7,6 +7,8 @@ import { productReducer } from "./product/productSlice";
 export const STORE_PATHS = {
   SET_PRODUCTS: "PRODUCTS/setProducts",
   SET_CURRENT_PRODUCT: "PRODUCTS/setCurrentProduct",
+  SET_ACTIVE_MENU_ITEM: "NAVIGATION/setActiveMenuItem",
+  SET_DRAWER_IS_OPEN: "NAVIGATION/setIsDrawerOpen",
 };
 
 export const store = configureStore({

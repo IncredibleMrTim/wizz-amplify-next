@@ -2,13 +2,15 @@
 import Navigation from "@/components/navigation/Navigation";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
+import { FiMenu } from "react-icons/fi";
+import { Drawer } from "../drawer/Drawer";
 
 const Header = () => {
   const router = useRouter();
   const pathname = usePathname();
   return (
     <div>
-      <header className="h-48 relative">
+      <header className="h-36 md:h-48 relative">
         <div className="absolute top-0 left-0 w-full h-48 bg-gradient-to-r from-transparent from-40% to-black to-100%">
           <img
             src="/header-model.jpg"
@@ -23,8 +25,11 @@ const Header = () => {
           />
         </div>
       </header>
-      <div className="w-full border-b border-gray-300 h-10">
+      <div className="w-full border-b border-gray-300 h-10 invisible md:visible">
         <Navigation />
+      </div>
+      <div className="w-full h-full visible md:invisible">
+        <Drawer />
       </div>
     </div>
   );
