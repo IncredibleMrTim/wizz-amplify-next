@@ -25,10 +25,10 @@ const Header = () => {
           />
         </div>
       </header>
-      <div className="w-full border-b border-gray-300 h-10 invisible md:visible">
+      <div className="hidden w-full border-b border-gray-300 h-10 sho md:flex">
         <Navigation />
       </div>
-      <div className="w-full h-full visible md:invisible">
+      <div className="flex w-full h-8 visible md:hidden">
         <Drawer />
       </div>
     </div>

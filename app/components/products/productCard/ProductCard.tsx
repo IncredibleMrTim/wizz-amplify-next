@@ -30,7 +30,7 @@ const ProductCard = ({
   return (
     <div
       key={product.id}
-      className="fade-in-product w-1/4 flex flex-col h-full p-2"
+      className="flex flex-col basis-[50%] md:basis-auto fade-in-product w-1/4  h-full p-2"
     >
       <div className="flex h-full flex-col gap-4 justify-between ">
         {showDescription && (
@@ -59,7 +59,9 @@ const ProductCard = ({
 
             <div className="flex w-full align-bottom absolute bottom-2 px-2">
               <div
-                className={`flex gap-1 w-full ${isAdmin ? `justify-between` : `justify-end`}`}
+                className={`flex gap-1 w-full ${
+                  isAdmin ? `justify-between` : `justify-end`
+                }`}
               >
                 {isAdmin && (
                   <Link

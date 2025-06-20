@@ -16,7 +16,7 @@ export const BreadCrumb = () => {
 
   const segments = pathname.split("/").filter((segment) => segment !== "");
   return (
-    <div className="flex items-center justify-between text-black p-4">
+    <div className="items-center justify-between text-black p-4 hidden md:flex">
       <Breadcrumb>
         <BreadcrumbList>
           {segments.map((segment, index) => {
@@ -26,7 +26,11 @@ export const BreadCrumb = () => {
               <div key={index} className="flex place-items-center gap-2">
                 <BreadcrumbItem key={index}>
                   <Link
-                    href={`/${segmentMappings[segment] === "Products" ? "/" : segments.slice(0, index + 1).join("/")}`}
+                    href={`/${
+                      segmentMappings[segment] === "Products"
+                        ? "/"
+                        : segments.slice(0, index + 1).join("/")
+                    }`}
                   >
                     {segmentMappings[segment] ||
                       product?.name?.replace(/-/g, " ") ||
