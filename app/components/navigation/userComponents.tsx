@@ -2,6 +2,12 @@ import { NavComponent } from "./Navigation";
 
 const components: NavComponent[] = [
   {
+    id: "home",
+    type: "link",
+    title: "Home",
+    href: "/",
+  },
+  {
     id: "pageant-wear",
     type: "link",
     title: "Pageant Wear",
