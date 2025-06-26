@@ -30,7 +30,6 @@ interface ProductFormProps {
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
-  imageUrl: z.string().optional(),
   description: z
     .string()
     .min(1, { message: "Description is required" })
@@ -334,32 +333,15 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
             </div>
 
             <div>
-              <FormField
-                control={form.control}
-                name="imageUrl"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-xl">Product Images</FormLabel>
-                    <FormDescription>
-                      Upload product images. You can upload a maximum of 10
-                      images
-                    </FormDescription>
-                    <FormControl>
-                      <div key={product?.id}>
-                        {/* FileUploader component for uploading images */}
-                        <FileUploader
-                          product={product!}
-                          imagesRef={productImagesRef}
-                          updateProductImages={updateProductImages}
-                          updateProductImageOrder={updateProductImageOrder}
-                        />
-                      </div>
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div key={product?.id}>
+                {/* FileUploader component for uploading images */}
+                <FileUploader
+                  product={product!}
+                  imagesRef={productImagesRef}
+                  updateProductImages={updateProductImages}
+                  updateProductImageOrder={updateProductImageOrder}
+                />
+              </div>
             </div>
           </div>
           <div className="flex justify-between gap-2 pt-4">

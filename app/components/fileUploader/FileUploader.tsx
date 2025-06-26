@@ -26,17 +26,17 @@ export const FileUploader = ({
         acceptedFileTypes={["image/*"]}
         path={`${process.env.AWS_S3_PRODUCT_IMAGE_PATH!}`}
         maxFileCount={20}
-        processFile={(file) => {
-          // Process the file if needed before uploading
-          return file;
-        }}
+        // processFile={(file) => {
+        //   // Process the file if needed before uploading
+        //   return file;
+        // }}
         isResumable
         maxFileSize={2000000}
         components={{
           Container({ children }) {
             return <div className="flex flex-row gap-2 w-full">{children}</div>;
           },
-          DropZone({ children, inDropZone, ...rest }) {
+          DropZone({ children, inDropZone, displayText, ...rest }) {
             return (
               <Flex className="flex flex-col gap-2 w-1/2" {...rest}>
                 <div className="flex flex-col gap-4 justify-center items-center border-2 border-dashed border-gray-300 rounded-md h-64 bg-white">

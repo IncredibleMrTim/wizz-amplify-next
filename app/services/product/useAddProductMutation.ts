@@ -14,8 +14,6 @@ export const useAddProductMutation = (): UseMutationResult<
   const addProduct = async (product: Schema["Product"]["type"]) => {
     try {
       const result = await client.models.Product.create(product);
-console.log("Product created successfully:", result.data);
-console.log("Product:", product);
       return result.data;
     } catch (error) {
       console.error("Error creating product:", error);

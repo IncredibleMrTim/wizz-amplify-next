@@ -23,7 +23,7 @@ const schema = a.schema({
       category: a.string(),
       isFeatured: a.boolean().default(false),
       stock: a.integer().required(),
-      order: a.integer().required(),
+      order: a.integer().default(0).required(),
       images: a.ref("Images").array(), // Reference to Images
     })
 
