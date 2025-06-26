@@ -24,7 +24,7 @@ export const FileUploader = ({
     <div className="flex justify-between gap-4 w-full">
       <AmplifyFileUploader
         acceptedFileTypes={["image/*"]}
-        path={`${process.env.AWS_S3_PRODUCT_IMAGE_PATH!}`}
+        path={`${process.env.S3_PRODUCT_IMAGE_PATH!}`}
         maxFileCount={20}
         // processFile={(file) => {
         //   // Process the file if needed before uploading
@@ -84,7 +84,7 @@ export const FileUploader = ({
                               }}
                             >
                               <img
-                                src={`${process.env.AWS_S3_PRODUCT_IMAGE_URL}${file?.url}`}
+                                src={`${process.env.S3_PRODUCT_IMAGE_URL}${file?.url}`}
                                 alt={`${product?.name} product image`}
                                 className="h-full cursor-move"
                               />

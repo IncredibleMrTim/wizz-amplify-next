@@ -126,7 +126,7 @@ const ProductPage = () => {
     <div className="flex flex-col gap-4">
       <meta
         name="og:image"
-        content={`${process.env.AWS_S3_PRODUCT_IMAGE_URL}${currentProduct?.images?.[0]?.url}`}
+        content={`${process.env.S3_PRODUCT_IMAGE_URL}${currentProduct?.images?.[0]?.url}`}
       />
       <meta
         name="og:title"
@@ -189,7 +189,7 @@ const ProductPage = () => {
         <div className="flex justify-around w-3/5 gap-2  h-164 overflow-hidden">
           <div className="flex w-7/8 relative">
             <img
-              src={`${process.env.AWS_S3_PRODUCT_IMAGE_URL}${selectedImageUrl ?? currentProduct?.images?.[0]?.url}`}
+              src={`${process.env.S3_PRODUCT_IMAGE_URL}${selectedImageUrl ?? currentProduct?.images?.[0]?.url}`}
               alt={currentProduct?.name}
               className="flex w-full object-cover grow-0 shrink-0"
             />
@@ -209,7 +209,7 @@ const ProductPage = () => {
               return (
                 <img
                   key={image?.url}
-                  src={`${process.env.AWS_S3_PRODUCT_IMAGE_URL}${image?.url}`}
+                  src={`${process.env.S3_PRODUCT_IMAGE_URL}${image?.url}`}
                   alt={image?.altText || currentProduct?.name}
                   className="border-1 border-pink-100 p-1  cursor-pointer  hover:border-pink-200 hover:shadow-lg transition-all duration-300 rounded-sm flex-shrink-0"
                   onClick={() => setSelectedImageUrl(image?.url || null)}
