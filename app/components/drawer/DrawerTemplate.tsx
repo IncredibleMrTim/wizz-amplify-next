@@ -38,7 +38,7 @@ export const DrawerTemplate = ({ type }: DrawerTemplateProps) => {
         <ul className="w-full">
           {components &&
             components.map((component, i) => (
-              <>
+              <div key={i} className="w-full">
                 <li key={component.id} className="py-4 w-full h-full">
                   <Link
                     href={component.href}
@@ -54,7 +54,7 @@ export const DrawerTemplate = ({ type }: DrawerTemplateProps) => {
                   </Link>
                 </li>
                 <Separator />
-              </>
+              </div>
             ))}
         </ul>
       </div>

@@ -7,7 +7,6 @@ import { useAppDispatch, useAppSelector } from "@/stores/store";
 import { AUTH_TYPES } from "@/stores/auth/authSlice";
 import { FiLogOut, FiHome, FiSettings } from "react-icons/fi";
 import Link from "next/link";
-import { cookies } from "next/headers";
 
 export const AuthUserMenu = ({
   onMenuItemClick,
@@ -24,6 +23,7 @@ export const AuthUserMenu = ({
       setIsSigningOut(true);
 
       await signOut();
+
       await caches.delete("auth");
 
       dispatch({
