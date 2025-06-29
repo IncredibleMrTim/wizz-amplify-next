@@ -183,7 +183,7 @@ const ProductPage = () => {
           </div>
         </div>
         <div className="flex flex-col justify-around w-full gap-2 overflow-hidden md:w-3/5 md:h-164 md:flex-row">
-          <div className="flex relative w-full sm:h-128 md:w-7/8">
+          <div className="flex relative w-full h-128 md:h-auto md:w-7/8">
             <img
               src={`${process.env.S3_PRODUCT_IMAGE_URL}${selectedImageUrl ?? currentProduct?.images?.[0]?.url}`}
               alt={currentProduct?.name}
@@ -200,14 +200,14 @@ const ProductPage = () => {
               </Link>
             )}
           </div>
-          <div className="flex w-full shrink-0 md:h-full gap-1 overflow-scroll h-32 md:h-auto md:flex-col md:w-1/8">
+          <div className="flex w-full shrink-0 gap-1 overflow-scroll h-32 md:h-full md:flex-col md:w-1/8">
             {currentProduct?.images?.map((image) => {
               return (
                 <img
                   key={image?.url}
                   src={`${process.env.S3_PRODUCT_IMAGE_URL}${image?.url}`}
                   alt={image?.altText || currentProduct?.name}
-                  className="border-1 border-pink-100 p-1  cursor-pointer  hover:border-pink-200 hover:shadow-lg transition-all duration-300 rounded-sm flex-shrink-0"
+                  className="border-1 object-fit border-pink-100 p-1  cursor-pointer  hover:border-pink-200 hover:shadow-lg transition-all duration-300 rounded-sm flex-shrink-0"
                   onClick={() => setSelectedImageUrl(image?.url || null)}
                 />
               );

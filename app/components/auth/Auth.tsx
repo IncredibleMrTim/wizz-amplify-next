@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/stores/store";
 import { AUTH_TYPES } from "@/stores/auth/authSlice";
+import { fetchAuthSession } from "aws-amplify/auth";
 
 const CheckAuth = () => {
   const pathname = usePathname();
@@ -14,23 +15,27 @@ const CheckAuth = () => {
   useEffect(() => {
     async function checkAuth() {
       try {
-        const authorized = await AuthGetCurrentUserServer();
+        const credentials = (await fetchAuthSession({ forceRefresh: true }))
+          .credentials;
 
-        // if we are not authorized user, we need to set the current user to null
-        // so that user cannot access the protected routes
-        if (!authorized) {
+        if (credentials?.expiration && credentials.expiration > new Date()) {
+          const user = await AuthGetCurrentUserServer();
+
+          // only set the user if it is not already set
+          // so that we don't continuously update the state
+          if (user && !currentUser) {
+            dispatch({
+              type: AUTH_TYPES.SET_CURRENT_USER,
+              payload: user,
+            });
+          }
+        } else {
+          // if we are not authorized user, we need to set the current user to null
+          // so that user cannot access the protected routes
+
           dispatch({
             type: AUTH_TYPES.SET_CURRENT_USER,
             payload: null,
-          });
-        }
-
-        // only set the user if it is not already set
-        // so that we don't continuously update the state
-        if (authorized && !currentUser) {
-          dispatch({
-            type: AUTH_TYPES.SET_CURRENT_USER,
-            payload: authorized,
           });
         }
       } catch (error) {
