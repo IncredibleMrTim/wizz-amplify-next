@@ -10,19 +10,22 @@ const Header = () => {
   const pathname = usePathname();
   return (
     <>
-      <header className="h-48 relative">
-        <div className="absolute top-0 left-0 w-full h-48 bg-gradient-to-r from-transparent from-40% to-black to-100%">
-          <img
-            src="/header-model.jpg"
-            alt="Header Model"
-            className="background-image w-full h-full object-cover opacity-50"
-          />
-          <img
-            src="/wizz-logo-trans-full.webp"
-            alt="Wizzington Moos Boutique Logo"
-            className="w-64 md:w-96 object-right absolute top-0 right-0 mt-4 mr-4"
-            onClick={() => router.push("/")}
-          />
+      <header className="h-48">
+        <div
+          className="flex h-48 bg-no-repeat bg-cover"
+          style={{
+            backgroundImage:
+              "linear-gradient(to right, transparent 30%, #00000075 100%), url('/header-model.jpg')",
+            backgroundPosition: "30%",
+          }}
+        >
+          <div className="w-full flex justify-center md:justify-end p-4">
+            <img
+              src="/wizz-logo-trans-v2-flare-stroke.webp"
+              alt="Wizzington Moos Boutique Logo"
+              onClick={() => router.push("/")}
+            />
+          </div>
         </div>
       </header>
       <div className="hidden w-full border-b border-gray-300 h-10 sho md:flex">
