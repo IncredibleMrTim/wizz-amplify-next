@@ -17,9 +17,9 @@ export const DrawerTemplate = ({ type }: DrawerTemplateProps) => {
   const dispatch = useAppDispatch();
 
   return (
-    <div className="bg-gray-800 h-full w-full rounded-md bg-gradient-to-t from-gray-300 from-1% to-transparent to-80%">
-      <div className="w-full flex justify-end p-2 mb-4  pt-6 pr-6">
-        <img src="/wizz-logo-trans.webp" className="w-1/2" />
+    <div className="bg-white h-full w-full rounded-md bg-gradient-to-tr from-gray-300 from-20% to-transparent to-100%">
+      <div className="w-full flex justify-end p-2 mb-4 pt-6 pr-6">
+        <img src="/wizz-logo-trans-v2-flare-stroke.webp" className="w-3/8" />
         <div className="fixed top-0 left-0 p-2">
           <FiChevronsRight
             size={24}
@@ -34,7 +34,7 @@ export const DrawerTemplate = ({ type }: DrawerTemplateProps) => {
         </div>
       </div>
 
-      <div className="p-4 w-full">
+      <div className="px-4 w-full">
         <ul className="w-full">
           {components &&
             components.map((component, i) => (
@@ -42,7 +42,7 @@ export const DrawerTemplate = ({ type }: DrawerTemplateProps) => {
                 <li key={component.id} className="py-4 w-full h-full">
                   <Link
                     href={component.href}
-                    className="flex text-lg text-gray-100 w-full place-items-center"
+                    className="flex text-lg text-gray-700 w-full place-items-center"
                     onClick={() => {
                       dispatch({
                         type: STORE_PATHS.SET_DRAWER_IS_OPEN,
@@ -61,7 +61,7 @@ export const DrawerTemplate = ({ type }: DrawerTemplateProps) => {
 
       {currentUser && (
         <>
-          <div className="flex flex-col w-full fixed bottom-0 left-0 text-lg text-gray-100 p-4 items-center">
+          <div className="flex flex-col w-full fixed bottom-0 left-0 text-lg text-gray-100 p-4 items-center gap-2">
             <Separator />
             {currentUser && (
               <div className="flex w-full items-center">
