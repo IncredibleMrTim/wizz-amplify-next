@@ -11,16 +11,21 @@ const Header = () => {
   return (
     <>
       <header className="h-48 relative">
-        <div className="absolute top-0 left-0 w-full h-48 bg-gradient-to-r from-transparent from-40% to-black to-100%">
+        {/* Background image */}
+        <div
+          className="absolute inset-0 w-full h-48 bg-cover bg-no-repeat opacity-60"
+          style={{
+            backgroundImage: "url('/header-model.jpg')",
+            backgroundPosition: "30%",
+          }}
+        />
+        {/* Gradient overlay */}
+        <div className="flex absolute inset-0 w-full h-48 md:bg-gradient-to-r from-transparent from-20% to-[#f8f8f8] to-100% pointer-events-none" />
+        {/* Content */}
+        <div className="relative z-10 w-full flex justify-center md:justify-end p-4 h-48">
           <img
-            src="/header-model.jpg"
-            alt="Header Model"
-            className="background-image w-full h-full object-cover opacity-50"
-          />
-          <img
-            src="/wizz-logo-trans-full.webp"
+            src="/wizz-logo-trans-v2-flare-stroke.webp"
             alt="Wizzington Moos Boutique Logo"
-            className="w-64 md:w-96 object-right absolute top-0 right-0 mt-4 mr-4"
             onClick={() => router.push("/")}
           />
         </div>
