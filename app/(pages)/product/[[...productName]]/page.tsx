@@ -61,13 +61,6 @@ const ProductPage = () => {
     }
   }, [currentProduct, queryResult, dispatch]);
 
-  // TODO: this needs to be relative to the  current lead time of products
-  const defaultDate = () => {
-    const today = new Date();
-    today.setDate(today.getDate() + 7); // Set default date to 7 days from today
-    return today;
-  };
-
   const form = useForm<
     z.infer<typeof formSchema>,
     any,
@@ -143,35 +136,38 @@ const ProductPage = () => {
           "-"
         )}`}
       />
-      <div className="flex justify-between flex-row gap-16">
-        <div className="flex flex-col gap-4 w-3/5">
+      {/* Mobile title */}
+      <h1 className="flex md:hidden">
+        {currentProduct ? currentProduct?.name : "...Loading"}
+      </h1>
+      <div className="flex flex-col-reverse gap-8 md:gap-16 md:flex-row justify-between">
+        <div className="flex flex-col gap-4 w-full md:w-3/5">
+          {/* Desktop title */}
+          <h1 className="hidden md:flex">
+            {currentProduct ? currentProduct?.name : "...Loading"}
+          </h1>
           <div className="flex flex-col gap-4">
-            <h1>{currentProduct ? currentProduct?.name : "...Loading"}</h1>
-            <div className="flex flex-col gap-4">
-              <p className="whitespace-pre-wrap">
-                {currentProduct?.description}
+            <p className="whitespace-pre-wrap">{currentProduct?.description}</p>
+            <div className="flex items-center justify-between w-full">
+              <p className="!font-bold !text-lg">
+                Price: £{currentProduct?.price}
               </p>
-              <div className="flex items-center justify-between w-full">
-                <p className="!font-bold !text-lg">
-                  Price: £{currentProduct?.price}
-                </p>
-                <Link
-                  href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-                    `${process.env.ROOT_URL}/product/${currentProduct?.name?.replace(
-                      /\s+/g,
-                      "-"
-                    )}`
-                  )}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex gap-2 opacity-70 hover:opacity-100 transition-opacity w-auto"
-                >
-                  Share on Facebook:
-                  <FaFacebook size={20} />
-                </Link>
-              </div>
-              <hr />
+              <Link
+                href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+                  `${process.env.ROOT_URL}/product/${currentProduct?.name?.replace(
+                    /\s+/g,
+                    "-"
+                  )}`
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex gap-2 opacity-70 hover:opacity-100 transition-opacity w-auto"
+              >
+                Share on Facebook:
+                <FaFacebook size={20} />
+              </Link>
             </div>
+            <hr className="mt-4 md:mt-auto" />
           </div>
           <div>
             <Form {...form}>
@@ -186,8 +182,8 @@ const ProductPage = () => {
             </Form>
           </div>
         </div>
-        <div className="flex justify-around w-3/5 gap-2  h-164 overflow-hidden">
-          <div className="flex w-7/8 relative">
+        <div className="flex flex-col justify-around w-full gap-2 overflow-hidden md:w-3/5 md:h-164 md:flex-row">
+          <div className="flex relative w-full sm:h-128 md:w-7/8">
             <img
               src={`${process.env.S3_PRODUCT_IMAGE_URL}${selectedImageUrl ?? currentProduct?.images?.[0]?.url}`}
               alt={currentProduct?.name}
@@ -204,7 +200,7 @@ const ProductPage = () => {
               </Link>
             )}
           </div>
-          <div className="flex flex-col w-1/8 shrink-0 h-full gap-1 overflow-scroll">
+          <div className="flex w-full shrink-0 md:h-full gap-1 overflow-scroll h-32 md:h-auto md:flex-col md:w-1/8">
             {currentProduct?.images?.map((image) => {
               return (
                 <img
