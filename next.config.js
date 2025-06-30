@@ -6,7 +6,7 @@ const nextConfig = {
     S3_PRODUCT_IMAGE_URL: process.env.S3_PRODUCT_IMAGE_URL,
   },
   images: {
-    domains: process.env.S3_IMAGE_DOMAIN,
+    domains: [process.env.S3_IMAGE_DOMAIN],
   },
 };
 export default nextConfig;

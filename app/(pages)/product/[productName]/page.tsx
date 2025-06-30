@@ -69,20 +69,124 @@ const ProductPage = () => {
     resolver: zodResolver(formSchema),
   });
 
+  // Measurements ;
+  // Chest
+  // Waist
+  // Hips
+  // Girth
+  // Head
+  // Neck
+  // Bicep
+  // Armpit to wrist
+  // Wrist
+  // Inseam (crotch to ankle )
+  // Waist to ankle
+  // Waist to floor
+  // Ankle
+
   const formFields = [
     {
-      waistSize: {
-        label: "Waist Size",
-        placeholderText: "Enter your waist size",
-        icon: TbRulerMeasure,
+      chestSize: {
+        label: "Chest Size (Circumference Around Chest)",
+        placeholderText: "Enter chest size",
+        // // icon: TbRulerMeasure,
         variant: "number",
       },
     },
     {
-      chestSize: {
-        label: "Chest Size",
-        placeholderText: "Enter your chest size",
-        icon: TbRulerMeasure,
+      waistSize: {
+        label: "Waist Size (Circumference Around Waist)",
+        placeholderText: "Enter waist size",
+        // // icon: TbRulerMeasure,
+        variant: "number",
+      },
+    },
+    {
+      hipsSize: {
+        label: "Hip Size (Circumference Around Hips)",
+        placeholderText: "Enter hip size",
+        // // icon: TbRulerMeasure,
+        variant: "number",
+      },
+    },
+    {
+      girth: {
+        label: "Girth Measurement (Around the Body)",
+        placeholderText: "Girth measurement",
+        // icon: TbRulerMeasure,
+        variant: "number",
+      },
+    },
+    {
+      headSize: {
+        label: "Head Size (Hat Size)",
+        placeholderText: "Enter head size",
+        // icon: TbRulerMeasure,
+        variant: "number",
+      },
+    },
+    {
+      neckSize: {
+        label: "Neck Size (Collar Size)",
+        placeholderText: "Enter neck size",
+        // icon: TbRulerMeasure,
+        variant: "number",
+      },
+    },
+    {
+      bicepSize: {
+        label: "Bicep Size (Upper Arm Circumference)",
+        placeholderText: "Enter bicep size",
+        // icon: TbRulerMeasure,
+        variant: "number",
+      },
+    },
+    {
+      armpitToWrist: {
+        label: "Armpit to Wrist (Arm Length)",
+        placeholderText: "Enter armpit to wrist",
+        // icon: TbRulerMeasure,
+        variant: "number",
+      },
+    },
+    {
+      wristSize: {
+        label: "Wrist Size",
+        placeholderText: "Enter wrist size",
+        // icon: TbRulerMeasure,
+        variant: "number",
+      },
+    },
+    {
+      inseam: {
+        label: "Inseam (Crotch to Ankle Length)",
+        placeholderText: "Enter crotch to ankle",
+        // icon: TbRulerMeasure,
+        variant: "number",
+      },
+    },
+    {
+      waistToAnkle: {
+        label: "Waist to Ankle (Length of Pants)",
+        placeholderText: "waist to ankle",
+        // icon: TbRulerMeasure,
+        variant: "number",
+      },
+    },
+    {
+      waistToFloor: {
+        label: "Waist to Floor (Length of Dress)",
+        placeholderText: "Enter waist to floor",
+        // icon: TbRulerMeasure,
+        variant: "number",
+      },
+    },
+
+    {
+      ankleSize: {
+        label: "Ankle Size (For Shoes)",
+        placeholderText: "Enter your ankle size",
+        // icon: TbRulerMeasure,
         variant: "number",
       },
     },
@@ -165,6 +269,16 @@ const ProductPage = () => {
               >
                 Share on Facebook:
                 <FaFacebook size={20} />
+              </Link>
+              <Link
+                href={`/product/${currentProduct?.name?.replace(
+                  /\s+/g,
+                  "-"
+                )}/orderForm`}
+                prefetch
+                className="flex items-center gap-2 px-4 py-2 bg-pink-200 rounded-md hover:bg-pink-300 transition-colors duration-300"
+              >
+                Order
               </Link>
             </div>
             <hr className="mt-4 md:mt-auto" />
