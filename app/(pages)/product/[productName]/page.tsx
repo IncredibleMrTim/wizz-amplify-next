@@ -3,38 +3,9 @@ import { useEffect, useState } from "react";
 import { useAppSelector, useAppDispatch, STORE_PATHS } from "@/stores/store";
 import { useGetProductQuery } from "@/services/product/useGetProductQuery";
 import { useParams } from "next/navigation";
-import { Form } from "@/components/shad/form";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { TbRulerMeasure } from "react-icons/tb";
-import { FiCalendar, FiEdit } from "react-icons/fi";
-import { PiBasket } from "react-icons/pi";
-import { z } from "zod";
 import Link from "next/link";
-import { FormField as FField } from "./FormField";
 import { FaFacebook } from "react-icons/fa6";
-import { Schema } from "amplify/data/resource";
-
-const formSchema = z.object({
-  waistSize: z.coerce.number().min(0, { message: "Waist size is required" }),
-  chestSize: z.coerce.number().min(0, { message: "Chest size is required" }),
-  height: z.coerce
-    .number()
-    .min(0, { message: "Height is required" })
-    .nullable(),
-  notes: z
-    .string()
-    .max(1000, { message: "Maximum character length exceeded" })
-    .optional(),
-  quantity: z.coerce
-    .number()
-    .min(0, { message: "Stock must be a positive number" })
-    .max(4, {
-      message: "Maximum quantity is 4",
-    }),
-
-  deliveryDate: z.date(),
-});
+import { FiEdit } from "react-icons/fi";
 
 const ProductPage = () => {
   const params = useParams();
@@ -60,60 +31,6 @@ const ProductPage = () => {
       });
     }
   }, [currentProduct, queryResult, dispatch]);
-
-  const form = useForm<
-    z.infer<typeof formSchema>,
-    any,
-    z.infer<typeof formSchema>
-  >({
-    resolver: zodResolver(formSchema),
-  });
-
-  const formFields = [
-    {
-      waistSize: {
-        label: "Waist Size",
-        placeholderText: "Enter your waist size",
-        icon: TbRulerMeasure,
-        variant: "number",
-      },
-    },
-    {
-      chestSize: {
-        label: "Chest Size",
-        placeholderText: "Enter your chest size",
-        icon: TbRulerMeasure,
-        variant: "number",
-      },
-    },
-    {
-      quantity: {
-        label: "Quantity",
-        placeholderText: "Enter quantity",
-        icon: PiBasket,
-        variant: "number",
-      },
-    },
-    {
-      deliveryDate: {
-        label: "Delivery Date",
-        placeholderText: "Select delivery date",
-        icon: FiCalendar,
-        variant: "date",
-      },
-    },
-    {
-      notes: {
-        label: "Additional Information",
-        placeholderText:
-          "Describe any additional information you would like to provide",
-        variant: "textarea",
-        classes: {
-          formItem: "flex flex-col items-start w-full",
-        },
-      },
-    },
-  ];
 
   return (
     <div className="flex flex-col gap-4">
@@ -166,20 +83,24 @@ const ProductPage = () => {
                 Share on Facebook:
                 <FaFacebook size={20} />
               </Link>
+              <Link
+                href={`/product/${currentProduct?.name?.replace(
+                  /\s+/g,
+                  "-"
+                )}/orderDetails`}
+                onClick={(e) => {
+                  if (!currentProduct) {
+                    e.preventDefault();
+                    alert("Product is not available");
+                  }
+                }}
+                prefetch
+                className="flex items-center gap-2 px-4 py-2 bg-pink-200 rounded-md hover:bg-pink-300 transition-colors duration-300"
+              >
+                Order
+              </Link>
             </div>
             <hr className="mt-4 md:mt-auto" />
-          </div>
-          <div>
-            <Form {...form}>
-              <form className="flex flex-wrap flex-row gap-y-4 items-start w-full">
-                {formFields.map((field, index) => {
-                  const [name, props] = Object.entries(field)[0];
-                  return (
-                    <FField key={name} form={form} name={name} {...props} />
-                  );
-                })}
-              </form>
-            </Form>
           </div>
         </div>
         <div className="flex flex-col justify-around w-full gap-2 overflow-hidden md:w-3/5 md:h-164 md:flex-row">

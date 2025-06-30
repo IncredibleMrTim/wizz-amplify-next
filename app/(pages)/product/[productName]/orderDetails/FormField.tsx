@@ -22,7 +22,8 @@ import { FiCalendar } from "react-icons/fi";
 
 interface UseFormFieldProps extends Partial<ControllerProps> {
   form: UseFormProps<any>["context"];
-  variant?: "number" | "textarea" | "text" | "date";
+  span: boolean;
+  variant?: "number" | "textarea" | "text" | "date" | "hidden";
   placeholder?: string;
   label?: string;
   customControl?: ReactNode;
@@ -57,6 +58,7 @@ export const FormField = ({
   placeholderText,
   label,
   children,
+  span,
   ...rest
 }: UseFormFieldProps) => {
   const renderVariant = (
@@ -158,7 +160,7 @@ export const FormField = ({
       render={({ field }) => {
         return (
           <FormItem
-            className={`flex flex-col items-start w-1/2 ${
+            className={`flex flex-col items-start ${span ? "w-full" : "w-1/2"} ${
               classes?.formItem || ""
             }`}
           >
