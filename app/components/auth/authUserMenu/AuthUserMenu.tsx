@@ -24,7 +24,9 @@ export const AuthUserMenu = ({
 
       await signOut();
 
-      await caches.delete("auth");
+      await caches.delete("idToken");
+      await caches.delete("accessToken");
+      await caches.delete("refreshToken");
 
       dispatch({
         type: AUTH_TYPES.SET_CURRENT_USER,
