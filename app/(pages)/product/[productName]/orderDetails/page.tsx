@@ -2,13 +2,34 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import z from "zod";
-import { Form } from "@/components/shad/form";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import {
+  PopoverTrigger,
+  PopoverContent,
+  Popover,
+} from "@/components/ui/popover";
 import { useAppSelector } from "@/stores/store";
 import { FormField as FField } from "./FormField";
 import { FiCalendar } from "react-icons/fi";
 import { PiBasket } from "react-icons/pi";
+import PayPalProvider from "@/components/payPal/payPalProvider/PayPalProvider";
+import PayPalButton from "@/components/payPal/payPalButton/PayPalButton";
+import { sendEmail } from "@/utils/email"; // Adjust the import path as necessary
+import { Calendar } from "@/components/ui/calendar";
 
-const formFields = [
+type VariantType = "number" | "textarea" | "text" | "date" | "hidden";
+
+const formFields: {
+  [key: string]: {
+    label: string;
+    placeholderText: string;
+    variant: VariantType;
+    icon?: any;
+    classes?: { formItem: string };
+    span?: boolean;
+  };
+}[] = [
   {
     chestSize: {
       label: "Chest Size (Circumference Around Chest)",
@@ -172,6 +193,24 @@ const formSchema = z.object({
   deliveryDate: z.date(),
 });
 
+const handleSuccess = async (details) => {
+  // Handle successful payment (e.g., save order, show confirmation)
+  console.log("Payment successful!", details);
+  await sendEmail({
+    to: process.env.SMTP_EMAIL,
+    subject: "New Order Received",
+    html: `
+      <div>
+        <p>Hey Admin,</p>
+        <p>You have a new order from ${details.payer.name.given_name} ${details.payer.name.surname}.</p>
+        <h3>Order Details</h3>
+        <p><strong>Product:</strong>stuff</p>
+        <p><strong>Amount:</strong> ${details.purchase_units[0].amount.value} ${details.purchase_units[0].amount.currency_code}</p>
+      </div>
+    `,
+  });
+};
+
 const OrderDetailsPage = () => {
   const currentProduct = useAppSelector(
     (state) => state.products.currentProduct
@@ -199,22 +238,107 @@ const OrderDetailsPage = () => {
           aliquet, pulvinar luctus justo aliquam.
         </p>
       </div>
-      <Form {...form}>
-        <form className="flex flex-wrap flex-row gap-y-4 items-start w-full">
-          {formFields.map((field, index) => {
-            const [name, props] = Object.entries(field)[0];
-            return (
-              <FField
-                key={name}
-                form={form}
-                name={name}
-                {...props}
-                classes={{ formItem: "px-4" }}
-              />
-            );
-          })}
-        </form>
-      </Form>
+
+      <div className="flex flex-wrap flex-row gap-y-4 items-start w-full">
+        {formFields.map((field, index) => {
+          const [name, props] = Object.entries(field)[0];
+
+          switch (field.variant) {
+            case "date":
+              return (
+                <div>Date</div>
+
+                // <Popover key={name}>
+                //   <PopoverTrigger asChild>
+                //     <div className="relative w-full">
+                //       <FiCalendar
+                //         size={20}
+                //         className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                //       />
+                //       <Input
+                //         type="text"
+                //         placeholder={placeholderText || "Select a date"}
+                //         value={
+                //           (field?.value &&
+                //             new Date(field?.value).toLocaleDateString()) ||
+                //           ""
+                //         }
+                //         readOnly
+                //         className="w-full !border-0 shadow-none !border-b-1 rounded-none border-b-gray-300 focus-visible:ring-transparent"
+                //       />
+                //     </div>
+                //   </PopoverTrigger>
+                //   <PopoverContent className="w-auto p-0 !bg-white">
+                //     <Calendar
+                //       defaultMonth={defaultDate()}
+                //       selected={field.value ? new Date() : undefined}
+                //       mode="single"
+                //       onSelect={(date, day, mod, e) => {
+                //         if (date) {
+                //           field.onChange(date);
+                //           form.setValue("deliveryDate", date, {
+                //             shouldValidate: true,
+                //           });
+                //         }
+                //       }}
+                //     />
+                //   </PopoverContent>
+                // </Popover>
+              );
+            case "textarea":
+              return (
+                <Textarea
+                  key={name}
+                  maxLength={1000}
+                  placeholder="Describe any additional information you would like to provide"
+                  className={`"w-full h-32 border-gray-300 focus-visible:ring-transparent shadow-none" ${
+                    field?.classes?.control || ""
+                  }`}
+                  {...field}
+                />
+              );
+              break;
+
+            default:
+              return (
+                <div>Input</div>
+                // <Input
+                //   key={name}
+                //   type={field.variant}
+                //   placeholder={field.placeholderText}
+                //   className={`"w-full !border-0 shadow-none !border-b-1 rounded-none border-b-gray-300 focus-visible:ring-transparent" ${
+                //     field?.classes?.control || ""
+                //   }`}
+                //   {...field}
+                //   onChange={(e) => {
+                //     if (e.target.value) {
+                //       form.setValue(rest?.name as string, e.target.value, {
+                //         shouldValidate: true,
+                //       });
+                //     } else {
+                //       form.setValue(rest?.name as string, "", {
+                //         shouldValidate: false,
+                //       });
+                //     }
+                //   }}
+                // />
+              );
+          }
+          // return (
+          //   <FField
+          //     key={name}
+          //     form={form}
+          //     name={name}
+          //     {...props}
+          //     classes={{ formItem: "px-4" }}
+          //   />
+          // );
+        })}
+      </div>
+
+      <PayPalProvider>
+        <PayPalButton amount="22.50" onSuccess={handleSuccess} />
+      </PayPalProvider>
     </div>
   );
 };
