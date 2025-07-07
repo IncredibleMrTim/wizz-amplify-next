@@ -1,188 +1,78 @@
 "use client";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import z from "zod";
-import { Form } from "@/components/shad/form";
+
+import { useState } from "react";
+import { ZodError } from "zod";
+
+import PayPalButton, { OrderResponseBody } from "@/components/payPal/payPalButton/PayPalButton";
+// Define OrderResponseBody type locally since it's not exported by PayPal types
+
+import PayPalProvider from "@/components/payPal/payPalProvider/PayPalProvider";
 import { useAppSelector } from "@/stores/store";
-import { FormField as FField } from "./FormField";
-import { FiCalendar } from "react-icons/fi";
-import { PiBasket } from "react-icons/pi";
+import { sendEmail } from "@/utils/email"; // Adjust the import path as necessary
 
-const formFields = [
-  {
-    chestSize: {
-      label: "Chest Size (Circumference Around Chest)",
-      placeholderText: "Enter chest size",
-      // // icon: TbRulerMeasure,
-      variant: "number",
-    },
-  },
-  {
-    waistSize: {
-      label: "Waist Size (Circumference Around Waist)",
-      placeholderText: "Enter waist size",
-      // // icon: TbRulerMeasure,
-      variant: "number",
-    },
-  },
-  {
-    hipsSize: {
-      label: "Hip Size (Circumference Around Hips)",
-      placeholderText: "Enter hip size",
-      // // icon: TbRulerMeasure,
-      variant: "number",
-    },
-  },
-  {
-    girth: {
-      label: "Girth Measurement (Around the Body)",
-      placeholderText: "Girth measurement",
-      // icon: TbRulerMeasure,
-      variant: "number",
-    },
-  },
-  {
-    headSize: {
-      label: "Head Size (Hat Size)",
-      placeholderText: "Enter head size",
-      // icon: TbRulerMeasure,
-      variant: "number",
-    },
-  },
-  {
-    neckSize: {
-      label: "Neck Size (Collar Size)",
-      placeholderText: "Enter neck size",
-      // icon: TbRulerMeasure,
-      variant: "number",
-    },
-  },
-  {
-    bicepSize: {
-      label: "Bicep Size (Upper Arm Circumference)",
-      placeholderText: "Enter bicep size",
-      // icon: TbRulerMeasure,
-      variant: "number",
-    },
-  },
-  {
-    armpitToWrist: {
-      label: "Armpit to Wrist (Arm Length)",
-      placeholderText: "Enter armpit to wrist",
-      // icon: TbRulerMeasure,
-      variant: "number",
-    },
-  },
-  {
-    wristSize: {
-      label: "Wrist Size",
-      placeholderText: "Enter wrist size",
-      // icon: TbRulerMeasure,
-      variant: "number",
-    },
-  },
-  {
-    inseam: {
-      label: "Inseam (Crotch to Ankle Length)",
-      placeholderText: "Enter crotch to ankle",
-      // icon: TbRulerMeasure,
-      variant: "number",
-    },
-  },
-  {
-    waistToAnkle: {
-      label: "Waist to Ankle (Length of Pants)",
-      placeholderText: "waist to ankle",
-      // icon: TbRulerMeasure,
-      variant: "number",
-    },
-  },
-  {
-    waistToFloor: {
-      label: "Waist to Floor (Length of Dress)",
-      placeholderText: "Enter waist to floor",
-      // icon: TbRulerMeasure,
-      variant: "number",
-    },
-  },
-
-  {
-    ankleSize: {
-      label: "Ankle Size (For Shoes)",
-      placeholderText: "Enter your ankle size",
-      // icon: TbRulerMeasure,
-      variant: "number",
-    },
-  },
-  {
-    quantity: {
-      label: "Quantity",
-      placeholderText: "Enter quantity",
-      icon: PiBasket,
-      variant: "number",
-    },
-  },
-  {
-    deliveryDate: {
-      label: "Delivery Date",
-      placeholderText: "Select delivery date",
-      icon: FiCalendar,
-      variant: "date",
-    },
-  },
-  {
-    spacer1: {
-      label: " ",
-      placeholderText: " ",
-      variant: "hidden",
-    },
-  },
-  {
-    notes: {
-      label: "Additional Information",
-      placeholderText:
-        "Describe any additional information you would like to provide",
-      variant: "textarea",
-      classes: {
-        formItem: "flex flex-col items-start w-full",
-      },
-      span: true,
-    },
-  },
-];
-
-const formSchema = z.object({
-  waistSize: z.coerce.number().min(0, { message: "Waist size is required" }),
-  chestSize: z.coerce.number().min(0, { message: "Chest size is required" }),
-  height: z.coerce
-    .number()
-    .min(0, { message: "Height is required" })
-    .nullable(),
-  notes: z
-    .string()
-    .max(1000, { message: "Maximum character length exceeded" })
-    .optional(),
-  quantity: z.coerce
-    .number()
-    .min(0, { message: "Stock must be a positive number" })
-    .max(4, {
-      message: "Maximum quantity is 4",
-    }),
-
-  deliveryDate: z.date(),
-});
+import { fields } from "./fields";
+import { OrderEmailTemplate } from "./orderEmailTemplate";
+import { OrderField } from "./OrderField";
 
 const OrderDetailsPage = () => {
+  const [fieldErrors, setFieldErrors] = useState<{
+    [key: string]: ZodError | null;
+  }>({});
+  const [fieldData, setFieldData] = useState<{ [key: string]: string }>({});
   const currentProduct = useAppSelector(
     (state) => state.products.currentProduct
   );
-  const form = useForm<
-    z.infer<typeof formSchema>,
-    any,
-    z.infer<typeof formSchema>
-  >({
-    resolver: zodResolver(formSchema),
-  });
+
+  const requiredFieldNames = fields
+    .map((field) => Object.keys(field)[0])
+    .filter(
+      (name) =>
+        name !== "deliveryDate" && name !== "spacer1" && name !== "notes"
+    );
+
+  const allRequiredFieldsFilled = requiredFieldNames.every(
+    (name) => fieldData[name] && fieldData[name] !== ""
+  );
+
+  const handleSuccess = async (details: OrderResponseBody) => {
+    console.log("Transaction completed by:", details);
+    await sendEmail({
+      to: process.env.SMTP_EMAIL,
+      subject: "New Order Received",
+      html: OrderEmailTemplate(details),
+    });
+  };
+
+  const handleValidation = (
+    fieldName: string,
+    value: ZodError | string | null
+  ) => {
+    if (typeof value === "object") {
+      setFieldErrors((prev) => ({
+        ...prev,
+        [fieldName]: value as ZodError, // Use the first path element as the key
+      }));
+
+      return true; // Indicate that there was an error
+    }
+
+    setFieldErrors((prev) => {
+      const newErrors = { ...prev };
+
+      // Remove the error if the field is now valid
+      if (typeof value === "string" && value.trim() !== "") {
+        delete newErrors[fieldName];
+      }
+      return newErrors;
+    });
+
+    setFieldData((prev) => ({ ...prev, [fieldName]: value }));
+    return false; // No error
+  };
+
+  // Disable if any field has an error
+  const hasAnyError = Object.values(fieldErrors).some(Boolean);
+
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-4">
@@ -199,22 +89,30 @@ const OrderDetailsPage = () => {
           aliquet, pulvinar luctus justo aliquam.
         </p>
       </div>
-      <Form {...form}>
-        <form className="flex flex-wrap flex-row gap-y-4 items-start w-full">
-          {formFields.map((field, index) => {
-            const [name, props] = Object.entries(field)[0];
-            return (
-              <FField
-                key={name}
-                form={form}
-                name={name}
+
+      <div className="flex flex-wrap flex-row gap-y-4 w-full">
+        {fields.map((field, index) => {
+          const [name, props] = Object.entries(field)[0];
+
+          return (
+            <div className="w-1/2 py-2 px-4" key={props.name || index}>
+              <OrderField
                 {...props}
-                classes={{ formItem: "px-4" }}
+                name={name}
+                onValidation={handleValidation}
               />
-            );
-          })}
-        </form>
-      </Form>
+            </div>
+          );
+        })}
+      </div>
+
+      <PayPalProvider>
+        <PayPalButton
+          amount="22.50"
+          onSuccess={handleSuccess}
+          disabled={!allRequiredFieldsFilled || hasAnyError}
+        />
+      </PayPalProvider>
     </div>
   );
 };

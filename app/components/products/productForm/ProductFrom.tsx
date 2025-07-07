@@ -1,7 +1,7 @@
 "use client";
 
-import { Input } from "@/components/shad/input";
-import { Textarea } from "@/components/shad/textarea";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
 import { Button } from "@radix-ui/themes";
 import {
@@ -12,7 +12,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/shad/form";
+} from "@/components/ui/form";
 import { type Schema } from "amplify/data/resource";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { z } from "zod";
