@@ -1,10 +1,10 @@
-export type emailAttachments = {
+export type EmailAttachments = {
   filename: string;
   path: string;
   cid: string;
 };
 
-interface sendEmailProps {
+export interface SendEmailProps {
   to: string;
   from?: string;
   subject: string;
@@ -12,6 +12,7 @@ interface sendEmailProps {
   firstName?: string;
   lastName?: string;
   html?: string;
+  attachments?: EmailAttachments[];
 }
 
 export const sendEmail = async ({
@@ -22,13 +23,9 @@ export const sendEmail = async ({
   firstName,
   lastName,
   html,
-}: sendEmailProps) => {
-  console.log("Sending email to:", to);
-  console.log("Email subject:", subject);
-  console.log("Email from:", from ?? process.env.SMTP_EMAIL);
-  console.log("Email firstName:", firstName);
-  console.log("Email lastName:", lastName);
-  console.log("Email message:", message);
+  attachments,
+}: SendEmailProps) => {
+  console.log("html", html);
 
   try {
     const res = await fetch("/api/sendEmail", {
@@ -38,27 +35,13 @@ export const sendEmail = async ({
         to,
         from: from ?? process.env.SMTP_EMAIL,
         subject,
-        html:
-          html ??
-          `
-              <div>
-                <p>Hey GTown Festival Admin</p>
-                <p>
-                  You have a new message from
-                  <strong>${firstName} ${lastName}</strong>
-                </p>
-  
-                <h3>Message Details</h3>
-                <p><strong>From:</strong> ${from}</p>
-                <p>${message}</p>
-              </div>
-            `,
+        attachments,
+        html,
       }),
     });
     const data = await res.json();
     if (data.success) {
-      console.log("Email sent successfully");
-      return Promise.resolve(true, data);
+      return Promise.resolve(true);
     }
     return Promise.reject(new Error(data.error || "Failed to send email"));
   } catch (error) {

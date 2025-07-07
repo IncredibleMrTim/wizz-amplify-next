@@ -1,18 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { ZodError } from "zod";
 
-import z, { ZodError } from "zod";
+import PayPalButton, { OrderResponseBody } from "@/components/payPal/payPalButton/PayPalButton";
+// Define OrderResponseBody type locally since it's not exported by PayPal types
 
-import PayPalButton from "@/components/payPal/payPalButton/PayPalButton";
 import PayPalProvider from "@/components/payPal/payPalProvider/PayPalProvider";
-
 import { useAppSelector } from "@/stores/store";
 import { sendEmail } from "@/utils/email"; // Adjust the import path as necessary
 
+import { fields } from "./fields";
+import { OrderEmailTemplate } from "./orderEmailTemplate";
 import { OrderField } from "./OrderField";
-import { fields, fieldSchema } from "./fields";
-import { omit } from "lodash";
 
 const OrderDetailsPage = () => {
   const [fieldErrors, setFieldErrors] = useState<{
@@ -34,19 +34,12 @@ const OrderDetailsPage = () => {
     (name) => fieldData[name] && fieldData[name] !== ""
   );
 
-  const handleSuccess = async (details: any) => {
+  const handleSuccess = async (details: OrderResponseBody) => {
+    console.log("Transaction completed by:", details);
     await sendEmail({
       to: process.env.SMTP_EMAIL,
       subject: "New Order Received",
-      html: `
-      <div>
-        <p>Hey Admin,</p>
-        <p>You have a new order from ${details.payer.name.given_name} ${details.payer.name.surname}.</p>
-        <h3>Order Details</h3>
-        <p><strong>Product:</strong>stuff</p>
-        <p><strong>Amount:</strong> ${details.purchase_units[0].amount.value} ${details.purchase_units[0].amount.currency_code}</p>
-      </div>
-    `,
+      html: OrderEmailTemplate(details),
     });
   };
 
@@ -55,8 +48,6 @@ const OrderDetailsPage = () => {
     value: ZodError | string | null
   ) => {
     if (typeof value === "object") {
-      console.log("Error in OrderField - 2:", value as ZodError);
-      console.log("Field Errors:", fieldErrors);
       setFieldErrors((prev) => ({
         ...prev,
         [fieldName]: value as ZodError, // Use the first path element as the key
@@ -79,22 +70,9 @@ const OrderDetailsPage = () => {
     return false; // No error
   };
 
-  useEffect(() => {
-    if (fieldData) {
-      console.log("Field Data:", Object.keys(fieldData).length);
-    }
-  }, [fieldData]);
-
   // Disable if any field has an error
   const hasAnyError = Object.values(fieldErrors).some(Boolean);
-  console.log("Fields:", fields.length);
-  console.log(
-    "FieldData:",
-    fields.filter((field) => {
-      const [name] = Object.entries(field)[0];
-      return name !== "deliveryDate" && name !== "spacer1";
-    })
-  );
+
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-4">

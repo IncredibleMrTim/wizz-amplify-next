@@ -3,10 +3,25 @@ import {
   PayPalButtonsComponentProps,
 } from "@paypal/react-paypal-js";
 
+export type OrderResponseBody = {
+  id?: string;
+  status?: string;
+  payer?: {
+    name?: {
+      given_name?: string;
+      surname?: string;
+    };
+    email_address?: string;
+    payer_id?: string;
+    address?: Record<string, any>;
+  };
+  [key: string]: any;
+};
+
 interface PayPalButtonProps {
   amount: string;
   disabled?: boolean; // Optional prop to control button state
-  onSuccess: (details: any) => void; // You can type details more strictly if desired
+  onSuccess: (details: OrderResponseBody) => void; // You can type details more strictly if desired
 }
 
 export default function PayPalButton({
@@ -19,14 +34,13 @@ export default function PayPalButton({
       disabled={disabled}
       createOrder={(data, actions) => {
         return actions.order.create({
-          purchase_units: [{ amount: { currency_code: "USD", value: amount } }],
+          purchase_units: [{ amount: { currency_code: "GBP", value: amount } }],
           intent: "CAPTURE",
         });
       }}
       onApprove={async (data, actions) => {
         if (actions.order) {
           const details = await actions.order.capture();
-          console.log(details);
           onSuccess(details);
         }
       }}

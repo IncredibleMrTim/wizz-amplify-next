@@ -1,4 +1,3 @@
-// filepath: /Volumes/Tims SSD/Github/gtownfestival-next/app/api/send-email/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 

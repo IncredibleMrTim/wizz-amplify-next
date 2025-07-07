@@ -139,7 +139,7 @@ export const OrderField = ({
                       [props.name]: fieldSchema.shape[props.name],
                     }).parse({ [props.name]: e.target.value });
                     setError(null);
-                    console.log("Valid input:", e.target.value);
+
                     onValidation?.(props.name, e.target.value);
                   } catch (error) {
                     setError(error);
