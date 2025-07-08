@@ -141,7 +141,7 @@ const SpecificationPage = () => {
 
       <PayPalProvider>
         <PayPalButton
-          amount="22.50"
+          amount="31.50"
           onSuccess={handleSuccess}
           disabled={!isValidOrderProduct || !currentOrderProduct}
         />
