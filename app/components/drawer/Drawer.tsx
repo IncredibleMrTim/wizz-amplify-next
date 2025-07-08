@@ -5,7 +5,7 @@ import {
   DrawerTitle,
   DrawerHeader,
 } from "@/components/ui/drawer";
-import { useAppDispatch, useAppSelector, STORE_PATHS } from "@/stores/store";
+import { useAppDispatch, useAppSelector, STORE_KEYS } from "@/stores/store";
 import { FiMenu } from "react-icons/fi";
 import { DrawerTemplate } from "./DrawerTemplate";
 
@@ -22,7 +22,7 @@ export const Drawer = () => {
         open={isOpen}
         onOpenChange={(open) => {
           dispatch({
-            type: STORE_PATHS.SET_DRAWER_IS_OPEN,
+            type: STORE_KEYS.SET_DRAWER_IS_OPEN,
             payload: open,
           });
         }}

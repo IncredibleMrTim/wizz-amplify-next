@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import ProductCard from "@/components/products/productCard/ProductCard";
 import { Schema } from "amplify/data/resource";
 import { useGetProductsQuery } from "./services/product/useGetProductsQuery";
-import { useAppDispatch, STORE_PATHS } from "@/stores/store";
+import { useAppDispatch, STORE_KEYS } from "@/stores/store";
 import { Separator } from "./components/separator/Separator";
 
 const FEATURE_PRODUCTS_PER_PAGE = 4;
@@ -19,7 +19,7 @@ export default function App() {
   useEffect(() => {
     if (productsData && isFetched) {
       dispatch({
-        type: STORE_PATHS.SET_PRODUCTS,
+        type: STORE_KEYS.SET_PRODUCTS,
         payload: productsData,
       });
     }

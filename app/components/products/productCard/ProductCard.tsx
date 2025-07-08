@@ -1,7 +1,7 @@
 "use client";
 
 import { Schema } from "amplify/data/resource";
-import { useAppSelector, useAppDispatch, STORE_PATHS } from "@/stores/store";
+import { useAppSelector, useAppDispatch, STORE_KEYS } from "@/stores/store";
 import { useRouter } from "next/navigation";
 import { FiShoppingCart, FiEdit } from "react-icons/fi";
 import Link from "next/link";
@@ -45,7 +45,7 @@ const ProductCard = ({
               href={`/product/${product.name.replace(/\s+/g, "-")}`}
               onClick={() => {
                 dispatch({
-                  type: STORE_PATHS.SET_CURRENT_PRODUCT,
+                  type: STORE_KEYS.SET_CURRENT_PRODUCT,
                   payload: product,
                 });
               }}
@@ -71,7 +71,7 @@ const ProductCard = ({
                     aria-label="Edit Product"
                     onClick={() => {
                       dispatch({
-                        type: STORE_PATHS.SET_CURRENT_PRODUCT,
+                        type: STORE_KEYS.SET_CURRENT_PRODUCT,
                         payload: product,
                       });
                     }}

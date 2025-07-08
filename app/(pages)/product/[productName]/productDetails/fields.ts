@@ -2,7 +2,7 @@ import { FiCalendar } from "react-icons/fi";
 import { PiBasket } from "react-icons/pi";
 import { z } from "zod";
 
-import { Field, Variant } from "./OrderField";
+import { Field, Variant } from "./ProductField";
 
 export const fieldSchema = z.object({
   waistSize: z.coerce.number().min(1),
@@ -19,7 +19,6 @@ export const fieldSchema = z.object({
   waistToFloor: z.coerce.number().min(1),
   ankleSize: z.coerce.number().min(1),
   quantity: z.coerce.number().min(1).max(4),
-  deliveryDate: z.date().refine((date) => date >= new Date()),
   height: z.coerce.number().min(1).nullable(),
   notes: z.string().max(1000).optional(),
 });
@@ -31,7 +30,7 @@ export const fields: {
     chestSize: {
       label: "Chest Size (Circumference Around Chest)",
       placeholderText: "Enter chest size",
-      // // icon: TbRulerMeasure,
+      required: true,
       variant: "number",
       error: "Please enter a valid chest size",
     },
@@ -40,7 +39,7 @@ export const fields: {
     waistSize: {
       label: "Waist Size (Circumference Around Waist)",
       placeholderText: "Enter waist size",
-      // // icon: TbRulerMeasure,
+      required: true,
       variant: "number",
       error: "Please enter a valid waist size",
     },
@@ -49,7 +48,7 @@ export const fields: {
     hipSize: {
       label: "Hip Size (Circumference Around Hips)",
       placeholderText: "Enter hip size",
-      // // icon: TbRulerMeasure,
+      required: true,
       variant: "number",
       error: "Please enter a valid hip size",
     },
@@ -58,7 +57,7 @@ export const fields: {
     girth: {
       label: "Girth Measurement (Around the Body)",
       placeholderText: "Girth measurement",
-      // icon: TbRulerMeasure,
+      required: true,
       variant: "number",
       error: "Please enter a valid girth measurement",
     },
@@ -67,7 +66,7 @@ export const fields: {
     headSize: {
       label: "Head Size (Hat Size)",
       placeholderText: "Enter head size",
-      // icon: TbRulerMeasure,
+      required: true,
       variant: "number",
       error: "Please enter a valid head size",
     },
@@ -76,7 +75,7 @@ export const fields: {
     neckSize: {
       label: "Neck Size (Collar Size)",
       placeholderText: "Enter neck size",
-      // icon: TbRulerMeasure,
+      required: true,
       variant: "number",
       error: "Please enter a valid neck size",
     },
@@ -85,7 +84,7 @@ export const fields: {
     bicepSize: {
       label: "Bicep Size (Upper Arm Circumference)",
       placeholderText: "Enter bicep size",
-      // icon: TbRulerMeasure,
+      required: true,
       variant: "number",
       error: "Please enter a valid bicep size",
     },
@@ -94,7 +93,7 @@ export const fields: {
     armpitToWrist: {
       label: "Armpit to Wrist (Arm Length)",
       placeholderText: "Enter armpit to wrist",
-      // icon: TbRulerMeasure,
+      required: true,
       variant: "number",
       error: "Please enter a valid armpit to wrist measurement",
     },
@@ -103,7 +102,7 @@ export const fields: {
     wristSize: {
       label: "Wrist Size",
       placeholderText: "Enter wrist size",
-      // icon: TbRulerMeasure,
+      required: true,
       variant: "number",
       error: "Please enter a valid wrist size",
     },
@@ -112,7 +111,7 @@ export const fields: {
     inseam: {
       label: "Inseam (Crotch to Ankle Length)",
       placeholderText: "Enter crotch to ankle",
-      // icon: TbRulerMeasure,
+      required: true,
       variant: "number",
       error: "Please enter a valid inseam measurement",
     },
@@ -121,7 +120,7 @@ export const fields: {
     waistToAnkle: {
       label: "Waist to Ankle (Length of Pants)",
       placeholderText: "waist to ankle",
-      // icon: TbRulerMeasure,
+      required: true,
       variant: "number",
       error: "Please enter a valid waist to ankle measurement",
     },
@@ -130,7 +129,7 @@ export const fields: {
     waistToFloor: {
       label: "Waist to Floor (Length of Dress)",
       placeholderText: "Enter waist to floor",
-      // icon: TbRulerMeasure,
+      required: true,
       variant: "number",
       error: "Please enter a valid waist to floor measurement",
     },
@@ -139,7 +138,8 @@ export const fields: {
     ankleSize: {
       label: "Ankle Size (For Shoes)",
       placeholderText: "Enter your ankle size",
-      // icon: TbRulerMeasure,
+      required: true,
+
       variant: "number",
       error: "Please enter a valid ankle size",
     },
@@ -149,24 +149,9 @@ export const fields: {
       label: "Quantity",
       placeholderText: "Enter quantity",
       icon: PiBasket,
+      required: true,
       variant: "number",
       error: "Please enter a quantity (1-4)",
-    },
-  },
-  {
-    deliveryDate: {
-      label: "Delivery Date",
-      placeholderText: "Select delivery date",
-      icon: FiCalendar,
-      variant: "date",
-      error: "Please select a valid delivery date",
-    },
-  },
-  {
-    spacer1: {
-      label: " ",
-      placeholderText: " ",
-      variant: "hidden",
     },
   },
   {
