@@ -14,8 +14,20 @@ import {
 
 import { fieldSchema } from "./fields";
 import moment from "moment";
+import { offsetDate } from "@/utils/date";
 
-export type Variant = "number" | "textarea" | "text" | "date" | "hidden";
+export type Variant =
+  | "number"
+  | "textarea"
+  | "text"
+  | "date"
+  | "hidden"
+  | "error";
+export interface onValidationProps {
+  fieldName: string;
+  value: ZodError | string | number | Date;
+  type?: Variant;
+}
 
 export type Field = {
   label: string;
@@ -25,18 +37,16 @@ export type Field = {
   classes?: { formItem: string };
   span?: boolean;
   name?: string;
-  value?: string | number | Date | null;
+  value?: string | number | null;
   error?: string;
+  required?: boolean;
 };
 
-export const OrderField = ({
+export const ProductField = ({
   onValidation,
   ...props
 }: Field & {
-  onValidation?: (
-    fieldName: string,
-    value: ZodError | string | Date | null
-  ) => boolean;
+  onValidation?: (props: onValidationProps) => void;
 }) => {
   const [value, setValue] = useState<Date | string | undefined | null>(null);
   const [error, setError] = useState<ZodError | null>(null);
@@ -70,22 +80,35 @@ export const OrderField = ({
             <PopoverContent className="w-auto p-0 !bg-white">
               <Calendar
                 defaultMonth={null}
-                selected={new Date(value)}
+                startMonth={offsetDate(7)}
+                selected={value ? new Date(value) : null}
                 mode="single"
-                onSelect={(date, day, mod, e) => {
+                disabled={(date) => date < offsetDate(7)}
+                onSelect={(date) => {
                   if (date) {
                     setValue(date.toISOString());
-
+                    console.log(
+                      "Selected date:",
+                      date.toISOString().slice(0, 10)
+                    );
                     if (props.name) {
                       try {
                         z.object({
                           [props.name]: fieldSchema.shape[props.name],
                         }).parse({ [props.name]: date });
                         setError(null);
-                        onValidation?.(props.name, date);
+                        onValidation?.({
+                          fieldName: props.name || "",
+                          value: date,
+                          type: props.variant,
+                        });
                       } catch (error) {
                         setError(error);
-                        onValidation?.(props.name, error as ZodError);
+                        onValidation?.({
+                          fieldName: props.name || "",
+                          value: error as ZodError,
+                          type: "error",
+                        });
                       }
                     }
                   }
@@ -108,10 +131,18 @@ export const OrderField = ({
                     [props.name]: fieldSchema.shape[props.name],
                   }).parse({ [props.name]: e.target.value });
                   setError(null);
-                  onValidation?.(props.name, e.target.value);
+                  onValidation?.({
+                    fieldName: props.name,
+                    value: e.target.value,
+                    type: props.variant,
+                  });
                 } catch (error) {
                   setError(error);
-                  onValidation?.(props.name, error as ZodError);
+                  onValidation?.({
+                    fieldName: props.name,
+                    value: error as ZodError,
+                    type: "error",
+                  });
                 }
               }
             }}
@@ -140,10 +171,18 @@ export const OrderField = ({
                     }).parse({ [props.name]: e.target.value });
                     setError(null);
 
-                    onValidation?.(props.name, e.target.value);
+                    onValidation?.({
+                      fieldName: props.name,
+                      value: e.target.value,
+                      type: props.variant,
+                    });
                   } catch (error) {
                     setError(error);
-                    onValidation?.(props.name, error as ZodError);
+                    onValidation?.({
+                      fieldName: props.name || "",
+                      value: error as ZodError,
+                      type: "error",
+                    });
                   }
                 }
               }}

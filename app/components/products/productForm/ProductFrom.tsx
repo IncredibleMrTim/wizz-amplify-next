@@ -19,7 +19,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useParams } from "next/navigation";
-import { useAppDispatch, useAppSelector, STORE_PATHS } from "@/stores/store";
+import { useAppDispatch, useAppSelector, STORE_KEYS } from "@/stores/store";
 import { FileUploader } from "@/components/fileUploader/FileUploader";
 import { useGetProductQuery } from "@/services/product/useGetProductQuery";
 import { FiCheck, FiArrowLeft } from "react-icons/fi";
@@ -84,7 +84,7 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
     setProduct(data as Schema["Product"]["type"]);
     form.reset(data as z.infer<typeof formSchema>);
     dispatch({
-      type: STORE_PATHS.SET_CURRENT_PRODUCT,
+      type: STORE_KEYS.SET_CURRENT_PRODUCT,
       payload: data as Schema["Product"]["type"],
     });
 
@@ -93,7 +93,7 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
       setProduct(null);
       form.reset();
       dispatch({
-        type: STORE_PATHS.SET_CURRENT_PRODUCT,
+        type: STORE_KEYS.SET_CURRENT_PRODUCT,
         payload: null,
       });
     };
@@ -111,7 +111,7 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
       // if a new product, add it to te product list
       if (!product.id) {
         dispatch({
-          type: STORE_PATHS.SET_PRODUCTS,
+          type: STORE_KEYS.SET_PRODUCTS,
           payload: [...allProducts, product],
         });
       } else {
@@ -120,7 +120,7 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
           p.id === product.id ? product : p
         );
         dispatch({
-          type: STORE_PATHS.SET_PRODUCTS,
+          type: STORE_KEYS.SET_PRODUCTS,
           payload: updatedProducts,
         });
       }

@@ -3,16 +3,24 @@ import { useDispatch, TypedUseSelectorHook, useSelector } from "react-redux";
 import { navReducer } from "./navigation/navSlice";
 import { authReducer } from "./auth/authSlice";
 import { productReducer } from "./product/productSlice";
+import { orderReducer } from "./order/orderSlice";
 
-export const STORE_PATHS = {
+export const STORE_KEYS = {
   SET_PRODUCTS: "PRODUCTS/setProducts",
   SET_CURRENT_PRODUCT: "PRODUCTS/setCurrentProduct",
   SET_ACTIVE_MENU_ITEM: "NAVIGATION/setActiveMenuItem",
   SET_DRAWER_IS_OPEN: "NAVIGATION/setIsDrawerOpen",
+  SET_CURRENT_ORDER: "ORDER/setCurrentOrder",
+  UPDATE_ORDER_PRODUCT: "ORDER/updateOrderProduct",
 };
 
 export const store = configureStore({
-  reducer: { nav: navReducer, auth: authReducer, products: productReducer },
+  reducer: {
+    nav: navReducer,
+    auth: authReducer,
+    products: productReducer,
+    order: orderReducer,
+  },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ serializableCheck: false }),
 });

@@ -4,7 +4,7 @@ import userComponents from "../navigation/userComponents";
 import Link from "next/link";
 import { Separator } from "../separator/Separator";
 import { FiChevronsRight } from "react-icons/fi";
-import { useAppDispatch, STORE_PATHS } from "@/stores/store";
+import { useAppDispatch, STORE_KEYS } from "@/stores/store";
 import { Avatar } from "@aws-amplify/ui-react";
 
 interface DrawerTemplateProps {
@@ -26,7 +26,7 @@ export const DrawerTemplate = ({ type }: DrawerTemplateProps) => {
             className="text-gray-500 cursor-pointer"
             onClick={() => {
               dispatch({
-                type: STORE_PATHS.SET_DRAWER_IS_OPEN,
+                type: STORE_KEYS.SET_DRAWER_IS_OPEN,
                 payload: false,
               });
             }}
@@ -45,7 +45,7 @@ export const DrawerTemplate = ({ type }: DrawerTemplateProps) => {
                     className="flex text-lg text-gray-700 w-full place-items-center"
                     onClick={() => {
                       dispatch({
-                        type: STORE_PATHS.SET_DRAWER_IS_OPEN,
+                        type: STORE_KEYS.SET_DRAWER_IS_OPEN,
                         payload: false,
                       });
                     }}
@@ -73,7 +73,7 @@ export const DrawerTemplate = ({ type }: DrawerTemplateProps) => {
                   href="/admin"
                   onClick={() => {
                     dispatch({
-                      type: STORE_PATHS.SET_DRAWER_IS_OPEN,
+                      type: STORE_KEYS.SET_DRAWER_IS_OPEN,
                       payload: false,
                     });
                   }}

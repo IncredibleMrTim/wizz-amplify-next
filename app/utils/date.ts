@@ -1,3 +1,5 @@
+const currentDate = new Date();
+
 /*
  * Utility function to get the default date for order details.
  * This function returns a date that is 'n' days from today.
@@ -13,3 +15,10 @@ export const formatDate = ({ offset = 0, date }: FormatDateProps): Date => {
 
   return currentDate;
 };
+
+export const offsetDate = (offset?: number) =>
+  new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth(),
+    currentDate.getDate() + (offset || 7)
+  );

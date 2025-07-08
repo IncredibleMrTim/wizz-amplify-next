@@ -1,4 +1,4 @@
-const OrderDetailsLayout = ({ children }: { children: React.ReactNode }) => {
+const ProductDetailsLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="flex flex-col min-h-screen">
       <main className="flex-grow p-4">{children}</main>
@@ -6,4 +6,4 @@ const OrderDetailsLayout = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export default OrderDetailsLayout;
+export default ProductDetailsLayout;

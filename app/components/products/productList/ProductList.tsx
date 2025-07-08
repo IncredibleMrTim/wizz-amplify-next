@@ -29,7 +29,7 @@ import {
 } from "./productListColumnDefs";
 import { ProductTableFooter } from "./ProductTableFooter";
 import { ProductFilter } from "./ProductFilter";
-import { useAppDispatch, useAppSelector, STORE_PATHS } from "@/stores/store";
+import { useAppDispatch, useAppSelector, STORE_KEYS } from "@/stores/store";
 import { generateClient } from "aws-amplify/api";
 import { useRouter } from "next/navigation";
 
@@ -50,7 +50,7 @@ const ProductList = () => {
       const { data } = await client.models.Product.list();
 
       setData(data);
-      dispatch({ type: STORE_PATHS.SET_PRODUCTS, payload: data });
+      dispatch({ type: STORE_KEYS.SET_PRODUCTS, payload: data });
     };
 
     // Check if products are already in the store
@@ -143,7 +143,7 @@ const ProductList = () => {
                       deleteProduct,
                     }: ProductListCustomCellContextProps) => {
                       dispatch({
-                        type: STORE_PATHS.SET_CURRENT_PRODUCT,
+                        type: STORE_KEYS.SET_CURRENT_PRODUCT,
                         payload: cell.row.original,
                       });
 
@@ -158,7 +158,7 @@ const ProductList = () => {
                         );
 
                         dispatch({
-                          type: STORE_PATHS.SET_PRODUCTS,
+                          type: STORE_KEYS.SET_PRODUCTS,
                           payload: updatedProductList,
                         });
                         setData(updatedProductList);

@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useAppSelector, useAppDispatch, STORE_PATHS } from "@/stores/store";
+import { useAppSelector, useAppDispatch, STORE_KEYS } from "@/stores/store";
 import { useGetProductQuery } from "@/services/product/useGetProductQuery";
 import { useParams } from "next/navigation";
 import Link from "next/link";
@@ -26,7 +26,7 @@ const ProductPage = () => {
   useEffect(() => {
     if (!currentProduct && queryResult?.data) {
       dispatch({
-        type: STORE_PATHS.SET_CURRENT_PRODUCT,
+        type: STORE_KEYS.SET_CURRENT_PRODUCT,
         payload: queryResult.data,
       });
     }
@@ -87,7 +87,7 @@ const ProductPage = () => {
                 href={`/product/${currentProduct?.name?.replace(
                   /\s+/g,
                   "-"
-                )}/orderDetails`}
+                )}/productDetails`}
                 onClick={(e) => {
                   if (!currentProduct) {
                     e.preventDefault();
