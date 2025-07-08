@@ -51,6 +51,7 @@ export const ProductField = ({
   const [value, setValue] = useState<Date | string | undefined | null>(null);
   const [error, setError] = useState<ZodError | null>(null);
 
+  /* Render the component based on the variant */
   const renderComponent = () => {
     switch (props.variant) {
       case "date":
@@ -189,6 +190,7 @@ export const ProductField = ({
     }
   };
 
+  /* Render the error message if exists */
   return (
     <div className="flex flex-col gap-2 w-full relative">
       {renderComponent()}

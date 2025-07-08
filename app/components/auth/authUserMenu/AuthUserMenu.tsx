@@ -15,9 +15,18 @@ export const AuthUserMenu = ({
 }) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
+
+  // States
   const [isSigningOut, setIsSigningOut] = useState(false);
+
+  // Selectors
   const currentUser = useAppSelector((state) => state.auth.currentUser);
 
+  /* * Handle user sign out
+   * This function handles the sign out process, clears the cache for tokens,
+   * and updates the Redux store to set the current user to null.
+   * The user will be redirected to the home page after signing out.
+   */
   const handleSignOut = async () => {
     try {
       setIsSigningOut(true);
