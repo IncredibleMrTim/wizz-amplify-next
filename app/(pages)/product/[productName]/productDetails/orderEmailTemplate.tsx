@@ -6,7 +6,6 @@ export const OrderEmailTemplate = (props: OrderResponseBody) => {
   const {
     payer: { name, email_address: from },
   } = props;
-
   const temp = document.createElement("div");
 
   const emailHtml = (

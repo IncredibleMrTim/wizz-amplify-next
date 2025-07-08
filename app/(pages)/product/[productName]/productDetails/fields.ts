@@ -154,7 +154,6 @@ export const fields: {
       error: "Please enter a quantity (1-4)",
     },
   },
-
   {
     notes: {
       label: "Additional Information",
