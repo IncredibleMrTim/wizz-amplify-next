@@ -8,25 +8,23 @@ export interface SendEmailProps {
   to: string;
   from?: string;
   subject: string;
-  message?: string;
-  firstName?: string;
-  lastName?: string;
   html?: string;
   attachments?: EmailAttachments[];
 }
 
+/*
+ * This function sends an email using the /api/sendEmail endpoint.
+ * @param {SendEmailProps} props - The properties for sending the email.
+ * @returns {Promise<boolean>} - Returns a promise that resolves to true if the email was sent successfully, or rejects with an error if it failed.
+ * @throws {Error} - Throws an error if the email sending fails.
+ */
 export const sendEmail = async ({
   to,
   from,
   subject,
-  message,
-  firstName,
-  lastName,
   html,
   attachments,
 }: SendEmailProps) => {
-  console.log("html", html);
-
   try {
     const res = await fetch("/api/sendEmail", {
       method: "POST",

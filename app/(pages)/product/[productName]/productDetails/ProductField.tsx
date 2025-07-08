@@ -87,10 +87,7 @@ export const ProductField = ({
                 onSelect={(date) => {
                   if (date) {
                     setValue(date.toISOString());
-                    console.log(
-                      "Selected date:",
-                      date.toISOString().slice(0, 10)
-                    );
+
                     if (props.name) {
                       try {
                         z.object({

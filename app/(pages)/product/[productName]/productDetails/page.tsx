@@ -17,18 +17,21 @@ import { fields } from "./fields";
 import { OrderEmailTemplate } from "./orderEmailTemplate";
 import { onValidationProps, ProductField } from "./ProductField";
 
+const requiredFieldNames = fields
+  .filter((f) => Object.values(f)[0].required)
+  .map((f) => Object.keys(f)[0]);
+
 const SpecificationPage = () => {
   const dispatch = useAppDispatch();
   const addOrderMutation = useAddOrderMutation();
-  const requiredFieldNames = fields
-    .filter((f) => Object.values(f)[0].required)
-    .map((f) => Object.keys(f)[0]);
 
+  // States
   const [isValidOrderProduct, setIsValidOrderProduct] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<{
     [key: string]: ZodError | null;
   }>({});
 
+  // Selectors
   const currentProduct = useAppSelector(
     (state) => state.products.currentProduct
   );
@@ -37,12 +40,8 @@ const SpecificationPage = () => {
     (product) => product.productId === currentProduct?.id
   );
 
+  // check if the order is valid before we show the PayPal button
   useEffect(() => {
-    console.log(
-      "useEffect called",
-      Object.keys(omit(currentOrderProduct, "productId"))
-    );
-    console.log("useEffect called", requiredFieldNames);
     setIsValidOrderProduct(
       Object.keys(omit(currentOrderProduct, "productId")).length >=
         requiredFieldNames.length &&
@@ -50,9 +49,11 @@ const SpecificationPage = () => {
     );
   }, [currentOrder, fieldErrors]);
 
-  const handleSuccess = async (details: OrderResponseBody) => {
-    // TODO: Add the order to the database
-
+  /*
+   * Handle successful PayPal payment
+   * @param orderDetails - The details of the order response from PayPal
+   */
+  const handleSuccess = async (orderDetails: OrderResponseBody) => {
     if (isValidOrderProduct) {
       addOrderMutation.mutateAsync({
         ...currentOrder,
@@ -61,27 +62,36 @@ const SpecificationPage = () => {
       await sendEmail({
         to: process.env.SMTP_EMAIL,
         subject: "New Order Received",
-        html: OrderEmailTemplate(details),
+        html: OrderEmailTemplate(orderDetails),
       });
     }
   };
 
+  /*
+   * Handle validation of product fields
+   * @param fieldName - The name of the field being validated
+   * @param value - The value of the field being validated
+   * @param type - The type of validation field
+   * @returns true if there is an error, false otherwise
+   */
   const handleValidation = ({ fieldName, value, type }: onValidationProps) => {
     if (type === "error") {
       setFieldErrors((prev) => ({
         ...prev,
-        [fieldName]: value as ZodError, // Use the first path element as the key
+        [fieldName]: value as ZodError,
       }));
 
       return true;
     }
 
+    // remove field errors if the field is valid
     setFieldErrors((prev) => {
       const updated = { ...prev };
       delete updated[fieldName];
       return updated;
     });
 
+    // If there is no order, create a new one
     if (!currentOrder) {
       dispatch({
         type: STORE_KEYS.SET_CURRENT_ORDER,
@@ -91,16 +101,16 @@ const SpecificationPage = () => {
       });
     }
 
+    // Add or update the product in the order
     dispatch({
       type: STORE_KEYS.UPDATE_ORDER_PRODUCT,
       payload: {
         productId: currentProduct?.id || "",
-
         updates: { [fieldName]: parseInt(value.toString()) || value },
       } as Schema["OrderProduct"]["type"],
     });
 
-    return false; // No error
+    return false;
   };
 
   return (

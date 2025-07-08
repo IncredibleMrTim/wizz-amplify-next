@@ -71,13 +71,7 @@ export const orderSlice = createSlice({
           (product) => product.productId === action.payload.productId
         );
 
-        console.log(
-          "Updating product at index:",
-          productIndex,
-          action.payload.updates
-        );
-
-        // if the product is in the order then update it
+        // if the product is in the order then update it with the new values
         state.currentOrder.products[productIndex] = {
           ...state.currentOrder.products[productIndex],
           ...action.payload.updates,
