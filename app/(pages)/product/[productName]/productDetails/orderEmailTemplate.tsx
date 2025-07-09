@@ -1,8 +1,13 @@
 import { OrderResponseBody } from "@/components/payPal/payPalButton/PayPalButton";
+import { EmailAttachments } from "@/utils/email";
+import { Schema } from "amplify/data/resource";
 
 import ReactDOMServer from "react-dom/server";
 
-export const OrderEmailTemplate = (props: OrderResponseBody) => {
+export const OrderEmailTemplate = (
+  props: OrderResponseBody,
+  order: Schema["Order"]["type"]
+) => {
   const {
     payer: { name, email_address: from },
   } = props;
@@ -22,7 +27,18 @@ export const OrderEmailTemplate = (props: OrderResponseBody) => {
       <p>
         <strong>From:</strong> {from}
       </p>
-      {/* <p>${message}</p> */}
+      {order.products.map((product) => {
+        return (
+          <div key={product.productId}>
+            <img
+              height="100"
+              width="100"
+              src={`https://amplify-awsamplifygen2-wi-wizzingtonproductimages2-eqfqxmvs6hfw.s3.eu-west-2.amazonaws.com/public/green%20two%20peice%202.jpeg`}
+              alt={product.name}
+            />
+          </div>
+        );
+      })}
     </div>
   );
   temp.innerHTML = ReactDOMServer.renderToStaticMarkup(emailHtml);

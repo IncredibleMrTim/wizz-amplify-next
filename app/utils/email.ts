@@ -1,7 +1,7 @@
 export type EmailAttachments = {
-  filename: string;
-  path: string;
-  cid: string;
+  filename?: string;
+  path: String;
+  cid?: string;
 };
 
 export interface SendEmailProps {

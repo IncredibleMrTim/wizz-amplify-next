@@ -35,6 +35,7 @@ const SpecificationPage = () => {
   const currentProduct = useAppSelector(
     (state) => state.products.currentProduct
   );
+  const allProducts = useAppSelector((state) => state.products.allProducts);
   const currentOrder = useAppSelector((state) => state.order.currentOrder);
   const currentOrderProduct = currentOrder?.products.find(
     (product) => product.productId === currentProduct?.id
@@ -49,20 +50,38 @@ const SpecificationPage = () => {
     );
   }, [currentOrder, fieldErrors]);
 
+  // console.log(
+  //   "imageBuffer",
+  //   currentProduct.images[0].url.substring(
+  //     currentProduct.images[0].url.lastIndexOf("/") + 1,
+  //     currentProduct.images[0].url.length
+  //   )
+  // );
+
   /*
    * Handle successful PayPal payment
    * @param orderDetails - The details of the order response from PayPal
    */
-  const handleSuccess = async (orderDetails: OrderResponseBody) => {
+  const handleSuccess = async (response: OrderResponseBody) => {
     if (isValidOrderProduct) {
       addOrderMutation.mutateAsync({
         ...currentOrder,
       });
 
+      let imageBuffer: Buffer | null = null;
+      const imageUrl = `${process.env.S3_PRODUCT_IMAGE_URL}${currentProduct.images[0].url}`;
+
+      const filename = currentProduct.images[0].url.substring(
+        currentProduct.images[0].url.lastIndexOf("/") + 1,
+        currentProduct.images[0].url.length
+      );
       await sendEmail({
         to: process.env.SMTP_EMAIL,
         subject: "New Order Received",
-        html: OrderEmailTemplate(orderDetails),
+        html: OrderEmailTemplate(response, currentOrder),
+        attachments: currentOrder?.products.map((product) => ({
+          path: encodeURI(imageUrl),
+        })),
       });
     }
   };
@@ -100,12 +119,14 @@ const SpecificationPage = () => {
         } as Schema["Order"]["type"],
       });
     }
+    console.log(currentProduct.name);
 
     // Add or update the product in the order
     dispatch({
       type: STORE_KEYS.UPDATE_ORDER_PRODUCT,
       payload: {
         productId: currentProduct?.id || "",
+        name: currentProduct?.name || "",
         updates: { [fieldName]: parseInt(value.toString()) || value },
       } as Schema["OrderProduct"]["type"],
     });

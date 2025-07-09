@@ -42,6 +42,7 @@ export const orderSlice = createSlice({
         state.currentOrder.products.push({
           productId: action.payload.productId,
           quantity: action.payload.quantity,
+          name: action.payload.name,
           ...action.payload,
         });
       }
@@ -51,6 +52,7 @@ export const orderSlice = createSlice({
       state,
       action: PayloadAction<{
         productId: string;
+        name?: string;
         updates: Partial<Schema["OrderProduct"]["type"]>;
       }>
     ) => {
@@ -59,10 +61,13 @@ export const orderSlice = createSlice({
           (product) => product.productId === action.payload.productId
         );
 
+        console.log(action.payload);
+
         // If the product is not in the order then add it
         if (productIndex === -1) {
           state.currentOrder.products.push({
             productId: action.payload.productId,
+            name: action.payload.name || "",
             quantity: 1,
           });
         }

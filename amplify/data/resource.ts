@@ -4,6 +4,7 @@ const schema = a.schema({
   // Lookup table for Order and Product
   OrderProduct: a.customType({
     productId: a.string().required(),
+    name: a.string().required(),
     quantity: a.integer().required(),
     waistSize: a.integer(),
     chestSize: a.integer(),
