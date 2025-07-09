@@ -136,41 +136,52 @@ const ProductList = () => {
                   }}
                   className="overflow-hidden text-ellipsis whitespace-nowrap py-4"
                 >
-                  {flexRender(cell.column.columnDef.cell, {
-                    ...cell.getContext(),
-                    onClick: async ({
-                      viewProduct,
-                      deleteProduct,
-                    }: ProductListCustomCellContextProps) => {
-                      dispatch({
-                        type: STORE_KEYS.SET_CURRENT_PRODUCT,
-                        payload: cell.row.original,
-                      });
-
-                      // TODO: Need to add conformation modal for delete
-                      if (deleteProduct) {
-                        client.models.Product.delete({
-                          id: cell.row.original.id,
-                        });
-
-                        const updatedProductList = data.filter(
-                          (product) => product.id !== cell.row.original.id
-                        );
-
+                  <div
+                    onClick={async (e) => {
+                      // You may want to check if the click is on a button or icon inside the cell
+                      // and only then handle the logic, or move this logic to a button inside your custom cell renderer.
+                      // For now, this will trigger on any cell click.
+                      const customContext =
+                        cell.getContext() as unknown as ProductListCustomCellContextProps;
+                      if (
+                        customContext.viewProduct ||
+                        customContext.deleteProduct
+                      ) {
                         dispatch({
-                          type: STORE_KEYS.SET_PRODUCTS,
-                          payload: updatedProductList,
+                          type: STORE_KEYS.SET_CURRENT_PRODUCT,
+                          payload: cell.row.original,
                         });
-                        setData(updatedProductList);
-                      }
 
-                      if (viewProduct && !deleteProduct) {
-                        router.push(
-                          `/product/${cell.row.original.name?.replace(/\s+/g, "-")}`
-                        );
+                        // TODO: Need to add conformation modal for delete
+                        if (customContext.deleteProduct) {
+                          await client.models.Product.delete({
+                            id: cell.row.original.id,
+                          });
+
+                          const updatedProductList = data.filter(
+                            (product) => product.id !== cell.row.original.id
+                          );
+
+                          dispatch({
+                            type: STORE_KEYS.SET_PRODUCTS,
+                            payload: updatedProductList,
+                          });
+                          setData(updatedProductList);
+                        }
+
+                        if (
+                          customContext.viewProduct &&
+                          !customContext.deleteProduct
+                        ) {
+                          router.push(
+                            `/product/${cell.row.original.name?.replace(/\s+/g, "-")}`
+                          );
+                        }
                       }
-                    },
-                  })}
+                    }}
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </div>
                 </TableCell>
               );
             })}
