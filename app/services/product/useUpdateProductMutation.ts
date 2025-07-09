@@ -1,5 +1,5 @@
 "use client";
-import { type Schema } from "amplify/data/resource";
+import { Schema } from "amplify/data/resource";
 import { useMutation, UseMutationResult } from "@tanstack/react-query";
 import { generateClient } from "aws-amplify/data";
 import { ProductMutationKeys } from "./keys";
@@ -12,7 +12,12 @@ export const useUpdateProductMutation = (): UseMutationResult<
   Schema["Product"]["type"]
 > => {
   const updateProduct = async (product: Schema["Product"]["type"]) => {
-    const result = await client.models.Product.update(product);
+    if (!product.id) {
+      throw new Error("Product id is required for update.");
+    }
+    const result = await client.models.Product.update(
+      product as Schema["Product"]["type"] & { id: string }
+    );
 
     if (result?.data) {
       return result.data;
