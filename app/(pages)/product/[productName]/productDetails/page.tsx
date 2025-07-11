@@ -62,7 +62,7 @@ const SpecificationPage = () => {
       await sendEmail({
         to: process.env.SMTP_EMAIL,
         subject: "New Order Received",
-        html: OrderEmailTemplate(orderDetails),
+        html: OrderEmailTemplate(orderDetails, currentOrder),
       });
     }
   };
@@ -106,6 +106,7 @@ const SpecificationPage = () => {
       type: STORE_KEYS.UPDATE_ORDER_PRODUCT,
       payload: {
         productId: currentProduct?.id || "",
+        name: currentProduct?.name || "",
         updates: { [fieldName]: parseInt(value.toString()) || value },
       } as Schema["OrderProduct"]["type"],
     });

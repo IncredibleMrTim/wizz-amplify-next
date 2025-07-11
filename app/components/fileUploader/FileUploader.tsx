@@ -23,7 +23,7 @@ export const FileUploader = ({
   return (
     <div className="flex justify-between gap-4 w-full">
       <AmplifyFileUploader
-        acceptedFileTypes={["image/*"]}
+        acceptedFileTypes={["image/webp", "image/jpeg", "image/png"]}
         path={`${process.env.S3_PRODUCT_IMAGE_PATH!}`}
         maxFileCount={20}
         // processFile={(file) => {
