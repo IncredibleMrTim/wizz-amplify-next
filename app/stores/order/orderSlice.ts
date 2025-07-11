@@ -11,7 +11,7 @@ export interface OrderState {
     updates: Partial<Schema["OrderProduct"]["type"]>
   ) => void;
   removeProductFromOrder?: (productId: string) => void;
-  clearOrder?: () => void;
+  clearCurrentOrder?: () => void;
 }
 
 const initialSate: OrderState = {
@@ -20,7 +20,7 @@ const initialSate: OrderState = {
   addProductToOrder: () => {},
   updateOrderProduct: () => {},
   removeProductFromOrder: () => {},
-  clearOrder: () => {},
+  clearCurrentOrder: () => {},
 };
 
 export const orderSlice = createSlice({
@@ -52,17 +52,19 @@ export const orderSlice = createSlice({
       action: PayloadAction<{
         productId: string;
         name?: string;
+        uid?: string;
         updates: Partial<Schema["OrderProduct"]["type"]>;
       }>
     ) => {
       if (state.currentOrder) {
         let productIndex = state.currentOrder.products.findIndex(
-          (product) => product.productId === action.payload.productId
+          (product) => product.uid === action.payload.uid
         );
 
         // If the product is not in the order then add it
         if (productIndex === -1) {
           state.currentOrder.products.push({
+            uid: action.payload.uid || crypto.randomUUID(),
             name: action.payload.name || "",
             productId: action.payload.productId,
             quantity: 1,
@@ -70,7 +72,7 @@ export const orderSlice = createSlice({
         }
 
         productIndex = state.currentOrder.products.findIndex(
-          (product) => product.productId === action.payload.productId
+          (product) => product.uid === action.payload.uid
         );
 
         // if the product is in the order then update it with the new values
@@ -87,9 +89,6 @@ export const orderSlice = createSlice({
           (product) => product.productId !== action.payload
         );
       }
-    },
-    clearOrder: (state) => {
-      state.currentOrder = null;
     },
   },
 });

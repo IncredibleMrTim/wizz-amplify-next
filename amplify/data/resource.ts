@@ -1,8 +1,13 @@
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
 const schema = a.schema({
+  SizeMetric: a.customType({
+    metric: a.string(),
+  }),
+
   // Lookup table for Order and Product
   OrderProduct: a.customType({
+    uid: a.id().required(),
     productId: a.string().required(),
     name: a.string().required(),
     quantity: a.integer().required(),
@@ -21,6 +26,7 @@ const schema = a.schema({
     ankleSize: a.integer(),
     height: a.integer(),
     notes: a.string(),
+    metric: a.ref("SizeMetric"), // Reference to SizeMetrics
   }),
 
   Images: a.customType({

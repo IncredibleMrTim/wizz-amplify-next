@@ -22,17 +22,20 @@ interface PayPalButtonProps {
   amount: string;
   disabled?: boolean; // Optional prop to control button state
   onSuccess: (details: OrderResponseBody) => void; // You can type details more strictly if desired
+  onClick?: PayPalButtonsComponentProps["onClick"]; // Optional click handler
 }
 
 export default function PayPalButton({
   amount,
   disabled,
   onSuccess,
+  onClick,
 }: PayPalButtonProps) {
   return (
     <PayPalButtons
       className="w-full"
       disabled={disabled}
+      onClick={onClick}
       createOrder={(data, actions) => {
         return actions.order.create({
           purchase_units: [{ amount: { currency_code: "GBP", value: amount } }],

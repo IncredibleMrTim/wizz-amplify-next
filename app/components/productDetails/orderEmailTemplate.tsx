@@ -24,83 +24,94 @@ export const OrderEmailTemplate = (
     <div>
       <p>Hey Wizzington Moo's Boutique Admin</p>
       <p>
-        You have a new order from:
-        <strong>
-          {name?.given_name} {name?.surname || ""}
-        </strong>
+        <div>You have a new order:</div>
+        <div>
+          <p>
+            Name:
+            <span style={{ color: "firebrick" }}>
+              {name?.given_name} {name?.surname || ""}
+            </span>
+          </p>
+          <p>
+            Email:
+            <span style={{ color: "firebrick" }}> {from}</span>
+          </p>
+          <p>
+            <span style={{ color: "firebrick" }}>
+              Order Value: {order.totalAmount}
+            </span>
+          </p>
+        </div>
       </p>
 
-      <h3>Message Details</h3>
-      <p>
-        <strong>From:</strong> {from}
-      </p>
+      <hr />
+
       {order.products.map((product) => (
-        <div key={product.productId}>
-          <p>
-            <strong>Product:</strong> {product.name || "Unknown Product"}
-            <Table
+        <div key={product.uid}>
+          <p>{product.name}</p>
+          <Table
+            style={{
+              marginLeft: "10px",
+              border: "1px solid #ccc",
+              width: "300px",
+            }}
+          >
+            <TableCaption
               style={{
-                marginLeft: "10px",
-                border: "1px solid #ccc",
-                width: "300px",
+                textAlign: "left",
               }}
             >
-              <TableCaption
-                style={{
-                  textAlign: "left",
-                }}
-              >
-                Specifications
-              </TableCaption>
-              <TableHeader style={{ backgroundColor: "#808b96" }}>
-                <TableRow>
-                  <TableHead
-                    style={{
-                      textAlign: "left",
-                      fontWeight: "normal",
-                      color: "#fff",
-                    }}
-                  >
-                    Name
-                  </TableHead>
-                  <TableHead
-                    style={{
-                      display: "flex",
-                      justifyContent: "start",
-                      fontWeight: "normal",
-                      color: "#fff",
-                    }}
-                  >
-                    Value
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {Object.entries(product).map(
-                  ([key, value]) =>
-                    key !== "productId" &&
-                    key !== "name" && (
-                      <TableRow
-                        key={key}
-                        style={{
-                          backgroundColor: "#f9f9f9",
-                          padding: "4px",
-                        }}
-                      >
-                        <TableCell>
-                          {key
-                            .replace(/([A-Z])/g, " $1")
-                            .replace(/^./, (str) => str.toUpperCase())}
-                        </TableCell>
-                        <TableCell>
-                          {value !== undefined ? value.toString() : "N/A"}
-                        </TableCell>
-                      </TableRow>
-                    )
-                )}
-              </TableBody>
-            </Table>
-          </p>
+              Specifications
+            </TableCaption>
+            <TableHeader style={{ backgroundColor: "firebrick" }}>
+              <TableRow>
+                <TableHead
+                  style={{
+                    textAlign: "left",
+                    fontWeight: "normal",
+                    color: "#fff",
+                  }}
+                >
+                  Name
+                </TableHead>
+                <TableHead
+                  style={{
+                    display: "flex",
+                    justifyContent: "start",
+                    fontWeight: "normal",
+                    color: "#fff",
+                  }}
+                >
+                  Value
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {Object.entries(product).map(
+                ([key, value]) =>
+                  key !== "productId" &&
+                  key !== "uid" &&
+                  key !== "name" && (
+                    <TableRow
+                      key={`${product.uid}-${key}`}
+                      style={{
+                        backgroundColor: "#f9f9f9",
+                        padding: "4px",
+                      }}
+                    >
+                      <TableCell>
+                        {key
+                          .replace(/([A-Z])/g, " $1")
+                          .replace(/^./, (str) => str.toUpperCase())}
+                      </TableCell>
+                      <TableCell>
+                        {value !== undefined ? value.toString() : "N/A"}
+                      </TableCell>
+                    </TableRow>
+                  )
+              )}
+            </TableBody>
+          </Table>
         </div>
       ))}
     </div>

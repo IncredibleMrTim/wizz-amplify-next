@@ -2,7 +2,9 @@
 
 import { Schema } from "amplify/data/resource";
 import omit from "lodash/omit";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { PiBasket } from "react-icons/pi";
 import { ZodError } from "zod";
 
 import PayPalButton, {
@@ -12,13 +14,12 @@ import PayPalProvider from "@/components/payPal/payPalProvider/PayPalProvider";
 import { useAddOrderMutation } from "@/services/order/useAddOrderMutation";
 import { STORE_KEYS, useAppDispatch, useAppSelector } from "@/stores/store";
 import { sendEmail } from "@/utils/email";
+import { Button } from "@radix-ui/themes";
 
 import { fields } from "./fields";
 import { OrderEmailTemplate } from "./orderEmailTemplate";
 import { onValidationProps, ProductField } from "./ProductField";
-import Link from "next/link";
-import { Button } from "@radix-ui/themes";
-import { useRouter } from "next/navigation";
+import { Separator } from "../separator/Separator";
 
 const requiredFieldNames = fields
   .filter((f) => Object.values(f)[0].required)
@@ -30,11 +31,21 @@ export const ProductDetails = () => {
   const router = useRouter();
   // States
   const [isValidOrderProduct, setIsValidOrderProduct] = useState(false);
-  const [fieldErrors, setFieldErrors] = useState<{
-    [key: string]: ZodError | null;
-  }>({});
+  const [fieldErrors, setFieldErrors] = useState<
+    Record<string, ZodError | null>
+  >({});
+  const [productDetails, setProductDetails] = useState<Record<string, unknown>>(
+    {}
+  );
+  const [actionType, setActionType] = useState<"purchase" | "basket">(null);
 
   // Selectors
+  const clearCurrentProduct = useAppSelector(
+    (state) => state.products.clearCurrentProduct
+  );
+  const clearCurrentOrder = useAppSelector(
+    (state) => state.order.clearCurrentOrder
+  );
   const currentProduct = useAppSelector(
     (state) => state.products.currentProduct
   );
@@ -46,26 +57,65 @@ export const ProductDetails = () => {
   // check if the order is valid before we show the PayPal button
   useEffect(() => {
     setIsValidOrderProduct(
-      Object.keys(omit(currentOrderProduct, "productId")).length >=
+      Object.keys(omit(productDetails, "productId")).length >=
         requiredFieldNames.length &&
         Object.values(fieldErrors).every((error) => error === null)
     );
-  }, [currentOrder, fieldErrors]);
+  }, [productDetails, fieldErrors]);
 
+  const addProductToOrder = () => {
+    // If there is no order, create a new one
+    if (!currentOrder) {
+      dispatch({
+        type: STORE_KEYS.SET_CURRENT_ORDER,
+        payload: {
+          products: [],
+        } as Schema["Order"]["type"],
+      });
+    }
+
+    // Add or update the product in the order
+    dispatch({
+      type: STORE_KEYS.UPDATE_ORDER_PRODUCT,
+      payload: {
+        productId: currentProduct?.id || "",
+        name: currentProduct?.name || "",
+        updates: productDetails,
+      } as Schema["OrderProduct"]["type"],
+    });
+  };
   /*
    * Handle successful PayPal payment
    * @param orderDetails - The details of the order response from PayPal
    */
   const handleSuccess = async (orderDetails: OrderResponseBody) => {
+    console.log("ProductDetails rendered", productDetails);
+
+    const newOrder = {
+      id: orderDetails.id,
+      products: [
+        {
+          productId: currentProduct?.id || "",
+          name: currentProduct?.name || "",
+          quantity: currentOrderProduct?.quantity || 1,
+          ...productDetails,
+        },
+      ],
+      totalAmount: currentProduct?.price || 0,
+      status: "Pending", // This can be updated based on your business logic
+    } as Schema["Order"]["type"];
+
     if (isValidOrderProduct) {
       addOrderMutation.mutateAsync({
         ...currentOrder,
       });
 
+      setActionType("purchase");
+
       await sendEmail({
         to: process.env.SMTP_EMAIL,
         subject: "New Order Received",
-        html: OrderEmailTemplate(orderDetails, currentOrder),
+        html: OrderEmailTemplate(orderDetails, newOrder),
       });
     }
   };
@@ -94,25 +144,10 @@ export const ProductDetails = () => {
       return updated;
     });
 
-    // If there is no order, create a new one
-    if (!currentOrder) {
-      dispatch({
-        type: STORE_KEYS.SET_CURRENT_ORDER,
-        payload: {
-          products: [],
-        } as Schema["Order"]["type"],
-      });
-    }
-
-    // Add or update the product in the order
-    dispatch({
-      type: STORE_KEYS.UPDATE_ORDER_PRODUCT,
-      payload: {
-        productId: currentProduct?.id || "",
-        name: currentProduct?.name || "",
-        updates: { [fieldName]: parseInt(value.toString()) || value },
-      } as Schema["OrderProduct"]["type"],
-    });
+    setProductDetails((prev) => ({
+      ...prev,
+      [fieldName]: value,
+    }));
 
     return false;
   };
@@ -121,7 +156,7 @@ export const ProductDetails = () => {
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-4">
         <h1 className="text-2xl font-bold">Order Details</h1>
-        <p>Please fill out the details below</p>
+        <p>Please add product details below</p>
       </div>
 
       <div className="flex flex-wrap flex-row gap-y-4 w-full justify-between">
@@ -142,30 +177,63 @@ export const ProductDetails = () => {
           );
         })}
       </div>
-      <div className="flex flex-col w-full items-center gap-4">
-        <Button
-          disabled={!isValidOrderProduct || !currentOrderProduct}
-          onClick={(e) => {
-            if (!currentProduct) {
-              alert("Product is not available");
-            } else {
-              router.push(
-                `/product/${currentProduct?.name?.replace(/\s+/g, "-")}/productDetails`
-              );
-            }
-          }}
-          className="flex items-center gap-2 px-4 py-2 bg-pink-200 rounded-md hover:bg-pink-300 transition-colors duration-300 !w-full"
-        >
-          Add to Basket
-        </Button>
-        <div>Or buy now with PayPal</div>
-        <PayPalProvider>
-          <PayPalButton
-            amount="31.50"
-            onSuccess={handleSuccess}
-            disabled={!isValidOrderProduct || !currentOrderProduct}
-          />
-        </PayPalProvider>
+      <div className="flex flex-row w-full items-center gap-4">
+        {actionType !== "purchase" && actionType !== "basket" ? (
+          <div className="flex gap-4 w-full h-full">
+            <Button
+              disabled={!isValidOrderProduct || !productDetails}
+              onClick={(e) => {
+                if (!currentProduct) {
+                  alert("Product is not available");
+                } else {
+                  setActionType("basket");
+                  addProductToOrder();
+                }
+              }}
+              className=""
+            >
+              Add to Basket <PiBasket size={20} />
+            </Button>
+
+            <div className="flex flex-col justify-center items-center w-[20px] h-3/4">
+              <div className="bg-gray-200 w-[1px] h-[40%]" />
+
+              <span
+                className={`${!isValidOrderProduct || !productDetails ? "text-gray-400" : "text-black"}`}
+              >
+                or
+              </span>
+
+              <div className="bg-gray-200 w-[1px] h-[40%]" />
+            </div>
+            <PayPalProvider>
+              <PayPalButton
+                amount="31.50"
+                onSuccess={handleSuccess}
+                disabled={!isValidOrderProduct || !productDetails}
+              />
+            </PayPalProvider>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center gap-4 w-full">
+            {actionType === "basket" ? (
+              <>
+                <div>Your item has been added to your basket</div>
+                <Button onClick={() => router.push("/")}>View Basket</Button>
+              </>
+            ) : (
+              <div>Thanks for your purchase</div>
+            )}
+            <Button
+              onClick={() => {
+                router.push("/");
+                clearCurrentOrder();
+              }}
+            >
+              Continue Shopping
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
