@@ -31,6 +31,7 @@ export default function PayPalButton({
 }: PayPalButtonProps) {
   return (
     <PayPalButtons
+      className="w-full"
       disabled={disabled}
       createOrder={(data, actions) => {
         return actions.order.create({

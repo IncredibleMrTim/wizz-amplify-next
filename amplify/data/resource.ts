@@ -70,6 +70,17 @@ const schema = a.schema({
     })
     .authorization((allow) => [allow.publicApiKey()]),
 
+  OrderBasket: a
+    .model({
+      id: a.string().required(),
+      products: a.ref("OrderProduct").array().required(), // Reference to Product:
+      customerId: a.string(), // Reference to Customer
+      totalAmount: a.integer(),
+      status: a.string().default("Pending"), // e.g., Pending, Completed, Cancelled
+      deliveryDate: a.date(),
+    })
+    .authorization((allow) => [allow.publicApiKey()]),
+
   pageSettings: a
     .model({
       strapLine: a.string(),
