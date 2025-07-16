@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { FaFacebook } from "react-icons/fa6";
 import { FiEdit } from "react-icons/fi";
+import { ProductDetails } from "@/components/productDetails/ProductDetails";
 
 const ProductPage = () => {
   const params = useParams();
@@ -83,24 +84,9 @@ const ProductPage = () => {
                 Share on Facebook:
                 <FaFacebook size={20} />
               </Link>
-              <Link
-                href={`/product/${currentProduct?.name?.replace(
-                  /\s+/g,
-                  "-"
-                )}/productDetails`}
-                onClick={(e) => {
-                  if (!currentProduct) {
-                    e.preventDefault();
-                    alert("Product is not available");
-                  }
-                }}
-                prefetch
-                className="flex items-center gap-2 px-4 py-2 bg-pink-200 rounded-md hover:bg-pink-300 transition-colors duration-300"
-              >
-                Order
-              </Link>
             </div>
             <hr className="mt-4 md:mt-auto" />
+            <ProductDetails />
           </div>
         </div>
         <div className="flex flex-col justify-around w-full gap-2 overflow-hidden md:w-3/5 md:h-164 md:flex-row">

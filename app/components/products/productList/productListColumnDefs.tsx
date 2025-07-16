@@ -14,7 +14,7 @@ export interface ProductListCustomCellContextProps {
   deleteProduct?: boolean;
 }
 
-type CustomCellContext<TData, TValue> = CellContext<TData, TValue> & {
+export type CustomCellContext<TData, TValue> = CellContext<TData, TValue> & {
   onClick?: ({
     viewProduct,
     deleteProduct,

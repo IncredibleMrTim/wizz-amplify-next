@@ -136,9 +136,10 @@ const ProductList = () => {
                   }}
                   className="overflow-hidden text-ellipsis whitespace-nowrap py-4"
                 >
-                  {flexRender(cell.column.columnDef.cell, {
+                  {flexRender(cell.column.columnDef.cell as any, {
                     ...cell.getContext(),
-                    onClick: async ({
+
+                    onClick: ({
                       viewProduct,
                       deleteProduct,
                     }: ProductListCustomCellContextProps) => {

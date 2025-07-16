@@ -1,8 +1,13 @@
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
 const schema = a.schema({
+  SizeMetric: a.customType({
+    metric: a.string(),
+  }),
+
   // Lookup table for Order and Product
   OrderProduct: a.customType({
+    uid: a.id().required(),
     productId: a.string().required(),
     name: a.string().required(),
     quantity: a.integer().required(),
@@ -21,6 +26,8 @@ const schema = a.schema({
     ankleSize: a.integer(),
     height: a.integer(),
     notes: a.string(),
+    metric: a.ref("SizeMetric"), // Reference to SizeMetrics
+    price: a.integer().required(),
   }),
 
   Images: a.customType({
@@ -60,6 +67,17 @@ const schema = a.schema({
     .authorization((allow) => [allow.publicApiKey()]),
 
   Order: a
+    .model({
+      id: a.string().required(),
+      products: a.ref("OrderProduct").array().required(), // Reference to Product:
+      customerId: a.string(), // Reference to Customer
+      totalAmount: a.integer(),
+      status: a.string().default("Pending"), // e.g., Pending, Completed, Cancelled
+      deliveryDate: a.date(),
+    })
+    .authorization((allow) => [allow.publicApiKey()]),
+
+  OrderBasket: a
     .model({
       id: a.string().required(),
       products: a.ref("OrderProduct").array().required(), // Reference to Product:

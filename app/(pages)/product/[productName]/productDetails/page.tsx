@@ -32,6 +32,7 @@ const SpecificationPage = () => {
   }>({});
 
   // Selectors
+  const productPrices = useAppSelector((state) => state.order.productPrices);
   const currentProduct = useAppSelector(
     (state) => state.products.currentProduct
   );
@@ -62,7 +63,7 @@ const SpecificationPage = () => {
       await sendEmail({
         to: process.env.SMTP_EMAIL,
         subject: "New Order Received",
-        html: OrderEmailTemplate(orderDetails, currentOrder),
+        html: OrderEmailTemplate(orderDetails, currentOrder, productPrices),
       });
     }
   };
@@ -107,6 +108,8 @@ const SpecificationPage = () => {
       payload: {
         productId: currentProduct?.id || "",
         name: currentProduct?.name || "",
+        uid: currentOrderProduct?.uid || crypto.randomUUID(),
+        price: currentProduct?.price || 0,
         updates: { [fieldName]: parseInt(value.toString()) || value },
       } as Schema["OrderProduct"]["type"],
     });
@@ -152,7 +155,7 @@ const SpecificationPage = () => {
 
       <PayPalProvider>
         <PayPalButton
-          amount="31.50"
+          amount={currentProduct?.price?.toString()}
           onSuccess={handleSuccess}
           disabled={!isValidOrderProduct || !currentOrderProduct}
         />
