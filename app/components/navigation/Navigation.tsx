@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/popover";
 import { PopoverClose } from "@radix-ui/react-popover";
 import { FiPlus } from "react-icons/fi";
+import { CgShoppingCart } from "react-icons/cg";
 
 export type NavComponent = {
   id: string;
@@ -74,27 +75,37 @@ const Navigation = ({ type = "user" }: NavigationProps) => {
               </li>
             ))}
         </ul>
-        {type === "user" && (
-          <div className="flex absolute top-0 right-0 h-10 mr-4 items-center">
-            {currentUser ? (
-              <Popover onOpenChange={setAdminMenuOpen} open={adminMenuOpen}>
-                <PopoverTrigger>
-                  <Avatar>
-                    {currentUser?.given_name[0]}
-                    {currentUser?.family_name[0]}
-                  </Avatar>
-                </PopoverTrigger>
-                <PopoverContent className="mr-4 mt-1 bg-white rounded-sm !border-gray-200">
-                  <PopoverClose asChild>
-                    <AuthUserMenu onMenuItemClick={handleAdminMenuItemClick} />
-                  </PopoverClose>
-                </PopoverContent>
-              </Popover>
-            ) : (
-              <Link href="/admin">Login</Link>
-            )}
-          </div>
-        )}
+        <div className="flex absolute top-0 right-0 h-10 mr-4 items-center gap-2">
+          <Link
+            href="/basket"
+            className="flex items-center rounded-full  p-2 bg-gray-100"
+          >
+            <CgShoppingCart size={18} />
+          </Link>
+          {type === "user" && (
+            <>
+              {currentUser ? (
+                <Popover onOpenChange={setAdminMenuOpen} open={adminMenuOpen}>
+                  <PopoverTrigger>
+                    <Avatar>
+                      {currentUser?.given_name[0]}
+                      {currentUser?.family_name[0]}
+                    </Avatar>
+                  </PopoverTrigger>
+                  <PopoverContent className="mr-4 mt-1 bg-white rounded-sm !border-gray-200">
+                    <PopoverClose asChild>
+                      <AuthUserMenu
+                        onMenuItemClick={handleAdminMenuItemClick}
+                      />
+                    </PopoverClose>
+                  </PopoverContent>
+                </Popover>
+              ) : (
+                <Link href="/admin">Login</Link>
+              )}
+            </>
+          )}
+        </div>
         <div
           className={`overflow-hidden bg-white !z-1 ${selected?.content && "fade-in-scale border-t-1 border-gray-100 "}`}
         >

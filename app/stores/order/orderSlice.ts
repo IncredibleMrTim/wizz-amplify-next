@@ -8,10 +8,14 @@ export interface OrderState {
   addProductToOrder?: (product: Schema["Product"]["type"]) => void;
   updateOrderProduct?: (
     productId: string,
-    updates: Partial<Schema["OrderProduct"]["type"]>
+    updates: Partial<Schema["OrderProduct"]["type"]>,
+    price?: number
   ) => void;
   removeProductFromOrder?: (productId: string) => void;
   clearCurrentOrder?: () => void;
+  updateTotalCost?: (cost: number) => void;
+  // productPrices?: Record<string, number>;
+  totalCost?: number;
 }
 
 const initialSate: OrderState = {
@@ -21,6 +25,9 @@ const initialSate: OrderState = {
   updateOrderProduct: () => {},
   removeProductFromOrder: () => {},
   clearCurrentOrder: () => {},
+  updateTotalCost: (cost: number) => {},
+  // productPrices: {},
+  totalCost: 0,
 };
 
 export const orderSlice = createSlice({
@@ -53,6 +60,7 @@ export const orderSlice = createSlice({
         productId: string;
         name?: string;
         uid?: string;
+        price?: number;
         updates: Partial<Schema["OrderProduct"]["type"]>;
       }>
     ) => {
@@ -67,6 +75,7 @@ export const orderSlice = createSlice({
             uid: action.payload.uid || crypto.randomUUID(),
             name: action.payload.name || "",
             productId: action.payload.productId,
+            price: action.payload.price || 0,
             quantity: 1,
           });
         }
@@ -80,6 +89,14 @@ export const orderSlice = createSlice({
           ...state.currentOrder.products[productIndex],
           ...action.payload.updates,
         };
+
+        // state.productPrices = {
+        //   ...state.productPrices,
+        //   [action.payload.uid]: action.payload.price || 0,
+        // };
+        state.totalCost =
+          state.totalCost +
+          action.payload.price * (action.payload.updates.quantity || 1);
       }
     },
 

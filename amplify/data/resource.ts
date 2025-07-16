@@ -27,6 +27,7 @@ const schema = a.schema({
     height: a.integer(),
     notes: a.string(),
     metric: a.ref("SizeMetric"), // Reference to SizeMetrics
+    price: a.integer().required(),
   }),
 
   Images: a.customType({

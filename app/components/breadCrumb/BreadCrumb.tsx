@@ -20,7 +20,8 @@ export const BreadCrumb = () => {
       <Breadcrumb>
         <BreadcrumbList>
           {segments.map((segment, index) => {
-            if (pathname.includes("admin")) return null; // don't show breadcrumb in admin
+            if (pathname.includes("admin") || pathname.includes("basket"))
+              return null; // don't show breadcrumb in admin
             // don't show breadcrumb for product page
             return (
               <div key={index} className="flex place-items-center gap-2">

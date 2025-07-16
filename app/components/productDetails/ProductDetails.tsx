@@ -19,7 +19,6 @@ import { Button } from "@radix-ui/themes";
 import { fields } from "./fields";
 import { OrderEmailTemplate } from "./orderEmailTemplate";
 import { onValidationProps, ProductField } from "./ProductField";
-import { Separator } from "../separator/Separator";
 
 const requiredFieldNames = fields
   .filter((f) => Object.values(f)[0].required)
@@ -40,9 +39,7 @@ export const ProductDetails = () => {
   const [actionType, setActionType] = useState<"purchase" | "basket">(null);
 
   // Selectors
-  const clearCurrentProduct = useAppSelector(
-    (state) => state.products.clearCurrentProduct
-  );
+  const productPrices = useAppSelector((state) => state.order.productPrices);
   const clearCurrentOrder = useAppSelector(
     (state) => state.order.clearCurrentOrder
   );
@@ -65,6 +62,8 @@ export const ProductDetails = () => {
 
   const addProductToOrder = () => {
     // If there is no order, create a new one
+
+    console.log("Adding product to order", currentProduct, productDetails);
     if (!currentOrder) {
       dispatch({
         type: STORE_KEYS.SET_CURRENT_ORDER,
@@ -80,6 +79,8 @@ export const ProductDetails = () => {
       payload: {
         productId: currentProduct?.id || "",
         name: currentProduct?.name || "",
+        uid: crypto.randomUUID(),
+        price: currentProduct?.price || 0,
         updates: productDetails,
       } as Schema["OrderProduct"]["type"],
     });
@@ -115,7 +116,7 @@ export const ProductDetails = () => {
       await sendEmail({
         to: process.env.SMTP_EMAIL,
         subject: "New Order Received",
-        html: OrderEmailTemplate(orderDetails, newOrder),
+        html: OrderEmailTemplate(orderDetails, newOrder, productPrices),
       });
     }
   };

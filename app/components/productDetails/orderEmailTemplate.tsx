@@ -1,3 +1,4 @@
+"use client";
 import { OrderResponseBody } from "@/components/payPal/payPalButton/PayPalButton";
 import { Schema } from "amplify/data/resource";
 import ReactDOMServer from "react-dom/server";
@@ -20,27 +21,31 @@ export const OrderEmailTemplate = (
   } = props;
   const temp = document.createElement("div");
 
+  const totalCost = order.products.reduce(
+    (total, product) => total + (product.price * product.quantity || 0),
+    0
+  );
+
   const emailHtml = (
     <div>
       <p>Hey Wizzington Moo's Boutique Admin</p>
       <p>
         <div>You have a new order:</div>
         <div>
-          <p>
+          <div>
             Name:
             <span style={{ color: "firebrick" }}>
               {name?.given_name} {name?.surname || ""}
             </span>
-          </p>
-          <p>
+          </div>
+          <div>
             Email:
             <span style={{ color: "firebrick" }}> {from}</span>
-          </p>
-          <p>
-            <span style={{ color: "firebrick" }}>
-              Order Value: {order.totalAmount}
-            </span>
-          </p>
+          </div>
+          <div>
+            Order Value:
+            <span style={{ color: "firebrick" }}>{`£${totalCost}`}</span>
+          </div>
         </div>
       </p>
 
@@ -49,69 +54,37 @@ export const OrderEmailTemplate = (
       {order.products.map((product) => (
         <div key={product.uid}>
           <p>{product.name}</p>
-          <Table
-            style={{
-              marginLeft: "10px",
-              border: "1px solid #ccc",
-              width: "300px",
-            }}
-          >
-            <TableCaption
-              style={{
-                textAlign: "left",
-              }}
-            >
-              Specifications
-            </TableCaption>
-            <TableHeader style={{ backgroundColor: "firebrick" }}>
-              <TableRow>
-                <TableHead
-                  style={{
-                    textAlign: "left",
-                    fontWeight: "normal",
-                    color: "#fff",
-                  }}
-                >
-                  Name
-                </TableHead>
-                <TableHead
-                  style={{
-                    display: "flex",
-                    justifyContent: "start",
-                    fontWeight: "normal",
-                    color: "#fff",
-                  }}
-                >
-                  Value
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+          <table width="600" style={{ width: "600px" }}>
+            <thead>
+              <tr>
+                <th style={{ textAlign: "left" }}>Name</th>
+                <th style={{ textAlign: "left" }}>Value</th>
+              </tr>
+            </thead>
+            <tbody>
               {Object.entries(product).map(
                 ([key, value]) =>
                   key !== "productId" &&
                   key !== "uid" &&
                   key !== "name" && (
-                    <TableRow
-                      key={`${product.uid}-${key}`}
-                      style={{
-                        backgroundColor: "#f9f9f9",
-                        padding: "4px",
-                      }}
-                    >
-                      <TableCell>
+                    <tr key={`${value}-${key}`}>
+                      <td>
                         {key
                           .replace(/([A-Z])/g, " $1")
                           .replace(/^./, (str) => str.toUpperCase())}
-                      </TableCell>
-                      <TableCell>
-                        {value !== undefined ? value.toString() : "N/A"}
-                      </TableCell>
-                    </TableRow>
+                      </td>
+                      <td>{value !== undefined ? value.toString() : "N/A"}</td>
+                    </tr>
                   )
               )}
-            </TableBody>
-          </Table>
+              <tr>
+                <td style={{ fontWeight: "bold" }}>Cost</td>
+                <td style={{ fontWeight: "bold" }}>
+                  {`£${(product.price * product.quantity).toFixed(2)}`}
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       ))}
     </div>
