@@ -35,12 +35,7 @@ export default function App() {
           spectacle, embracing individuality and artistry.
         </p>
         <Separator />
-        <SignUp
-          username="Test6"
-          email="test6@example.com"
-          groupName="user"
-          password="TestPassword123!"
-        />
+        <SignUp groupName="user" />
         {isFetched && (
           <div className="flex flex-row flex-wrap justify-between mt-2">
             {productsData

@@ -11,15 +11,10 @@ import {
   FormDescription,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
-export const SignUp = ({
-  username,
-  password,
-  email,
-  groupName,
-}: SignupUserProps) => {
-  // Example usage
-
+export const SignUp = ({ groupName }: { groupName?: "user" | "admin" }) => {
   const formDataSchema = zod.object({
     username: zod.string().min(1, "Username is required"),
     password: zod.string().min(6, "Password must be at least 6 characters"),
@@ -34,24 +29,6 @@ export const SignUp = ({
       email: "",
     },
   });
-  //   useEffect(() => {
-  //     const sign = async () => {
-  //       try {
-  //         const result = await signupUser({
-  //           username,
-  //           password,
-  //           email,
-  //           groupName,
-  //         });
-  //         console.log("Success:", result);
-  //         // Handle success (e.g., show success message, redirect, etc.)
-  //       } catch (error) {
-  //         console.error("Error creating user:", error);
-  //         // Handle error (e.g., show error message to user)
-  //       }
-  //     };
-  //     sign();
-  //   }, []);
 
   return (
     <Form {...form}>

@@ -1,4 +1,4 @@
-export interface SignupUserProps {
+interface SignupUserProps {
   username: string;
   password: string;
   email: string;
