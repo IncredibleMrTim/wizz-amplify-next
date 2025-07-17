@@ -1,21 +1,24 @@
 export interface SignupUserProps {
   username: string;
+  password: string;
   email: string;
   groupName: string;
 }
 export async function signupUser({
   username,
+  password,
   email,
   groupName,
 }: SignupUserProps) {
   try {
-    const response = await fetch(process.env.LAMBDA_AUTH_URL, {
+    const response = await fetch(process.env.NEXT_PUBLIC_LAMBDA_AUTH_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         username,
+        password,
         email,
         groupName,
       }),
