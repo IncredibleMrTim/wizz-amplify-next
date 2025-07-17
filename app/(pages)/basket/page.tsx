@@ -11,7 +11,6 @@ const BasketPage = () => {
   const currentOrder = useAppSelector((state) => state.order.currentOrder);
   const totalCost = useAppSelector((state) => state.order.totalCost);
   const allProducts = useAppSelector((state) => state.products.allProducts);
-  const productPrices = useAppSelector((state) => state.order.productPrices);
 
   /*
    * Handle successful PayPal payment
@@ -21,7 +20,7 @@ const BasketPage = () => {
     await sendEmail({
       to: process.env.SMTP_EMAIL,
       subject: "New Order Received",
-      html: OrderEmailTemplate(orderDetails, currentOrder, productPrices),
+      html: OrderEmailTemplate(orderDetails, currentOrder),
     });
   };
   console.log("orderDetails", currentOrder);

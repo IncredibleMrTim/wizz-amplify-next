@@ -39,7 +39,7 @@ export const ProductDetails = () => {
   const [actionType, setActionType] = useState<"purchase" | "basket">(null);
 
   // Selectors
-  const productPrices = useAppSelector((state) => state.order.productPrices);
+
   const clearCurrentOrder = useAppSelector(
     (state) => state.order.clearCurrentOrder
   );
@@ -116,7 +116,7 @@ export const ProductDetails = () => {
       await sendEmail({
         to: process.env.SMTP_EMAIL,
         subject: "New Order Received",
-        html: OrderEmailTemplate(orderDetails, newOrder, productPrices),
+        html: OrderEmailTemplate(orderDetails, newOrder),
       });
     }
   };
