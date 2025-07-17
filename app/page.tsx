@@ -8,7 +8,7 @@ import { useGetProductsQuery } from "./services/product/useGetProductsQuery";
 import { useAppDispatch, STORE_KEYS } from "@/stores/store";
 import { Separator } from "./components/separator/Separator";
 import { SignUp } from "@/components/auth/customAuthenticator/SignUp";
-import { Authenticator } from "@aws-amplify/ui-react";
+import { SignIn } from "@/components/auth/customAuthenticator/SignIn";
 
 const FEATURE_PRODUCTS_PER_PAGE = 4;
 
@@ -35,7 +35,7 @@ export default function App() {
           spectacle, embracing individuality and artistry.
         </p>
         <Separator />
-        <SignUp groupName="user" />
+        <SignIn />
         {isFetched && (
           <div className="flex flex-row flex-wrap justify-between mt-2">
             {productsData
