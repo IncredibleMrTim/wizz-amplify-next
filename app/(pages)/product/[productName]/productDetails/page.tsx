@@ -14,8 +14,11 @@ import { STORE_KEYS, useAppDispatch, useAppSelector } from "@/stores/store";
 import { sendEmail } from "@/utils/email";
 
 import { fields } from "./fields";
-import { OrderEmailTemplate } from "./orderEmailTemplate";
-import { onValidationProps, ProductField } from "./ProductField";
+import { OrderEmailTemplate } from "@/components/emailTemplates/orderEmailTemplate";
+import {
+  onValidationProps,
+  ProductField,
+} from "@/components/productFields/ProductField";
 
 const requiredFieldNames = fields
   .filter((f) => Object.values(f)[0].required)

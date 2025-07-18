@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@radix-ui/themes";
 
-export const SignIn = () => {
+export const Signin = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -45,38 +47,32 @@ export const SignIn = () => {
 
   return (
     <div className="sign-in-container">
-      <h2>Sign In</h2>
       {error && <div className="error-message">{error}</div>}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div className="form-group">
-          <label htmlFor="username">Username</label>
-          <input
+          <Input
             type="text"
             id="username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
+            placeholder="Username"
           />
         </div>
         <div className="form-group">
-          <label htmlFor="password">Password</label>
-          <input
+          <Input
             type="password"
             id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            placeholder="Password"
           />
         </div>
-        <button type="submit" disabled={loading}>
+        <Button type="submit" disabled={loading}>
           {loading ? "Signing In..." : "Sign In"}
-        </button>
+        </Button>
       </form>
-      <p>
-        Don't have an account? <a href="/signup">Sign Up</a>
-      </p>
     </div>
   );
 };
-
-export default SignIn;

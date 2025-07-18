@@ -2,7 +2,10 @@ import { FiCalendar } from "react-icons/fi";
 import { PiBasket } from "react-icons/pi";
 import { z } from "zod";
 
-import { Field, Variant } from "./ProductField";
+import {
+  Field,
+  Variant,
+} from "../../../../components/productFields/ProductField";
 
 export const fieldSchema = z.object({
   waistSize: z.coerce.number().min(1),

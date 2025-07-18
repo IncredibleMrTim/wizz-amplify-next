@@ -101,7 +101,7 @@ const Navigation = ({ type = "user" }: NavigationProps) => {
                   </PopoverContent>
                 </Popover>
               ) : (
-                <Link href="/admin">Login</Link>
+                <Link href="/login">Login</Link>
               )}
             </>
           )}

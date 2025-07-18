@@ -18,7 +18,10 @@ import { Button } from "@radix-ui/themes";
 
 import { fields } from "./fields";
 import { OrderEmailTemplate } from "./orderEmailTemplate";
-import { onValidationProps, ProductField } from "./ProductField";
+import {
+  onValidationProps,
+  ProductField,
+} from "@/components/productFields/ProductField";
 
 const requiredFieldNames = fields
   .filter((f) => Object.values(f)[0].required)

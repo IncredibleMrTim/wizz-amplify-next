@@ -1,5 +1,4 @@
-import { useEffect } from "react";
-import { signupUser, SignupUserProps } from "./signupUser";
+import { signupUser } from "./signupUser";
 import { useForm } from "react-hook-form";
 import zod from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,13 +7,12 @@ import {
   FormField,
   FormItem,
   FormControl,
-  FormDescription,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Button } from "@radix-ui/themes";
 
-export const SignUp = ({ groupName }: { groupName?: "user" | "admin" }) => {
+export const Signup = ({ groupName }: { groupName?: "user" | "admin" }) => {
   const formDataSchema = zod.object({
     username: zod.string().min(1, "Username is required"),
     password: zod.string().min(6, "Password must be at least 6 characters"),
@@ -46,6 +44,7 @@ export const SignUp = ({ groupName }: { groupName?: "user" | "admin" }) => {
             console.error("Error signing up user:", error);
           }
         })}
+        className="flex flex-col gap-4"
       >
         <FormField
           control={form.control}
@@ -53,7 +52,7 @@ export const SignUp = ({ groupName }: { groupName?: "user" | "admin" }) => {
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <input {...field} placeholder="Username" />
+                <Input {...field} placeholder="Username" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -65,7 +64,7 @@ export const SignUp = ({ groupName }: { groupName?: "user" | "admin" }) => {
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <input type="password" {...field} placeholder="Password" />
+                <Input type="password" {...field} placeholder="Password" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -77,15 +76,17 @@ export const SignUp = ({ groupName }: { groupName?: "user" | "admin" }) => {
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <input type="email" {...field} placeholder="Email" />
+                <Input type="email" {...field} placeholder="Email" />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <button type="submit">Sign Up</button>
+        <Button type="submit" variant="surface">
+          Sign Up
+        </Button>
       </form>
-      <FormDescription>Please fill in the form to sign up.</FormDescription>
+
       <FormMessage />
     </Form>
   );

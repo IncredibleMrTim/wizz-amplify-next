@@ -3,7 +3,7 @@ import PayPalButton, {
   OrderResponseBody,
 } from "@/components/payPal/payPalButton/PayPalButton";
 import PayPalProvider from "@/components/payPal/payPalProvider/PayPalProvider";
-import { OrderEmailTemplate } from "@/components/productDetails/orderEmailTemplate";
+import { OrderEmailTemplate } from "@/components/emailTemplates/orderEmailTemplate";
 import { useAppSelector } from "@/stores/store";
 import { sendEmail } from "@/utils/email";
 

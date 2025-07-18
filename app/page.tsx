@@ -7,8 +7,8 @@ import { Schema } from "amplify/data/resource";
 import { useGetProductsQuery } from "./services/product/useGetProductsQuery";
 import { useAppDispatch, STORE_KEYS } from "@/stores/store";
 import { Separator } from "./components/separator/Separator";
-import { SignUp } from "@/components/auth/customAuthenticator/SignUp";
-import { SignIn } from "@/components/auth/customAuthenticator/SignIn";
+import { SignUp } from "@/components/auth/loginSignup/SignUp";
+import { SignIn } from "@/components/auth/loginSignup/SignIn";
 
 const FEATURE_PRODUCTS_PER_PAGE = 4;
 
