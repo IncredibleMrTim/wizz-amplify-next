@@ -11,6 +11,10 @@ import PayPalButton, {
   OrderResponseBody,
 } from "@/components/payPal/payPalButton/PayPalButton";
 import PayPalProvider from "@/components/payPal/payPalProvider/PayPalProvider";
+import {
+  onValidationProps,
+  ProductField,
+} from "@/components/productFields/ProductField";
 import { useAddOrderMutation } from "@/services/order/useAddOrderMutation";
 import { STORE_KEYS, useAppDispatch, useAppSelector } from "@/stores/store";
 import { sendEmail } from "@/utils/email";
@@ -18,7 +22,6 @@ import { Button } from "@radix-ui/themes";
 
 import { fields } from "./fields";
 import { OrderEmailTemplate } from "./orderEmailTemplate";
-import { onValidationProps, ProductField } from "./ProductField";
 
 const requiredFieldNames = fields
   .filter((f) => Object.values(f)[0].required)
@@ -39,7 +42,7 @@ export const ProductDetails = () => {
   const [actionType, setActionType] = useState<"purchase" | "basket">(null);
 
   // Selectors
-  const productPrices = useAppSelector((state) => state.order.productPrices);
+
   const clearCurrentOrder = useAppSelector(
     (state) => state.order.clearCurrentOrder
   );
@@ -63,7 +66,6 @@ export const ProductDetails = () => {
   const addProductToOrder = () => {
     // If there is no order, create a new one
 
-    console.log("Adding product to order", currentProduct, productDetails);
     if (!currentOrder) {
       dispatch({
         type: STORE_KEYS.SET_CURRENT_ORDER,
@@ -90,8 +92,6 @@ export const ProductDetails = () => {
    * @param orderDetails - The details of the order response from PayPal
    */
   const handleSuccess = async (orderDetails: OrderResponseBody) => {
-    console.log("ProductDetails rendered", productDetails);
-
     const newOrder = {
       id: orderDetails.id,
       products: [
@@ -116,7 +116,7 @@ export const ProductDetails = () => {
       await sendEmail({
         to: process.env.SMTP_EMAIL,
         subject: "New Order Received",
-        html: OrderEmailTemplate(orderDetails, newOrder, productPrices),
+        html: OrderEmailTemplate(orderDetails, newOrder),
       });
     }
   };

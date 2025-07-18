@@ -13,7 +13,6 @@ const FEATURE_PRODUCTS_PER_PAGE = 4;
 export default function App() {
   const dispatch = useAppDispatch();
   const { getProducts } = useGetProductsQuery();
-
   const { data: productsData, isFetched } = getProducts({});
 
   useEffect(() => {

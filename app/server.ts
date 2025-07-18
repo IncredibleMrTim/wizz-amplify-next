@@ -1,6 +1,9 @@
 "use client";
-import express from "express";
 import "dotenv/config";
+
+import bodyParser from "body-parser";
+import express from "express";
+
 import {
   ApiError,
   CheckoutPaymentIntent,
@@ -13,7 +16,6 @@ import {
   PaypalExperienceUserAction,
   ShippingPreference,
 } from "@paypal/paypal-server-sdk";
-import bodyParser from "body-parser";
 
 const app = express();
 app.use(bodyParser.json());

@@ -12,7 +12,7 @@ import {
   PopoverTrigger,
 } from "@radix-ui/react-popover";
 
-import { fieldSchema } from "./fields";
+import { fieldSchema } from "../../(pages)/product/[productName]/productDetails/fields";
 import moment from "moment";
 import { offsetDate } from "@/utils/date";
 
@@ -74,7 +74,6 @@ export const ProductField = ({
                       : moment(formatDate({ offset: 7 })).format("DD/MM/YYYY")
                   }
                   readOnly
-                  className="w-full !border-0 shadow-none !border-b-1 rounded-none border-b-gray-300 focus-visible:ring-transparent"
                 />
               </div>
             </PopoverTrigger>
@@ -155,7 +154,6 @@ export const ProductField = ({
               key={props.label}
               type={props.variant}
               placeholder={props.placeholderText}
-              className="w-full !border-0 shadow-none !border-b-1 rounded-none border-b-gray-300 focus-visible:ring-transparent"
               onChange={(e) => {
                 if (e.target.value) {
                   setValue(e.target.value);

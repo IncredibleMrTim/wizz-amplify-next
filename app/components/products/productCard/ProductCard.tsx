@@ -23,7 +23,7 @@ const ProductCard = ({
   showImage = true,
   showPrice = true,
 }: ProductCardProps) => {
-  const isAdmin = useAppSelector((state) => state.auth.currentUser);
+  const currentUser = useAppSelector((state) => state.auth.currentUser);
   const dispatch = useAppDispatch();
   const router = useRouter();
 
@@ -60,10 +60,10 @@ const ProductCard = ({
             <div className="flex w-full align-bottom absolute bottom-2 px-2">
               <div
                 className={`flex gap-1 w-full ${
-                  isAdmin ? `justify-between` : `justify-end`
+                  currentUser?.isAdmin ? `justify-between` : `justify-end`
                 }`}
               >
-                {isAdmin && (
+                {currentUser?.isAdmin && (
                   <Link
                     prefetch
                     href={`/admin/product/${product.id}`}

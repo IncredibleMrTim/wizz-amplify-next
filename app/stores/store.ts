@@ -12,6 +12,7 @@ export const STORE_KEYS = {
   SET_DRAWER_IS_OPEN: "NAVIGATION/setIsDrawerOpen",
   SET_CURRENT_ORDER: "ORDER/setCurrentOrder",
   UPDATE_ORDER_PRODUCT: "ORDER/updateOrderProduct",
+  SET_CURRENT_USER: "AUTH/setCurrentUser",
 };
 
 export const store = configureStore({

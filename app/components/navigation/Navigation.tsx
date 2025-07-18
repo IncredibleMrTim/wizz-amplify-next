@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+
 import { useAppSelector } from "@/stores/store";
 import { AuthUserMenu } from "../auth/authUserMenu/AuthUserMenu";
 import adminComponents from "./adminComponents";
@@ -27,6 +27,10 @@ export type NavComponent = {
   icon?: React.ReactNode;
 };
 
+// used to render the navigation bar
+// it will render a list of components based on the type
+// if the type is "user", it will render the user components
+// if the type is "admin", it will render the admin components
 interface NavigationProps {
   type?: "user" | "admin";
 }
@@ -88,8 +92,8 @@ const Navigation = ({ type = "user" }: NavigationProps) => {
                 <Popover onOpenChange={setAdminMenuOpen} open={adminMenuOpen}>
                   <PopoverTrigger>
                     <Avatar>
-                      {currentUser?.given_name[0]}
-                      {currentUser?.family_name[0]}
+                      {currentUser?.given_name?.[0]}
+                      {currentUser?.family_name?.[0]}
                     </Avatar>
                   </PopoverTrigger>
                   <PopoverContent className="mr-4 mt-1 bg-white rounded-sm !border-gray-200">
@@ -101,7 +105,7 @@ const Navigation = ({ type = "user" }: NavigationProps) => {
                   </PopoverContent>
                 </Popover>
               ) : (
-                <Link href="/admin">Login</Link>
+                <Link href="/login">Login</Link>
               )}
             </>
           )}

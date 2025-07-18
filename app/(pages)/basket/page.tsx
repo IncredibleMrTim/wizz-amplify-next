@@ -3,7 +3,7 @@ import PayPalButton, {
   OrderResponseBody,
 } from "@/components/payPal/payPalButton/PayPalButton";
 import PayPalProvider from "@/components/payPal/payPalProvider/PayPalProvider";
-import { OrderEmailTemplate } from "@/components/productDetails/orderEmailTemplate";
+import { OrderEmailTemplate } from "@/components/emailTemplates/orderEmailTemplate";
 import { useAppSelector } from "@/stores/store";
 import { sendEmail } from "@/utils/email";
 
@@ -11,7 +11,6 @@ const BasketPage = () => {
   const currentOrder = useAppSelector((state) => state.order.currentOrder);
   const totalCost = useAppSelector((state) => state.order.totalCost);
   const allProducts = useAppSelector((state) => state.products.allProducts);
-  const productPrices = useAppSelector((state) => state.order.productPrices);
 
   /*
    * Handle successful PayPal payment
@@ -21,10 +20,9 @@ const BasketPage = () => {
     await sendEmail({
       to: process.env.SMTP_EMAIL,
       subject: "New Order Received",
-      html: OrderEmailTemplate(orderDetails, currentOrder, productPrices),
+      html: OrderEmailTemplate(orderDetails, currentOrder),
     });
   };
-  console.log("orderDetails", currentOrder);
 
   return (
     <div className="flex flex-col min-h-screen">
