@@ -12,6 +12,10 @@ const nextConfig = {
     SMTP_PORT: process.env.SMTP_PORT,
     SMTP_PWD: process.env.SMTP_PWD,
     SMTP_EMAIL: process.env.SMTP_EMAIL,
+    NEXT_PUBLIC_LAMBDA_AUTH_URL: process.env.NEXT_PUBLIC_LAMBDA_AUTH_URL,
+    NEXT_PUBLIC_LAMBDA_SIGNIN_URL: process.env.NEXT_PUBLIC_LAMBDA_SIGNIN_URL,
+    NEXT_PUBLIC_LAMBDA_REFRESH_TOKEN_URL:
+      process.env.NEXT_PUBLIC_LAMBDA_REFRESH_TOKEN_URL,
   },
   images: {
     domains: [process.env.S3_IMAGE_DOMAIN],
