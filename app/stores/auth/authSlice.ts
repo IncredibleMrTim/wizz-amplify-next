@@ -1,6 +1,6 @@
 import { AuthUser } from "aws-amplify/auth";
 
-import { createSlice, PayloadAction, type } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export type User = {
   given_name: string;
