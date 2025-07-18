@@ -7,8 +7,6 @@ import { Schema } from "amplify/data/resource";
 import { useGetProductsQuery } from "./services/product/useGetProductsQuery";
 import { useAppDispatch, STORE_KEYS } from "@/stores/store";
 import { Separator } from "./components/separator/Separator";
-import { SignUp } from "@/components/auth/loginSignup/SignUp";
-import { SignIn } from "@/components/auth/loginSignup/SignIn";
 
 const FEATURE_PRODUCTS_PER_PAGE = 4;
 
@@ -35,7 +33,7 @@ export default function App() {
           spectacle, embracing individuality and artistry.
         </p>
         <Separator />
-        <SignIn />
+
         {isFetched && (
           <div className="flex flex-row flex-wrap justify-between mt-2">
             {productsData

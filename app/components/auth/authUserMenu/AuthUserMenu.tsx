@@ -3,10 +3,11 @@
 import { signOut } from "aws-amplify/auth";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useAppDispatch, useAppSelector } from "@/stores/store";
-import { AUTH_TYPES } from "@/stores/auth/authSlice";
+import { useAppDispatch, useAppSelector, STORE_KEYS } from "@/stores/store";
+
 import { FiLogOut, FiHome, FiSettings } from "react-icons/fi";
 import Link from "next/link";
+import { removeTokens } from "@/utils/auth";
 
 export const AuthUserMenu = ({
   onMenuItemClick,
@@ -33,12 +34,10 @@ export const AuthUserMenu = ({
 
       await signOut();
 
-      await caches.delete("idToken");
-      await caches.delete("accessToken");
-      await caches.delete("refreshToken");
+      removeTokens();
 
       dispatch({
-        type: AUTH_TYPES.SET_CURRENT_USER,
+        type: STORE_KEYS.SET_CURRENT_USER,
         payload: null,
       });
     } catch (error) {
@@ -67,18 +66,20 @@ export const AuthUserMenu = ({
             Home Page
           </Link>
         </li>
-        <li className="flex gap-4">
-          <FiSettings size={22} className="text-gray-400" />
+        {currentUser.isAdmin && (
+          <li className="flex gap-4">
+            <FiSettings size={22} className="text-gray-400" />
 
-          <Link
-            prefetch
-            href="/admin"
-            className="!text-black"
-            onClick={onMenuItemClick}
-          >
-            Admin
-          </Link>
-        </li>
+            <Link
+              prefetch
+              href="/admin"
+              className="!text-black"
+              onClick={onMenuItemClick}
+            >
+              Admin
+            </Link>
+          </li>
+        )}
         <li className="flex gap-4">
           <FiLogOut size={22} className="text-gray-400" />
           <Link

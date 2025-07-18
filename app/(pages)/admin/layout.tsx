@@ -4,34 +4,17 @@ import CheckAuth from "@/components/auth/Auth";
 
 import { useRouter } from "next/navigation";
 import { Button } from "@radix-ui/themes";
+import { parseJwt, getAccessToken } from "@/utils/auth";
+
+const isAdmin = parseJwt(localStorage.getItem("accessToken"))?.[
+  "cognito:groups"
+]?.includes("admin");
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   return (
     <div className="flex flex-col min-h-screen">
-      <main className="flex-grow p-4">
-        <Authenticator
-          variation="modal"
-          components={{
-            Footer: () => (
-              <div className="flex w-full justify-end -mt-8 pr-4 ">
-                <Button
-                  variant="ghost"
-                  onClick={() => {
-                    router.push("/");
-                  }}
-                >
-                  Cancel
-                </Button>
-              </div>
-            ),
-          }}
-        >
-          <CheckAuth />
-
-          {children}
-        </Authenticator>
-      </main>
+      <main className="flex-grow p-4">{isAdmin ? children : null}</main>
     </div>
   );
 };

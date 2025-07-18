@@ -3,8 +3,8 @@ import { AuthGetCurrentUserServer } from "@/utils/amplify-utils";
 import { usePathname } from "next/navigation";
 
 import { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "@/stores/store";
-import { AUTH_TYPES } from "@/stores/auth/authSlice";
+import { useAppDispatch, useAppSelector, STORE_KEYS } from "@/stores/store";
+
 import { getCurrentUser } from "aws-amplify/auth";
 
 const CheckAuth = () => {
@@ -25,13 +25,13 @@ const CheckAuth = () => {
         // so that we don't continuously update the state
         if (user && !currentUser) {
           dispatch({
-            type: AUTH_TYPES.SET_CURRENT_USER,
+            type: STORE_KEYS.SET_CURRENT_USER,
             payload: user,
           });
         }
       } catch (error) {
         dispatch({
-          type: AUTH_TYPES.SET_CURRENT_USER,
+          type: STORE_KEYS.SET_CURRENT_USER,
           payload: null,
         });
         await caches.delete("idToken");

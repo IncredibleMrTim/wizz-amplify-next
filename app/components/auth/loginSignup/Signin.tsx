@@ -1,12 +1,19 @@
-import React, { useState } from "react";
+"use client";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
+
 import { Input } from "@/components/ui/input";
+import { parseJwt, setTokens } from "@/utils/auth";
 import { Button } from "@radix-ui/themes";
+import { useAppDispatch, STORE_KEYS } from "@/stores/store";
 
 export const Signin = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const dispatch = useAppDispatch();
+  const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,18 +33,33 @@ export const Signin = () => {
       });
 
       const data = await response.json();
+      console.log(data.authResult);
 
       if (!response.ok) {
         throw new Error(data.message || "Sign-in failed");
       }
 
       // Store tokens in localStorage or secure storage
-      localStorage.setItem("accessToken", data.authResult.accessToken);
-      localStorage.setItem("idToken", data.authResult.idToken);
-      localStorage.setItem("refreshToken", data.authResult.refreshToken);
+      setTokens(
+        data.authResult.accessToken,
+        data.authResult.idToken,
+        data.authResult.refreshToken
+      );
 
-      // Redirect to dashboard or home page
-      window.location.href = "/";
+      const payload = parseJwt(data.authResult.idToken);
+
+      dispatch({
+        type: STORE_KEYS.SET_CURRENT_USER,
+        payload: {
+          given_name: payload.given_name,
+          family_name: payload.family_name,
+          email: payload.email,
+          isAdmin: payload["cognito:groups"]?.includes("admin") || false,
+        },
+      });
+
+      // Redirect to home page
+      router.push("/");
     } catch (error) {
       setError(error.message);
     } finally {
@@ -69,6 +91,7 @@ export const Signin = () => {
             placeholder="Password"
           />
         </div>
+
         <Button type="submit" disabled={loading}>
           {loading ? "Signing In..." : "Sign In"}
         </Button>

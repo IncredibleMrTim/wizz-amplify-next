@@ -1,6 +1,6 @@
 "use client";
-import { Signin } from "@/components/auth/loginSignup/SignIn";
-import { Signup } from "@/components/auth/loginSignup/SignUp";
+import { Signin } from "@/components/auth/loginSignup/Signin";
+import { Signup } from "@/components/auth/loginSignup/Signup";
 const LoginPage = ({ groupName }: { groupName?: "user" | "admin" }) => {
   return (
     <div className="flex flex-row justify-center h-full gap-4">
