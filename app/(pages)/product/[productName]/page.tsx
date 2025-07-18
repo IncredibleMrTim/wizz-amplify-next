@@ -16,7 +16,7 @@ const ProductPage = () => {
   const currentProduct = useAppSelector(
     (state) => state.products.currentProduct
   );
-  const isAdmin = useAppSelector((state) => state.auth.currentUser);
+  const currentUser = useAppSelector((state) => state.auth.currentUser);
 
   // Fetch current product is not already in state
   // this allows deep linking to product pages
@@ -96,7 +96,7 @@ const ProductPage = () => {
               alt={currentProduct?.name}
               className="flex w-full object-cover grow-0 shrink-0"
             />
-            {isAdmin && (
+            {currentUser?.isAdmin && (
               <Link
                 prefetch
                 href={`/admin/product/${currentProduct?.id}`}

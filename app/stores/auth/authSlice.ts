@@ -1,5 +1,6 @@
-import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { AuthUser } from "aws-amplify/auth";
+
+import { createSlice, PayloadAction, type } from "@reduxjs/toolkit";
 
 export type User = {
   given_name: string;
@@ -23,7 +24,6 @@ export const authSlice = createSlice({
   initialState: initialSate,
   reducers: {
     setCurrentUser: (state, action: PayloadAction<User>) => {
-      console.log("Setting current user:", action.payload);
       state.currentUser = action.payload;
     },
   },

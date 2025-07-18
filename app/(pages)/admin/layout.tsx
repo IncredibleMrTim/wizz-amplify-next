@@ -1,20 +1,27 @@
 "use client";
-import { Authenticator } from "@aws-amplify/ui-react";
-import CheckAuth from "@/components/auth/Auth";
-
 import { useRouter } from "next/navigation";
-import { Button } from "@radix-ui/themes";
-import { parseJwt, getAccessToken } from "@/utils/auth";
 
-const isAdmin = parseJwt(localStorage.getItem("accessToken"))?.[
-  "cognito:groups"
-]?.includes("admin");
+import { useAppSelector } from "@/stores/store";
+import { useEffect } from "react";
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
+  const currentUser = useAppSelector((state) => state.auth.currentUser);
+
+  useEffect(() => {
+    // Redirect to home if the user is not an admin
+    if (!currentUser?.isAdmin) {
+      router.push("/");
+    }
+  }, [currentUser, router]);
+
   return (
-    <div className="flex flex-col min-h-screen">
-      <main className="flex-grow p-4">{isAdmin ? children : null}</main>
+    <div>
+      {currentUser?.isAdmin && (
+        <div className="flex flex-col min-h-screen">
+          <main className="flex-grow p-4">{children}</main>
+        </div>
+      )}
     </div>
   );
 };

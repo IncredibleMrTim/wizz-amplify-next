@@ -1,8 +1,9 @@
 "use client";
-import { setTokens, removeTokens, parseJwt } from "@/utils/auth";
-import React, { createContext, useState, useContext, useEffect } from "react";
-import { useAppDispatch, STORE_KEYS } from "@/stores/store";
 import { fetchUserAttributes } from "aws-amplify/auth";
+import React, { createContext, useContext, useEffect, useState } from "react";
+
+import { STORE_KEYS, useAppDispatch } from "@/stores/store";
+import { parseJwt, removeTokens, setTokens } from "@/utils/auth";
 
 const AuthContext = createContext(null);
 
@@ -26,15 +27,10 @@ export const AuthProvider = ({ children }) => {
           const isExpired = Date.now() >= payload.exp * 1000;
 
           if (!isExpired) {
-            // Extract user info from ID token
-
             setUser({
               username: payload["cognito:username"],
               email: payload.email,
-              // Add other user attributes as needed
             });
-
-            console.log("payload", payload);
 
             dispatch({
               type: STORE_KEYS.SET_CURRENT_USER,

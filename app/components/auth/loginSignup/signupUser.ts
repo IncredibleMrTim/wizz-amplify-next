@@ -3,10 +3,14 @@ interface SignupUserProps {
   password: string;
   email: string;
   groupName: string;
+  firstName: string;
+  lastName: string;
 }
 export async function signupUser({
   username,
   password,
+  firstName,
+  lastName,
   email,
   groupName,
 }: SignupUserProps) {
@@ -19,6 +23,8 @@ export async function signupUser({
       body: JSON.stringify({
         username,
         password,
+        given_name: firstName,
+        family_name: lastName,
         email,
         groupName,
       }),
@@ -26,7 +32,6 @@ export async function signupUser({
 
     // Get the response as text first
     const responseText = await response.text();
-    console.log("Raw response:", responseText);
 
     // Try to parse as JSON
     let data;

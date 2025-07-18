@@ -13,7 +13,6 @@ const AdminProductsPage = () => {
   const params = useParams();
 
   const handleSubmit = (p: Schema["Product"]["type"]) => {
-    console.log("p", p);
     if (params.productId) {
       updateProductMutation.mutateAsync(p);
     } else {

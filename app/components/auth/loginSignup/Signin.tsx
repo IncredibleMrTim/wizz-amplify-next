@@ -3,9 +3,9 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 import { Input } from "@/components/ui/input";
+import { STORE_KEYS, useAppDispatch } from "@/stores/store";
 import { parseJwt, setTokens } from "@/utils/auth";
 import { Button } from "@radix-ui/themes";
-import { useAppDispatch, STORE_KEYS } from "@/stores/store";
 
 export const Signin = () => {
   const [username, setUsername] = useState("");
@@ -33,7 +33,6 @@ export const Signin = () => {
       });
 
       const data = await response.json();
-      console.log(data.authResult);
 
       if (!response.ok) {
         throw new Error(data.message || "Sign-in failed");
