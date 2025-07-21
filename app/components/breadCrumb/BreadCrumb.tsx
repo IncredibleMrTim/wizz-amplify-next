@@ -15,14 +15,16 @@ export const BreadCrumb = () => {
   const pathname = usePathname();
 
   const segments = pathname.split("/").filter((segment) => segment !== "");
+
+  const hiddenSegments = ["admin", "basket"];
+  const filteredSegments = segments.filter(
+    (segment) => !hiddenSegments.includes(segment)
+  );
   return (
     <div className="items-center justify-between text-black p-4 hidden md:flex">
       <Breadcrumb>
         <BreadcrumbList>
-          {segments.map((segment, index) => {
-            if (pathname.includes("admin") || pathname.includes("basket"))
-              return null; // don't show breadcrumb in admin
-            // don't show breadcrumb for product page
+          {filteredSegments.map((segment, index) => {
             return (
               <div key={index} className="flex place-items-center gap-2">
                 <BreadcrumbItem key={index}>
@@ -30,7 +32,7 @@ export const BreadCrumb = () => {
                     href={`/${
                       segmentMappings[segment] === "Products"
                         ? "/"
-                        : segments.slice(0, index + 1).join("/")
+                        : filteredSegments.slice(0, index + 1).join("/")
                     }`}
                   >
                     {segmentMappings[segment] ||
@@ -40,7 +42,7 @@ export const BreadCrumb = () => {
                 </BreadcrumbItem>
 
                 <BreadcrumbSeparator
-                  className={`${index === segments.length - 1 && "hidden"}`}
+                  className={`${index === filteredSegments.length - 1 && "hidden"}`}
                 >
                   <p>/</p>
                 </BreadcrumbSeparator>

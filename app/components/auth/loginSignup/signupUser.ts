@@ -15,7 +15,7 @@ export async function signupUser({
   groupName,
 }: SignupUserProps) {
   try {
-    const response = await fetch(process.env.NEXT_PUBLIC_LAMBDA_AUTH_URL, {
+    const response = await fetch(process.env.NEXT_PUBLIC_LAMBDA_SIGNUP_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
