@@ -1,6 +1,12 @@
 "use client";
 // auth.js
 
+import {
+  fetchAuthSession,
+  fetchUserAttributes,
+  getCurrentUser,
+} from "aws-amplify/auth";
+
 export const getIdToken = () => localStorage.getItem("idToken");
 export const getRefreshToken = () => localStorage.getItem("refreshToken");
 
@@ -37,6 +43,17 @@ export const parseJwt = (token: string) => {
   try {
     return JSON.parse(atob(token.split(".")[1]));
   } catch (e) {
+    return null;
+  }
+};
+
+export const getUserRole = async () => {
+  try {
+    const session = await fetchAuthSession();
+
+    console.log("User role:", session);
+  } catch (error) {
+    console.error("Error fetching user role:", error);
     return null;
   }
 };

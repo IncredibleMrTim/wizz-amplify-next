@@ -8,6 +8,8 @@ import { useGetProductsQuery } from "./services/product/useGetProductsQuery";
 import { useAppDispatch, STORE_KEYS } from "@/stores/store";
 import { Separator } from "./components/separator/Separator";
 
+import { jwtDecode } from "jwt-decode";
+
 const FEATURE_PRODUCTS_PER_PAGE = 4;
 
 export default function App() {
@@ -23,6 +25,16 @@ export default function App() {
       });
     }
   }, [productsData, isFetched]);
+
+  useEffect(() => {
+    const getSession = async () => {
+      const session = localStorage.getItem("idToken");
+      if (session) {
+        console.log("Session:", jwtDecode(session));
+      }
+    };
+    getSession();
+  }, []);
 
   return (
     <main>

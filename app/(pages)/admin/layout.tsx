@@ -1,27 +1,37 @@
 "use client";
-import { useRouter } from "next/navigation";
+import { Authenticator } from "@aws-amplify/ui-react";
+import CheckAuth from "@/components/auth/Auth";
 
-import { useAppSelector } from "@/stores/store";
-import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@radix-ui/themes";
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
-  const currentUser = useAppSelector((state) => state.auth.currentUser);
-
-  useEffect(() => {
-    // Redirect to home if the user is not an admin
-    if (!currentUser?.isAdmin) {
-      router.push("/");
-    }
-  }, [currentUser, router]);
-
   return (
-    <div>
-      {currentUser?.isAdmin && (
-        <div className="flex flex-col min-h-screen">
-          <main className="flex-grow p-4">{children}</main>
-        </div>
-      )}
+    <div className="flex flex-col min-h-screen">
+      <main className="flex-grow p-4">
+        <Authenticator
+          variation="modal"
+          components={{
+            Footer: () => (
+              <div className="flex w-full justify-end -mt-8 pr-4 ">
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    router.push("/");
+                  }}
+                >
+                  Cancel
+                </Button>
+              </div>
+            ),
+          }}
+        >
+          <CheckAuth />
+
+          {children}
+        </Authenticator>
+      </main>
     </div>
   );
 };
