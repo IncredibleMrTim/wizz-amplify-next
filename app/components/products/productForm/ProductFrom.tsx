@@ -1,9 +1,13 @@
 "use client";
 
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { useRouter } from "next/navigation";
-import { Button } from "@radix-ui/themes";
+import { Schema, type } from "amplify/data/resource";
+import { useParams, useRouter } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
+import { FiArrowLeft, FiCheck } from "react-icons/fi";
+import { z } from "zod";
+
+import { FileUploader } from "@/components/fileUploader/FileUploader";
 import {
   Form,
   FormControl,
@@ -13,16 +17,12 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { type Schema } from "amplify/data/resource";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { useParams } from "next/navigation";
-import { useAppDispatch, useAppSelector, STORE_KEYS } from "@/stores/store";
-import { FileUploader } from "@/components/fileUploader/FileUploader";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useGetProductQuery } from "@/services/product/useGetProductQuery";
-import { FiCheck, FiArrowLeft } from "react-icons/fi";
+import { STORE_KEYS, useAppDispatch, useAppSelector } from "@/stores/store";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button";
 
 interface ProductFormProps {
   onSubmit: (product: Schema["Product"]["type"]) => void;
@@ -345,17 +345,13 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
             </div>
           </div>
           <div className="flex justify-between gap-2 pt-4">
-            <Button
-              variant="outline"
-              className="!mb-4"
-              onClick={() => router.push("/admin")}
-            >
-              <FiArrowLeft size={16} />
+            <Button variant="outline" onClick={() => router.push("/admin")}>
+              <FiArrowLeft />
               Cancel
             </Button>
 
-            <Button type="submit" variant="solid">
-              <FiCheck size={16} />
+            <Button type="submit">
+              <FiCheck />
               {params.productId?.[0] ? "Update" : "Create"} Product
             </Button>
           </div>

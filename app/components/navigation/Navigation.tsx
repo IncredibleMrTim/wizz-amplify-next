@@ -7,7 +7,7 @@ import { useAppSelector } from "@/stores/store";
 import { AuthUserMenu } from "../auth/authUserMenu/AuthUserMenu";
 import adminComponents from "./adminComponents";
 import userComponents from "./userComponents";
-import { Button, IconButton } from "@radix-ui/themes";
+import { Button } from "@/components/ui/button";
 import { Avatar } from "@aws-amplify/ui-react";
 import {
   Popover,

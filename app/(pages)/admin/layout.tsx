@@ -3,7 +3,7 @@ import { Authenticator } from "@aws-amplify/ui-react";
 import CheckAuth from "@/components/auth/Auth";
 
 import { useRouter } from "next/navigation";
-import { Button } from "@radix-ui/themes";
+import { Button } from "@/components/ui/button";
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();

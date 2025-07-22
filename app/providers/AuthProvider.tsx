@@ -1,5 +1,5 @@
 "use client";
-import { fetchUserAttributes } from "aws-amplify/auth";
+import { fetchAuthSession, fetchUserAttributes } from "aws-amplify/auth";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 import { STORE_KEYS, useAppDispatch } from "@/stores/store";
@@ -17,28 +17,24 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const accessToken = localStorage.getItem("accessToken");
-        const idToken = localStorage.getItem("idToken");
+        const authSession = await fetchAuthSession();
+        const userAttributes = await fetchUserAttributes();
 
-        if (accessToken && idToken) {
-          // Validate token expiration
-          const payload = parseJwt(idToken);
+        console.log("Auth session:", authSession);
+        console.log("User attributes:", userAttributes);
 
-          const isExpired = Date.now() >= payload.exp * 1000;
+        if (authSession) {
+          const isExpired =
+            Date.now() >= authSession.tokens.accessToken.payload.exp * 1000;
 
           if (!isExpired) {
-            setUser({
-              username: payload["cognito:username"],
-              email: payload.email,
-            });
-
             dispatch({
               type: STORE_KEYS.SET_CURRENT_USER,
               payload: {
-                given_name: payload.given_name,
-                family_name: payload.family_name,
-                email: payload.email,
-                isAdmin: payload["cognito:groups"]?.includes("admin") || false,
+                given_name: userAttributes.given_name,
+                family_name: userAttributes.family_name,
+                email: userAttributes.email,
+                isAdmin: true,
               },
             });
             setIsAuthenticated(true);
@@ -48,7 +44,7 @@ export const AuthProvider = ({ children }) => {
           }
         }
       } catch (error) {
-        console.error("Authentication error:", error);
+        // console.error("Authentication error:", error);
         logout();
       } finally {
         setLoading(false);
@@ -103,7 +99,7 @@ export const AuthProvider = ({ children }) => {
           family_name: payload.family_name,
           jti: payload.jti,
           email: payload.email,
-          isAdmin: payload["custom:isAdmin"] || false, // Assuming isAdmin is a custom attribute
+          isAdmin: false,
         },
       });
 

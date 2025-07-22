@@ -11,7 +11,7 @@ export type User = {
 
 export interface AuthState {
   currentUser: User | null;
-  setCurrentUser: (currentUser: AuthUser | null) => void;
+  setCurrentUser: (currentUser: User | null) => void;
 }
 
 const initialSate: AuthState = {
