@@ -71,7 +71,7 @@ const Navigation = ({ type = "user" }: NavigationProps) => {
                   </div>
                 ) : (
                   <Link href={component.href} prefetch>
-                    <Button variant="solid" className="px-2 py-2">
+                    <Button className="px-2 py-2">
                       <FiPlus /> {component.title}
                     </Button>
                   </Link>

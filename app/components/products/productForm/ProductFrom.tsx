@@ -1,6 +1,6 @@
 "use client";
 
-import { Schema, type } from "amplify/data/resource";
+import { Schema } from "amplify/data/resource";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
