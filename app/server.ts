@@ -12,9 +12,6 @@ import {
   LogLevel,
   OrdersController,
   PaymentsController,
-  PaypalExperienceLandingPage,
-  PaypalExperienceUserAction,
-  ShippingPreference,
 } from "@paypal/paypal-server-sdk";
 
 const app = express();

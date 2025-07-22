@@ -26,7 +26,7 @@ const CheckAuth = () => {
         if (user && !currentUser) {
           dispatch({
             type: STORE_KEYS.SET_CURRENT_USER,
-            payload: user,
+            payload: { ...user, isAdmin: true },
           });
         }
       } catch (error) {

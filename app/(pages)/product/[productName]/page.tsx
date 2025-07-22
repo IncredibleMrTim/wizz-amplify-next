@@ -4,7 +4,7 @@ import { useAppSelector, useAppDispatch, STORE_KEYS } from "@/stores/store";
 import { useGetProductQuery } from "@/services/product/useGetProductQuery";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { FaFacebook } from "react-icons/fa6";
+// import { FaFacebook } from "react-icons/fa6";
 import { FiEdit } from "react-icons/fi";
 import { ProductDetails } from "@/components/productDetails/ProductDetails";
 
@@ -70,7 +70,7 @@ const ProductPage = () => {
               <p className="!font-bold !text-lg">
                 Price: £{currentProduct?.price}
               </p>
-              <Link
+              {/* <Link
                 href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
                   `${process.env.ROOT_URL}/product/${currentProduct?.name?.replace(
                     /\s+/g,
@@ -83,7 +83,7 @@ const ProductPage = () => {
               >
                 Share on Facebook:
                 <FaFacebook size={20} />
-              </Link>
+              </Link> */}
             </div>
             <hr className="mt-4 md:mt-auto" />
             <ProductDetails />

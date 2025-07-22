@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { STORE_KEYS, useAppDispatch } from "@/stores/store";
 import { parseJwt, setTokens } from "@/utils/auth";
-import { Button } from "@radix-ui/themes";
+import { Button } from "@/components/ui/button";
 
 export const Signin = () => {
   const [username, setUsername] = useState("");
@@ -91,7 +91,7 @@ export const Signin = () => {
           />
         </div>
 
-        <Button type="submit" disabled={loading}>
+        <Button type="submit" className="w-full">
           {loading ? "Signing In..." : "Sign In"}
         </Button>
       </form>

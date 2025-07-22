@@ -1,6 +1,7 @@
-import { Button } from "@radix-ui/themes";
-import { Table } from "@tanstack/react-table/build/lib/";
 import { Schema } from "amplify/data/resource";
+
+import { Button } from "@/components/ui/button";
+import { Table } from "@tanstack/react-table/build/lib/";
 
 export const ProductTableFooter = ({
   table,
@@ -16,14 +17,12 @@ export const ProductTableFooter = ({
     </div>
     <div className="flex gap-2">
       <Button
-        variant="solid"
         onClick={() => table.previousPage()}
         disabled={!table.getCanPreviousPage()}
       >
         Previous
       </Button>
       <Button
-        variant="solid"
         onClick={() => table.nextPage()}
         disabled={!table.getCanNextPage()}
       >

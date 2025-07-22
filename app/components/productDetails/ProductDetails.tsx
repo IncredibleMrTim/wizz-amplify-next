@@ -15,10 +15,10 @@ import {
   onValidationProps,
   ProductField,
 } from "@/components/productFields/ProductField";
+import { Button } from "@/components/ui/button";
 import { useAddOrderMutation } from "@/services/order/useAddOrderMutation";
 import { STORE_KEYS, useAppDispatch, useAppSelector } from "@/stores/store";
 import { sendEmail } from "@/utils/email";
-import { Button } from "@radix-ui/themes";
 
 import { fields } from "./fields";
 import { OrderEmailTemplate } from "./orderEmailTemplate";
@@ -191,7 +191,7 @@ export const ProductDetails = () => {
                   addProductToOrder();
                 }
               }}
-              className=""
+              className="flex items-center-safe justify-center"
             >
               Add to Basket <PiBasket size={20} />
             </Button>

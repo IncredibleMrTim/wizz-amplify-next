@@ -1,17 +1,15 @@
-import {
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuCheckboxItem,
-  DropdownMenu,
-} from "@radix-ui/react-dropdown-menu";
-import { Button } from "@/components/ui/button";
+import { Schema } from "amplify/data/resource";
+import { Check, ChevronDown, X } from "lucide-react";
+import { FiSearch } from "react-icons/fi";
 
-import { ChevronDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@radix-ui/react-dropdown-menu";
 import { TextField } from "@radix-ui/themes";
 import { Table } from "@tanstack/react-table/build/lib/";
-import { Schema } from "amplify/data/resource";
-import { Check, X } from "lucide-react";
-import { FiSearch } from "react-icons/fi";
 
 export const ProductFilter = ({
   table,

@@ -1,10 +1,11 @@
 "use client";
 
 import { Schema } from "amplify/data/resource";
-import { useAppSelector, useAppDispatch, STORE_KEYS } from "@/stores/store";
-import { useRouter } from "next/navigation";
-import { FiShoppingCart, FiEdit } from "react-icons/fi";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { FiEdit, FiShoppingCart } from "react-icons/fi";
+
+import { STORE_KEYS, useAppDispatch, useAppSelector } from "@/stores/store";
 
 interface ProductCardProps {
   product: Schema["Product"]["type"];
