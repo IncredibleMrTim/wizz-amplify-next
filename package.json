@@ -17,7 +17,7 @@
     "@aws-amplify/plugin-types": "^1.11.0",
     "@aws-amplify/ui-react": "^6.11.2",
     "@aws-amplify/ui-react-storage": "^3.11.0",
-    "@aws-sdk/client-cognito-identity-provider": "^3.846.0",
+    "@aws-sdk/client-cognito-identity-provider": "^3.848.0",
     "@aws-sdk/client-sso-oidc": "^3.835.0",
     "@aws-sdk/types": "^3.821.0",
     "@hookform/resolvers": "^5.1.1",
