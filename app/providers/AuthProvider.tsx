@@ -20,9 +20,6 @@ export const AuthProvider = ({ children }) => {
         const authSession = await fetchAuthSession();
         const userAttributes = await fetchUserAttributes();
 
-        console.log("Auth session:", authSession);
-        console.log("User attributes:", userAttributes);
-
         if (authSession) {
           const isExpired =
             Date.now() >= authSession.tokens.accessToken.payload.exp * 1000;

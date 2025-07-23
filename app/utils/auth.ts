@@ -50,8 +50,6 @@ export const parseJwt = (token: string) => {
 export const getUserRole = async () => {
   try {
     const session = await fetchAuthSession();
-
-    console.log("User role:", session);
   } catch (error) {
     console.error("Error fetching user role:", error);
     return null;

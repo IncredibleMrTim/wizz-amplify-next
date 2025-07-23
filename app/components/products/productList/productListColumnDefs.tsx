@@ -32,11 +32,23 @@ export const columns: ColumnDef<Schema["Product"]["type"]>[] = [
     accessorKey: "name",
     header: "Name",
     size: 50, // Explicit size
-    cell: ({ row }) => (
-      <div className="overflow-hidden text-ellipsis whitespace-nowrap">
-        {row.getValue?.("name") ?? "unknown"}
-      </div>
-    ),
+
+    cell: ({ row }) => {
+      try {
+        return (
+          <div className="overflow-hidden text-ellipsis whitespace-nowrap">
+            {row?.getValue?.("name") ?? "unknown"}
+          </div>
+        );
+      } catch (error) {
+        console.error("Error rendering name cell:", error);
+        return (
+          <div className="overflow-hidden text-ellipsis whitespace-nowrap">
+            unknown
+          </div>
+        );
+      }
+    },
   },
   {
     accessorKey: "description",
@@ -69,7 +81,7 @@ export const columns: ColumnDef<Schema["Product"]["type"]>[] = [
     cell: ({ row }) => {
       return (
         <div className="overflow-hidden text-ellipsis whitespace-nowrap">
-          {row.getValue("price")}
+          {row?.getValue?.("price") ?? 0}
         </div>
       );
     },
