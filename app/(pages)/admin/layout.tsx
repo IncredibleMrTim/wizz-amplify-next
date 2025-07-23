@@ -11,6 +11,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     <div className="flex flex-col min-h-screen">
       <main className="flex-grow p-4">
         <Authenticator
+          hideSignUp
           variation="modal"
           components={{
             Footer: () => (
