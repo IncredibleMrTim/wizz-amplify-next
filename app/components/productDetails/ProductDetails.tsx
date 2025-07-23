@@ -300,7 +300,7 @@ export const ProductDetails = () => {
         </div>
       ) : (
         <div className="flex gap-4 flex-col">
-          {!enquiryDetails ? (
+          {!enquiryEmailSent ? (
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit((data) => {
