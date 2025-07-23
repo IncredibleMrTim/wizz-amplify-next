@@ -18,8 +18,8 @@ export const OrderEmailTemplate = (
   );
 
   const emailHtml = (
-    <div>
-      <p>Hey Wizzington Moo's Boutique Admin</p>
+    <div style={{ padding: "4px" }}>
+      <p>Hey Wizzington Moo's UK Admin</p>
       <p>
         <p>
           <i>You have a new order:</i>

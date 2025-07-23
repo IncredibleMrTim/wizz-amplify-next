@@ -21,7 +21,7 @@ export const EnquiryEmailTemplate = ({
   const temp = document.createElement("div");
   console.log(order);
   const emailHtml = (
-    <div>
+    <div style={{ padding: "4px" }}>
       <p>Hey Wizzington Moo's UK Admin</p>
       <p>
         <p>
@@ -45,49 +45,52 @@ export const EnquiryEmailTemplate = ({
 
       <hr />
 
-      <div>
-        <p>
+      <p>
+        <div>
           <span style={{ fontWeight: "bold" }}>Product: </span> {product.name}
-        </p>
-        <p>
+        </div>
+        <div>
           <span style={{ fontWeight: "bold" }}>Base Price: </span>
           {`£${product.price}`}
-        </p>
-        <table
-          width="600"
-          style={{ width: "600px", backgroundColor: "#f5f3ff" }}
-        >
-          <thead style={{ backgroundColor: "#fda5d6", padding: "4px" }}>
-            <tr>
-              <th style={{ textAlign: "left" }}>Name</th>
-              <th style={{ textAlign: "left" }}>Value</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Object.entries(order).map(
-              ([key, value]) =>
-                key !== "productId" &&
-                key !== "uid" &&
-                key !== "name" && (
-                  <tr
-                    key={`${value}-${key}`}
-                    style={{
-                      borderBottom: "1px solid #d1d5dc",
-                      padding: "4px",
-                    }}
-                  >
-                    <td>
-                      {key
-                        .replace(/([A-Z])/g, " $1")
-                        .replace(/^./, (str) => str.toUpperCase())}
-                    </td>
-                    <td>{value !== undefined ? value.toString() : "N/A"}</td>
-                  </tr>
-                )
-            )}
-          </tbody>
-        </table>
-      </div>
+        </div>
+        <div>
+          <span style={{ fontWeight: "bold" }}>
+            Measurement type: Centimeters (cm)
+          </span>
+        </div>
+      </p>
+
+      <table width="600" style={{ width: "600px", backgroundColor: "#f5f3ff" }}>
+        <thead style={{ backgroundColor: "#fda5d6", padding: "4px" }}>
+          <tr>
+            <th style={{ textAlign: "left" }}>Name</th>
+            <th style={{ textAlign: "left" }}>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          {Object.entries(order).map(
+            ([key, value]) =>
+              key !== "productId" &&
+              key !== "uid" &&
+              key !== "name" && (
+                <tr
+                  key={`${value}-${key}`}
+                  style={{
+                    borderBottom: "1px solid #d1d5dc",
+                    padding: "4px",
+                  }}
+                >
+                  <td>
+                    {key
+                      .replace(/([A-Z])/g, " $1")
+                      .replace(/^./, (str) => str.toUpperCase())}
+                  </td>
+                  <td>{value !== undefined ? value.toString() : "N/A"}</td>
+                </tr>
+              )
+          )}
+        </tbody>
+      </table>
     </div>
   );
   temp.innerHTML = ReactDOMServer.renderToStaticMarkup(emailHtml);
