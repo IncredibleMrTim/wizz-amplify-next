@@ -285,7 +285,6 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
                         <Input
                           {...field}
                           type="number"
-                          defaultValue={0}
                           placeholder="Stock"
                           onBlur={(e) =>
                             setProduct({
