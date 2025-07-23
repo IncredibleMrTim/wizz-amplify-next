@@ -153,7 +153,7 @@ export const ProductField = ({
             <Input
               key={props.label}
               type={props.variant}
-              placeholder={props.placeholderText}
+              placeholder={`${props.placeholderText} (cm)`}
               onChange={(e) => {
                 if (e.target.value) {
                   setValue(e.target.value);

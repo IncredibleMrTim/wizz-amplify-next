@@ -64,6 +64,7 @@ export const ProductDetails = () => {
     {}
   );
   const [enquiryValid, setEnquiryValid] = useState(false);
+  const [enquiryEmailSent, setEnquiryEmailSent] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(enquiryFieldSchema),
@@ -209,6 +210,7 @@ export const ProductDetails = () => {
           order: productDetails as Schema["Order"]["type"],
         }),
       });
+      setEnquiryEmailSent(true);
     }
   };
 
@@ -298,77 +300,84 @@ export const ProductDetails = () => {
         </div>
       ) : (
         <div className="flex gap-4 flex-col">
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit((data) => {
-                setEnquiryDetails(data);
-              })}
-            >
-              <div className="flex flex-wrap  gap-y-4 w-full justify-between">
-                <div className="w-full md:w-[48%]">
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            placeholder="Contact Name"
-                            className={`${form.formState.errors.name ? "border-pink-300" : ""}`}
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
+          {!enquiryDetails ? (
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit((data) => {
+                  setEnquiryDetails(data);
+                })}
+              >
+                <div className="flex flex-wrap  gap-y-4 w-full justify-between">
+                  <div className="w-full md:w-[48%]">
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              placeholder="Contact Name"
+                              className={`${form.formState.errors.name ? "border-pink-300" : ""}`}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div className="w-full md:w-[48%]">
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Input
+                              type="email"
+                              {...field}
+                              placeholder="Email Address"
+                              className={`${form.formState.errors.email ? "border-pink-300" : ""}`}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div className="w-full md:w-[48%]">
+                    <FormField
+                      control={form.control}
+                      name="phone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Input {...field} placeholder="Phone Number" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
                 </div>
-                <div className="w-full md:w-[48%]">
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            type="email"
-                            {...field}
-                            placeholder="Email Address"
-                            className={`${form.formState.errors.email ? "border-pink-300" : ""}`}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className="w-full md:w-[48%]">
-                  <FormField
-                    control={form.control}
-                    name="phone"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input {...field} placeholder="Phone Number" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </div>
-            </form>
-            <Button
-              onClick={handleEnquiry}
-              disabled={
-                form.getValues("name") === "" ||
-                form.getValues("email") === "" ||
-                !isValidOrderProduct
-              }
-              type="submit"
-            >
-              Enquire
-            </Button>
-          </Form>
+              </form>
+              <Button
+                onClick={handleEnquiry}
+                disabled={
+                  form.getValues("name") === "" ||
+                  form.getValues("email") === "" ||
+                  !isValidOrderProduct
+                }
+                type="submit"
+              >
+                Enquire
+              </Button>
+            </Form>
+          ) : (
+            <div className="flex flex-col items-center gap-4 w-full text-lg text-pink-500">
+              Thanks for your enquiry, we will contact you shortly for more
+              details.
+            </div>
+          )}
         </div>
       )}
     </div>
