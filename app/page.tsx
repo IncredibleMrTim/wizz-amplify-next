@@ -26,16 +26,6 @@ export default function App() {
     }
   }, [productsData, isFetched]);
 
-  useEffect(() => {
-    const getSession = async () => {
-      const session = localStorage.getItem("idToken");
-      if (session) {
-        console.log("Session:", jwtDecode(session));
-      }
-    };
-    getSession();
-  }, []);
-
   return (
     <main>
       <div className="flex flex-col">
