@@ -23,6 +23,26 @@ import { sendEmail } from "@/utils/email";
 import { fields } from "./fields";
 import { OrderEmailTemplate } from "./orderEmailTemplate";
 
+import { Input } from "../ui/input";
+import { EnquiryEmailTemplate } from "./EnquiryEmailTemplate";
+import z from "zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import e from "express";
+
+export const enquiryFieldSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Invalid email address").min(1, "Email is required"),
+  phone: z.string().optional(),
+});
+
 const requiredFieldNames = fields
   .filter((f) => Object.values(f)[0].required)
   .map((f) => Object.keys(f)[0]);
@@ -40,6 +60,20 @@ export const ProductDetails = () => {
     {}
   );
   const [actionType, setActionType] = useState<"purchase" | "basket">(null);
+  const [enquiryDetails, setEnquiryDetails] = useState<Record<string, unknown>>(
+    {}
+  );
+  const [enquiryValid, setEnquiryValid] = useState(false);
+
+  const form = useForm({
+    resolver: zodResolver(enquiryFieldSchema),
+    mode: "onTouched",
+    defaultValues: {
+      name: "",
+      email: "",
+      phone: "",
+    },
+  });
 
   // Selectors
 
@@ -62,6 +96,14 @@ export const ProductDetails = () => {
         Object.values(fieldErrors).every((error) => error === null)
     );
   }, [productDetails, fieldErrors]);
+
+  useEffect(() => {
+    if (form.formState.errors) {
+      setEnquiryValid(false);
+    } else {
+      setEnquiryValid(true);
+    }
+  }, [enquiryDetails, enquiryValid]);
 
   const addProductToOrder = () => {
     // If there is no order, create a new one
@@ -153,6 +195,23 @@ export const ProductDetails = () => {
     return false;
   };
 
+  const handleEnquiry = () => {
+    console.log("form.formState.errors: ", form.formState.errors);
+    if (Object.keys(form.formState.errors).length < 1) {
+      sendEmail({
+        to: process.env.SMTP_EMAIL,
+        subject: "Product Enquiry",
+        html: EnquiryEmailTemplate({
+          name: form.getValues().name,
+          email: form.getValues().email,
+          phone: form.getValues().phone,
+          product: currentProduct,
+          order: productDetails as Schema["Order"]["type"],
+        }),
+      });
+    }
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-4">
@@ -178,64 +237,140 @@ export const ProductDetails = () => {
           );
         })}
       </div>
-      <div className="flex flex-row w-full items-center gap-4">
-        {actionType !== "purchase" && actionType !== "basket" ? (
-          <div className="flex gap-4 w-full h-full">
-            <Button
-              disabled={!isValidOrderProduct || !productDetails}
-              onClick={(e) => {
-                if (!currentProduct) {
-                  alert("Product is not available");
-                } else {
-                  setActionType("basket");
-                  addProductToOrder();
-                }
-              }}
-              className="flex items-center-safe justify-center"
-            >
-              Add to Basket <PiBasket size={20} />
-            </Button>
-
-            <div className="flex flex-col justify-center items-center w-[20px] h-3/4">
-              <div className="bg-gray-200 w-[1px] h-[40%]" />
-
-              <span
-                className={`${!isValidOrderProduct || !productDetails ? "text-gray-400" : "text-black"}`}
-              >
-                or
-              </span>
-
-              <div className="bg-gray-200 w-[1px] h-[40%]" />
-            </div>
-            <PayPalProvider>
-              <PayPalButton
-                amount="31.50"
-                onSuccess={handleSuccess}
+      {currentProduct.price > 0 ? (
+        <div className="flex flex-row w-full items-center gap-4">
+          {actionType !== "purchase" && actionType !== "basket" ? (
+            <div className="flex gap-4 w-full h-full">
+              <Button
                 disabled={!isValidOrderProduct || !productDetails}
-              />
-            </PayPalProvider>
-          </div>
-        ) : (
-          <div className="flex flex-col items-center gap-4 w-full">
-            {actionType === "basket" ? (
-              <>
-                <div>Your item has been added to your basket</div>
-                <Button onClick={() => router.push("/")}>View Basket</Button>
-              </>
-            ) : (
-              <div>Thanks for your purchase</div>
-            )}
-            <Button
-              onClick={() => {
-                router.push("/");
-                clearCurrentOrder();
-              }}
+                onClick={(e) => {
+                  if (!currentProduct) {
+                    alert("Product is not available");
+                  } else {
+                    setActionType("basket");
+                    addProductToOrder();
+                  }
+                }}
+                className="flex items-center-safe justify-center"
+              >
+                Add to Basket <PiBasket size={20} />
+              </Button>
+
+              <div className="flex flex-col justify-center items-center w-[20px] h-3/4">
+                <div className="bg-gray-200 w-[1px] h-[40%]" />
+
+                <span
+                  className={`${!isValidOrderProduct || !productDetails ? "text-gray-400" : "text-black"}`}
+                >
+                  or
+                </span>
+
+                <div className="bg-gray-200 w-[1px] h-[40%]" />
+              </div>
+              <PayPalProvider>
+                <PayPalButton
+                  amount="31.50"
+                  onSuccess={handleSuccess}
+                  disabled={!isValidOrderProduct || !productDetails}
+                />
+              </PayPalProvider>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center gap-4 w-full">
+              {actionType === "basket" ? (
+                <>
+                  <div>Your item has been added to your basket</div>
+                  <Button onClick={() => router.push("/")}>View Basket</Button>
+                </>
+              ) : (
+                <div>Thanks for your purchase</div>
+              )}
+              <Button
+                onClick={() => {
+                  router.push("/");
+                  clearCurrentOrder();
+                }}
+              >
+                Continue Shopping
+              </Button>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="flex gap-4 flex-col">
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit((data) => {
+                setEnquiryDetails(data);
+              })}
             >
-              Continue Shopping
+              <div className="flex flex-wrap  gap-y-4 w-full justify-between">
+                <div className="w-full md:w-[48%]">
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            placeholder="Contact Name"
+                            className={`${form.formState.errors.name ? "border-pink-300" : ""}`}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="w-full md:w-[48%]">
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            type="email"
+                            {...field}
+                            placeholder="Email Address"
+                            className={`${form.formState.errors.email ? "border-pink-300" : ""}`}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="w-full md:w-[48%]">
+                  <FormField
+                    control={form.control}
+                    name="phone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input {...field} placeholder="Phone Number" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+            </form>
+            <Button
+              onClick={handleEnquiry}
+              disabled={
+                form.getValues("name") === "" ||
+                form.getValues("email") === "" ||
+                !isValidOrderProduct
+              }
+              type="submit"
+            >
+              Enquire
             </Button>
-          </div>
-        )}
-      </div>
+          </Form>
+        </div>
+      )}
     </div>
   );
 };

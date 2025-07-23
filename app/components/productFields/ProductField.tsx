@@ -47,7 +47,7 @@ export const ProductField = ({
   ...props
 }: Field & {
   onValidation?: (props: onValidationProps) => void;
-}) => {
+} & React.ComponentProps<"input">) => {
   const [value, setValue] = useState<Date | string | undefined | null>(null);
   const [error, setError] = useState<ZodError | null>(null);
 
