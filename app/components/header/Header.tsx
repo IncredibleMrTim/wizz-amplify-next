@@ -22,7 +22,7 @@ const Header = () => {
         {/* Gradient overlay */}
         <div className="flex absolute inset-0 w-full h-48 md:bg-gradient-to-r from-transparent from-20% to-[#f8f8f8] to-100% pointer-events-none" />
         {/* Content */}
-        <div className="relative z-10 w-full flex justify-center md:justify-end p-4 h-48">
+        <div className="relative w-full flex justify-center md:justify-end p-4 h-48">
           <img
             src="/wizz-logo-trans-v2-flare-stroke.webp"
             alt="Wizzington Moos Boutique Logo"
