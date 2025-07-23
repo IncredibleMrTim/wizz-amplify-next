@@ -27,7 +27,7 @@ const schema = a.schema({
     height: a.integer(),
     notes: a.string(),
     metric: a.ref("SizeMetric"), // Reference to SizeMetrics
-    price: a.integer().required(),
+    price: a.integer(),
   }),
 
   Images: a.customType({
@@ -56,7 +56,7 @@ const schema = a.schema({
       id: a.string().required(),
       name: a.string().required(),
       description: a.string().required(),
-      price: a.integer().required(),
+      price: a.integer().required().default(0),
       category: a.string(),
       isFeatured: a.boolean().default(false),
       stock: a.integer().required(),

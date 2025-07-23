@@ -255,12 +255,14 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
                           {...field}
                           type="number"
                           placeholder="Price"
-                          onBlur={(e) =>
+                          onBlur={(e) => {
                             setProduct({
                               ...product,
-                              price: e.target.valueAsNumber,
-                            } as unknown as Schema["Product"]["type"])
-                          }
+                              price: isNaN(e.target.valueAsNumber)
+                                ? 0
+                                : e.target.valueAsNumber,
+                            } as unknown as Schema["Product"]["type"]);
+                          }}
                         />
                       </div>
                     </FormControl>
@@ -283,11 +285,14 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
                         <Input
                           {...field}
                           type="number"
+                          defaultValue={0}
                           placeholder="Stock"
                           onBlur={(e) =>
                             setProduct({
                               ...product,
-                              stock: e.target.valueAsNumber,
+                              stock: isNaN(e.target.valueAsNumber)
+                                ? 0
+                                : e.target.valueAsNumber,
                             } as unknown as Schema["Product"]["type"])
                           }
                         />
