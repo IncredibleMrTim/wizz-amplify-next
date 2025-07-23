@@ -59,6 +59,7 @@ const schema = a.schema({
       price: a.integer().required().default(0),
       category: a.string(),
       isFeatured: a.boolean().default(false),
+      isEnquiryOnly: a.boolean(),
       stock: a.integer().required(),
       order: a.integer().default(0),
       images: a.ref("Images").array(), // Reference to Images

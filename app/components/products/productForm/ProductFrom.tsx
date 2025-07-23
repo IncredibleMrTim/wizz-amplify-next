@@ -45,6 +45,7 @@ const formSchema = z.object({
     .max(10000, { message: "Stock must be less than 10000" })
     .optional(),
   isFeatured: z.boolean(),
+  isEnquiryOnly: z.boolean(),
 });
 
 export const ProductForm = ({ onSubmit }: ProductFormProps) => {
@@ -75,6 +76,7 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
       price: product?.price || 0,
       stock: product?.stock || 0,
       isFeatured: product?.isFeatured || false,
+      isEnquiryOnly: product?.isEnquiryOnly || false,
     },
   });
 
@@ -303,37 +305,74 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
                 )}
               />
             </div>
-            <div>
-              <FormField
-                control={form.control}
-                name="isFeatured"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-xl">Feature Product</FormLabel>
-                    <FormDescription>
-                      Marking a product as Featured will display it on the home
-                      page
-                    </FormDescription>
-                    <FormControl>
-                      <div className="flex items-center gap-2">
-                        <p>Check this box to feature the product.</p>
-                        <input
-                          type="checkbox"
-                          checked={field.value}
-                          onChange={(e) => {
-                            field.onChange(e);
-                            setProduct({
-                              ...product,
-                              isFeatured: e.target.checked,
-                            } as unknown as Schema["Product"]["type"]);
-                          }}
-                          className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                        />
-                      </div>
-                    </FormControl>
-                  </FormItem>
-                )}
-              ></FormField>
+            <div className="flex gap-4">
+              <div className="w-[50%]">
+                <FormField
+                  control={form.control}
+                  name="isFeatured"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xl">Feature Product</FormLabel>
+                      <FormDescription>
+                        Marking a product as Featured will display it on the
+                        home page
+                      </FormDescription>
+                      <FormControl>
+                        <div className="flex items-center gap-2">
+                          <p>Check this box to feature the product.</p>
+                          <input
+                            type="checkbox"
+                            checked={field.value}
+                            onChange={(e) => {
+                              field.onChange(e);
+                              setProduct({
+                                ...product,
+                                isFeatured: e.target.checked,
+                              } as unknown as Schema["Product"]["type"]);
+                            }}
+                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                          />
+                        </div>
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="w-[50%]">
+                <FormField
+                  control={form.control}
+                  name="isEnquiryOnly"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xl">Enquiry Only</FormLabel>
+                      <FormDescription>
+                        Marking this product as Enquiry Only will hide the
+                        payment methods and only allow the user to send an
+                        enquiry email
+                      </FormDescription>
+                      <FormControl>
+                        <div className="flex items-center gap-2">
+                          <p>
+                            Check this box to mark the product as Enquiry Only.
+                          </p>
+                          <input
+                            type="checkbox"
+                            checked={field.value}
+                            onChange={(e) => {
+                              field.onChange(e);
+                              setProduct({
+                                ...product,
+                                isEnquiryOnly: e.target.checked,
+                              } as unknown as Schema["Product"]["type"]);
+                            }}
+                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                          />
+                        </div>
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </div>
             </div>
 
             <div>

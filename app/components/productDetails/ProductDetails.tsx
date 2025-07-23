@@ -237,7 +237,7 @@ export const ProductDetails = () => {
           );
         })}
       </div>
-      {currentProduct.price > 0 ? (
+      {!currentProduct.isEnquiryOnly ? (
         <div className="flex flex-row w-full items-center gap-4">
           {actionType !== "purchase" && actionType !== "basket" ? (
             <div className="flex gap-4 w-full h-full">

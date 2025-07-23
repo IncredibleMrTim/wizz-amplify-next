@@ -2,15 +2,6 @@
 import { OrderResponseBody } from "@/components/payPal/payPalButton/PayPalButton";
 import { Schema } from "amplify/data/resource";
 import ReactDOMServer from "react-dom/server";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 
 export const OrderEmailTemplate = (
   props: OrderResponseBody,
