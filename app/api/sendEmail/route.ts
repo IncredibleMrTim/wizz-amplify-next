@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
 
   try {
     await transporter.sendMail({
-      from: "tim.smart@timsmarttechnology.co.uk",
+      from: process.env.SMTP_FROM,
       to,
       subject,
       html,
