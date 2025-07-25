@@ -1,9 +1,9 @@
 "use client";
-import Navigation from "@/components/navigation/Navigation";
+// import Navigation from "@/components/navigation/Navigation";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
-import { FiMenu } from "react-icons/fi";
-import { Drawer } from "../drawer/Drawer";
+// import { FiMenu } from "react-icons/fi";
+// import { Drawer } from "../drawer/Drawer";
 
 const Header = () => {
   const router = useRouter();
