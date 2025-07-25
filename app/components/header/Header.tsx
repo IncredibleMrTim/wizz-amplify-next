@@ -30,12 +30,12 @@ const Header = () => {
           />
         </div>
       </header>
-      <div className="hidden w-full border-b border-gray-300 h-10 sho md:flex">
+      {/* <div className="hidden w-full border-b border-gray-300 h-10 sho md:flex">
         <Navigation />
-      </div>
-      <div className="flex w-full visible md:hidden">
+      </div> */}
+      {/* <div className="flex w-full visible md:hidden">
         <Drawer />
-      </div>
+      </div> */}
     </>
   );
 };
