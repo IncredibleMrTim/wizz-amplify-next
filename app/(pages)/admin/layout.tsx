@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen mt-12">
       <main className="flex-grow p-4">
         <Authenticator
           hideSignUp

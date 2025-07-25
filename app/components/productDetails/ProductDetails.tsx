@@ -197,7 +197,6 @@ export const ProductDetails = () => {
   };
 
   const handleEnquiry = () => {
-    console.log("form.formState.errors: ", form.formState.errors);
     if (Object.keys(form.formState.errors).length < 1) {
       sendEmail({
         to: process.env.SMTP_EMAIL,

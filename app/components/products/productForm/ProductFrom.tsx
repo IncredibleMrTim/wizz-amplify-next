@@ -17,16 +17,15 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useGetProductQuery } from "@/services/product/useGetProductQuery";
 import { STORE_KEYS, useAppDispatch, useAppSelector } from "@/stores/store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-
-interface ProductFormProps {
-  onSubmit: (product: Schema["Product"]["type"]) => void;
-}
+import { useAddProductMutation } from "@/services/product/useAddProductMutation";
+import { useUpdateProductMutation } from "@/services/product/useUpdateProductMutation";
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
@@ -44,16 +43,19 @@ const formSchema = z.object({
     .min(0, { message: "Stock must be a positive number" })
     .max(10000, { message: "Stock must be less than 10000" })
     .optional(),
-  isFeatured: z.boolean(),
-  isEnquiryOnly: z.boolean(),
+  isFeatured: z.boolean().optional(),
+  isEnquiryOnly: z.boolean().optional(),
+  id: z.string().optional(),
 });
 
-export const ProductForm = ({ onSubmit }: ProductFormProps) => {
+export const ProductForm = () => {
   const { getProductById } = useGetProductQuery();
   const params = useParams();
   const dispatch = useAppDispatch();
   const allProducts = useAppSelector((state) => state.products.allProducts);
   const productImagesRef = useRef<Schema["Product"]["type"]["images"]>([]);
+  const addProductMutation = useAddProductMutation();
+  const updateProductMutation = useUpdateProductMutation();
 
   const [product, setProduct] = useState<Schema["Product"]["type"] | null>(
     null
@@ -70,13 +72,15 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
     z.infer<typeof formSchema>
   >({
     resolver: zodResolver(formSchema),
-    defaultValues: {
+    mode: "onSubmit",
+    values: {
+      id: product?.id || "",
       name: product?.name || "",
       description: product?.description || "",
-      price: product?.price || 0,
-      stock: product?.stock || 0,
-      isFeatured: product?.isFeatured || false,
-      isEnquiryOnly: product?.isEnquiryOnly || false,
+      price: product?.price ?? 0,
+      stock: product?.stock ?? 0,
+      isFeatured: product?.isFeatured ?? false,
+      isEnquiryOnly: product?.isEnquiryOnly ?? false,
     },
   });
 
@@ -108,15 +112,15 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
     productImagesRef.current = product?.images || [];
   }, [product?.images]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (product) {
-      // if a new product, add it to te product list
-      if (!product.id) {
-        dispatch({
-          type: STORE_KEYS.SET_PRODUCTS,
-          payload: [...allProducts, product],
-        });
-      } else {
+      if (product.id) {
+        updateProductMutation.mutateAsync({
+          ...form.getValues(),
+          createdAt: product.createdAt,
+          updatedAt: new Date().toISOString(),
+        } as Schema["Product"]["type"]);
+
         // if an existing product, update it in the product list
         const updatedProducts = allProducts.map((p) =>
           p.id === product.id ? product : p
@@ -125,9 +129,15 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
           type: STORE_KEYS.SET_PRODUCTS,
           payload: updatedProducts,
         });
-      }
+      } else {
+        const newProduct = await addProductMutation.mutateAsync(product);
 
-      onSubmit(product);
+        dispatch({
+          type: STORE_KEYS.SET_PRODUCTS,
+          payload: [...allProducts, newProduct],
+        });
+      }
+      router.push("/admin");
     } else {
       console.error("Product is null and cannot be submitted.");
     }
@@ -177,10 +187,10 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
   );
 
   return (
-    <div className="-mt-8">
+    <div className="-mt-8 bg-violet-50 p-4   shadow-sm shadow-gray-300 border-gray-200">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)}>
-          <div className="flex flex-col gap-6  p-4 bg-gray-100 rounded-md">
+          <div className="flex flex-col gap-6">
             <div>
               <FormField
                 control={form.control}
@@ -199,7 +209,7 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
                           placeholder="Product Name"
                           onBlur={(e) =>
                             setProduct({
-                              ...product,
+                              ...form.getValues(),
                               name: e.target.value,
                             } as Schema["Product"]["type"])
                           }
@@ -228,10 +238,11 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
                           placeholder="Product Description"
                           onBlur={(e) =>
                             setProduct({
-                              ...product,
+                              ...form.getValues(),
                               description: e.target.value,
                             } as unknown as Schema["Product"]["type"])
                           }
+                          className="border-0 border-b-1 border-gray-300 rounded-none focus:!ring-0"
                         />
                       </div>
                     </FormControl>
@@ -259,7 +270,7 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
                           placeholder="Price"
                           onBlur={(e) => {
                             setProduct({
-                              ...product,
+                              ...form.getValues(),
                               price: isNaN(e.target.valueAsNumber)
                                 ? 0
                                 : e.target.valueAsNumber,
@@ -290,7 +301,7 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
                           placeholder="Stock"
                           onBlur={(e) =>
                             setProduct({
-                              ...product,
+                              ...form.getValues(),
                               stock: isNaN(e.target.valueAsNumber)
                                 ? 0
                                 : e.target.valueAsNumber,
@@ -320,17 +331,20 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
                       <FormControl>
                         <div className="flex items-center gap-2">
                           <p>Check this box to feature the product.</p>
-                          <input
-                            type="checkbox"
-                            checked={field.value}
-                            onChange={(e) => {
-                              field.onChange(e);
+                          <Checkbox
+                            checked={field.value ?? false}
+                            onCheckedChange={(checked) => {
+                              field.onChange(checked);
                               setProduct({
-                                ...product,
-                                isFeatured: e.target.checked,
+                                ...form.getValues(),
+                                isFeatured: checked,
                               } as unknown as Schema["Product"]["type"]);
                             }}
-                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                            name={field.name}
+                            ref={field.ref}
+                            onBlur={field.onBlur}
+                            disabled={field.disabled}
+                            className={`h-4 w-4 bg-white border-gray-500 ${field.value === true ? "bg-pink-500 border-pink-500 text-white" : ""}`}
                           />
                         </div>
                       </FormControl>
@@ -355,17 +369,20 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
                           <p>
                             Check this box to mark the product as Enquiry Only.
                           </p>
-                          <input
-                            type="checkbox"
-                            checked={field.value}
-                            onChange={(e) => {
-                              field.onChange(e);
+                          <Checkbox
+                            checked={field.value ?? false}
+                            onCheckedChange={(checked) => {
+                              field.onChange(checked);
                               setProduct({
-                                ...product,
-                                isEnquiryOnly: e.target.checked,
+                                ...form.getValues(),
+                                isEnquiryOnly: checked,
                               } as unknown as Schema["Product"]["type"]);
                             }}
-                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                            className={`h-4 w-4 bg-white border-gray-500 ${field.value === true ? "bg-pink-500 border-pink-500 text-white" : ""}`}
+                            name={field.name}
+                            ref={field.ref}
+                            onBlur={field.onBlur}
+                            disabled={field.disabled}
                           />
                         </div>
                       </FormControl>
@@ -393,7 +410,11 @@ export const ProductForm = ({ onSubmit }: ProductFormProps) => {
               Cancel
             </Button>
 
-            <Button type="submit">
+            <Button
+              type="submit"
+              disabled={form.formState.isSubmitting || !form.formState.isValid}
+              className="flex items-center gap-2"
+            >
               <FiCheck />
               {params.productId?.[0] ? "Update" : "Create"} Product
             </Button>

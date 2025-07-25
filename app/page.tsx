@@ -38,15 +38,21 @@ export default function App() {
 
         {isFetched && (
           <div className="flex flex-row flex-wrap justify-between mt-2">
-            {productsData
-              ?.filter((p) => p?.isFeatured ?? false)
-              .map((product: Schema["Product"]["type"]) => (
-                <ProductCard
-                  showDescription={false}
-                  key={product.id}
-                  product={product}
-                />
-              ))}
+            {productsData.some((p) => p.isFeatured) ? (
+              productsData
+                ?.filter((p) => p?.isFeatured ?? false)
+                ?.map((product: Schema["Product"]["type"]) => (
+                  <ProductCard
+                    showDescription={false}
+                    key={product.id}
+                    product={product}
+                  />
+                ))
+            ) : (
+              <p className="text-center w-full mt-12">
+                No products are available at the moment. Please check back soon!
+              </p>
+            )}
           </div>
         )}
       </div>

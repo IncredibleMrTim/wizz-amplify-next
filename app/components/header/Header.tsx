@@ -1,9 +1,9 @@
 "use client";
-// import Navigation from "@/components/navigation/Navigation";
+import Navigation from "@/components/navigation/Navigation";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
-// import { FiMenu } from "react-icons/fi";
-// import { Drawer } from "../drawer/Drawer";
+import { FiMenu } from "react-icons/fi";
+import { Drawer } from "../drawer/Drawer";
 
 const Header = () => {
   const router = useRouter();
@@ -30,12 +30,12 @@ const Header = () => {
           />
         </div>
       </header>
-      {/* <div className="hidden w-full border-b border-gray-300 h-10 sho md:flex">
+      <div className="hidden w-full border-b border-gray-300 h-10 sho md:flex">
         <Navigation />
-      </div> */}
-      {/* <div className="flex w-full visible md:hidden">
+      </div>
+      <div className="flex w-full visible md:hidden">
         <Drawer />
-      </div> */}
+      </div>
     </>
   );
 };

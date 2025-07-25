@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-
+import { useRouter } from "next/navigation";
 import { useAppSelector } from "@/stores/store";
 import { AuthUserMenu } from "../auth/authUserMenu/AuthUserMenu";
 import adminComponents from "./adminComponents";
@@ -40,6 +40,7 @@ const Navigation = ({ type = "user" }: NavigationProps) => {
   const [adminMenuOpen, setAdminMenuOpen] = useState(false);
   const currentUser = useAppSelector((state) => state.auth.currentUser);
   const components = type === "admin" ? adminComponents : userComponents;
+  const router = useRouter();
 
   const handleAdminMenuItemClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     setAdminMenuOpen(false);
@@ -48,7 +49,7 @@ const Navigation = ({ type = "user" }: NavigationProps) => {
   return (
     <div>
       <div
-        className={` w-full bg-white box-border z-1 ${type === "user" && "absolute  shadow-md"} ${selected && "h-auto"} `}
+        className={`w-full bg-white box-border z-1 ${type === "user" && "absolute  shadow-md"} ${selected && "h-auto"} `}
         onMouseLeave={() => {
           setSelected(null);
         }}
@@ -62,9 +63,15 @@ const Navigation = ({ type = "user" }: NavigationProps) => {
               >
                 {component.type === "link" ? (
                   <div
-                    className={`cursor-pointer py-2`}
+                    className={`flex cursor-pointer py-2 h-11 min-w-[100px] justify-center items-center`}
                     onMouseEnter={() => {
                       setSelected(component);
+                    }}
+                    onClick={(e) => {
+                      if (component.href) {
+                        e.preventDefault();
+                        router.push(component.href);
+                      }
                     }}
                   >
                     {component.title}
@@ -79,10 +86,10 @@ const Navigation = ({ type = "user" }: NavigationProps) => {
               </li>
             ))}
         </ul>
-        <div className="flex absolute top-0 right-0 h-10 mr-4 items-center gap-2">
+        <div className="flex absolute top-0 right-0 h-11 mr-4 items-center gap-2">
           <Link
             href="/basket"
-            className="flex items-center rounded-full  p-2 bg-gray-100"
+            className="flex items-center rounded-full  p-2 -mt-1 bg-pink-100"
           >
             <CgShoppingCart size={18} />
           </Link>

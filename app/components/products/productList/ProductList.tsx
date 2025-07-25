@@ -99,7 +99,7 @@ const ProductList = () => {
               <TableHead
                 key={header.id}
                 style={{
-                  width: `${header.column.columnDef.size}px`, // Apply explicit size
+                  width: `${header.column.columnDef.size}px!important`, // Apply explicit size
                 }}
               >
                 {header.isPlaceholder
@@ -125,7 +125,7 @@ const ProductList = () => {
             onDragOver={(e) => e.preventDefault()}
             key={row.id}
             data-state={row.getIsSelected() && "selected"}
-            className="border-0 odd:bg-stone-100 even:bg-stone-50"
+            className="border-0 odd:bg-violet-100 even:bg-violet-50"
           >
             {row.getVisibleCells().map((cell) => {
               return (
@@ -188,19 +188,23 @@ const ProductList = () => {
   );
 
   return (
-    <div className="w-full">
-      <ProductFilter table={table} />
-      <div className="bg-gray-50 p-4 rounded-sm">
-        <div>
-          <Table className="table-fixed">{renderHeaders()}</Table>
-          <div className="min-h-124 overflow-scroll  border-1 border-stone-100 rounded-sm">
-            <Table className="table-fixed">{renderBody()}</Table>
+    <>
+      <div className="w-full bg-violet-50 p-4 rounded-sm  shadow-md shadow-gray-300 mt-4">
+        <ProductFilter table={table} />
+        <div className="">
+          <div>
+            {/* <Table className="table-fixed">{renderHeaders()}</Table> */}
+            <div className="min-h-124 overflow-scroll border-1 border-stone-100 rounded-sm">
+              <Table className="table-fixed">
+                {renderHeaders()}
+                {renderBody()}
+              </Table>
+            </div>
           </div>
-
-          <ProductTableFooter table={table} allRowCount={data.length} />
         </div>
       </div>
-    </div>
+      <ProductTableFooter table={table} allRowCount={data.length} />
+    </>
   );
 };
 

@@ -20,7 +20,7 @@ export const BreadCrumb = () => {
   const filteredSegments = segments.filter(
     (segment) => !hiddenSegments.includes(segment)
   );
-  return (
+  return pathname.includes("admin") ? null : (
     <div className="items-center justify-between text-black p-4 hidden md:flex">
       <Breadcrumb>
         <BreadcrumbList>

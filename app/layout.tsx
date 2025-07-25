@@ -8,7 +8,7 @@ import "@aws-amplify/ui-react/styles.css";
 import ConfigureAmplifyClientSide from "@/components/auth/configureAmplifyClientSide/ConfigureAmplifyClientSide";
 import Header from "./components/header/Header";
 import ReduxProvider from "./providers/reduxProvider";
-import CheckAuth from "./components/auth/Auth";
+
 import { Amplify } from "aws-amplify";
 import outputs from "../amplify_outputs.json";
 import { ReactQueryProvider } from "./providers/reactQueryProvider";
@@ -37,7 +37,10 @@ export default async function RootLayout({
               <AuthProvider>
                 <Header />
 
-                <Container size="4" className="!m-0 !p-0">
+                <Container
+                  size="4"
+                  className="!m-0 !p-0 bg-gradient-to-br from-purple-50  to-white min-h-screen"
+                >
                   <BreadCrumb />
                   {children}
                 </Container>

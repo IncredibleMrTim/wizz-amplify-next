@@ -19,7 +19,7 @@ export const EnquiryEmailTemplate = ({
   order,
 }: EnquiryEmailTemplateProps) => {
   const temp = document.createElement("div");
-  console.log(order);
+
   const emailHtml = (
     <div style={{ padding: "4px" }}>
       <p>Hey Wizzington Moo's UK Admin</p>
