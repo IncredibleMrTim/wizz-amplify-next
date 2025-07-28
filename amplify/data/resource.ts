@@ -67,6 +67,16 @@ const schema = a.schema({
 
     .authorization((allow) => [allow.publicApiKey()]),
 
+  Category: a
+    .model({
+      id: a.string().required(),
+      name: a.string().required(),
+      description: a.string(),
+      subCategoryId: a.string(),
+      products: a.string().array(), // Store Product IDs
+    })
+    .authorization((allow) => [allow.publicApiKey()]),
+
   Order: a
     .model({
       id: a.string().required(),
