@@ -8,6 +8,15 @@ import { FiArrowLeft, FiCheck } from "react-icons/fi";
 import { z } from "zod";
 
 import { FileUploader } from "@/components/fileUploader/FileUploader";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Form,
   FormControl,
@@ -17,15 +26,14 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useAddProductMutation } from "@/services/product/useAddProductMutation";
 import { useGetProductQuery } from "@/services/product/useGetProductQuery";
+import { useUpdateProductMutation } from "@/services/product/useUpdateProductMutation";
 import { STORE_KEYS, useAppDispatch, useAppSelector } from "@/stores/store";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
-import { useAddProductMutation } from "@/services/product/useAddProductMutation";
-import { useUpdateProductMutation } from "@/services/product/useUpdateProductMutation";
+import { ChevronDown } from "lucide-react";
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
@@ -46,9 +54,10 @@ const formSchema = z.object({
   isFeatured: z.boolean().optional(),
   isEnquiryOnly: z.boolean().optional(),
   id: z.string().optional(),
+  productCategory: z.string().optional(),
 });
 
-export const ProductForm = () => {
+export const ProductEditor = () => {
   const { getProductById } = useGetProductQuery();
   const params = useParams();
   const dispatch = useAppDispatch();
@@ -315,6 +324,70 @@ export const ProductForm = () => {
                   </FormItem>
                 )}
               />
+            </div>
+            <div className="flex gap-4">
+              <div className="w-[50%]">
+                <FormField
+                  disabled={true}
+                  control={form.control}
+                  name="productCategory"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xl">
+                        Product Category
+                      </FormLabel>
+                      <FormDescription>
+                        Marking a product as Featured will display it on the
+                        home page
+                      </FormDescription>
+                      <FormControl className="w-full">
+                        <div className="flex gap-2 w-container relative">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger
+                              disabled={field.disabled}
+                              asChild
+                              className="!ring-0 bg-white w-full"
+                            >
+                              <Button
+                                variant="outline"
+                                className="w-full justify-end"
+                              >
+                                {field.value ?? "Select stock level"}
+                                <ChevronDown className="ml-2 h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className=" bg-white w-full">
+                              <DropdownMenuItem
+                                onClick={() => {
+                                  field.onChange(0);
+                                  setProduct({
+                                    ...form.getValues(),
+                                    stock: 0,
+                                  } as unknown as Schema["Product"]["type"]);
+                                }}
+                                className="w-full"
+                              >
+                                In Stock
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => {
+                                  field.onChange(1);
+                                  setProduct({
+                                    ...form.getValues(),
+                                    stock: 1,
+                                  } as unknown as Schema["Product"]["type"]);
+                                }}
+                              >
+                                Out of Stock
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </div>
             </div>
             <div className="flex gap-4">
               <div className="w-[50%]">

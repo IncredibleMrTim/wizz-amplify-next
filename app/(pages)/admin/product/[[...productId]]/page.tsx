@@ -1,6 +1,6 @@
-import { ProductForm } from "@/components/products/productForm/ProductFrom";
+import { ProductEditor } from "@/components/admin/productEditor/ProductEditor";
 
 const AdminProductsPage = () => {
-  return <ProductForm />;
+  return <ProductEditor />;
 };
 export default AdminProductsPage;

@@ -1,5 +1,5 @@
 import Navigation from "@/components/navigation/Navigation";
-import ProductList from "@/components/products/productList/ProductList";
+import ProductList from "@/components/admin/productList/ProductList";
 
 const AdminPage = async () => {
   return (
