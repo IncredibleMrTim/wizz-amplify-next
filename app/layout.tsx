@@ -10,7 +10,7 @@ import ConfigureAmplifyClientSide from "@/components/auth/configureAmplifyClient
 import { Container, Theme } from "@radix-ui/themes";
 
 import outputs from "../amplify_outputs.json";
-import { BreadCrumb } from "./components/breadCrumb/BreadCrumb";
+import BreadCrumb from "./components/breadCrumb/BreadCrumbWrapper";
 import Header from "./components/header/Header";
 import { AuthProvider } from "./providers/AuthProvider";
 import { ReactQueryProvider } from "./providers/reactQueryProvider";

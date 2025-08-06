@@ -1,8 +1,10 @@
-import { configureStore } from "@reduxjs/toolkit";
-import { Provider } from "react-redux";
-import { BreadCrumb } from "./BreadCrumb";
+import { Schema } from "amplify/data/resource";
 import * as nextNavigation from "next/navigation";
-import { render } from "@testing-library/react";
+
+import { renderWithProviders } from "@/testing/utils";
+import { screen } from "@testing-library/dom";
+
+import { BreadCrumb } from "./BreadCrumb";
 
 // Mock usePathname
 jest.mock("next/navigation", () => {
@@ -13,22 +15,20 @@ jest.mock("next/navigation", () => {
   };
 });
 
-// Minimal reducer for products slice
-const mockProductsReducer = (
-  state = { currentProduct: { name: "Test Product" } }
-) => state;
+jest.mock("@/components/breadCrumb/breadcrumbMappings");
 
-function renderWithStore(ui: React.ReactElement) {
-  const mockStore = configureStore({
-    reducer: {
-      products: mockProductsReducer,
-    },
-    preloadedState: {
-      products: { currentProduct: { name: "Test Product" } },
-    },
-  });
-  return render(<Provider store={mockStore}>{ui}</Provider>);
-}
+const mockProduct = {
+  id: "1",
+  name: "Test Product",
+} as unknown as Schema["Product"]["type"];
+
+const mockProductsReducer = (
+  state = {
+    currentProduct: mockProduct,
+    allProducts: [mockProduct],
+  },
+  action: any
+) => state;
 
 describe("BreadCrumb", () => {
   beforeEach(() => {
@@ -36,18 +36,51 @@ describe("BreadCrumb", () => {
   });
 
   it("renders breadcrumb links for a simple path", () => {
-    jest.mocked(nextNavigation.usePathname).mockReturnValue("/products/shoes");
+    renderWithProviders(
+      <BreadCrumb
+        pathname="/product/test-product"
+        product={mockProduct}
+        segments={["product", "shoes"]}
+      />,
+      {
+        products: mockProductsReducer,
+      }
+    );
 
-    const { getByText } = renderWithStore(<BreadCrumb />);
-
-    expect(getByText(/products/i)).toBeInTheDocument();
-    expect(getByText(/shoes/i)).toBeInTheDocument();
+    expect(screen.getByText(/Products/)).toBeInTheDocument();
+    expect(screen.getByText(mockProduct.name)).toBeInTheDocument();
   });
 
-  it("does not render on admin path", () => {
+  it("does not render on admin path", async () => {
     jest.mocked(nextNavigation.usePathname).mockReturnValue("/admin/dashboard");
 
-    const { container } = renderWithStore(<BreadCrumb />);
-    expect(container).toBeEmptyDOMElement();
+    renderWithProviders(
+      <BreadCrumb pathname="/admin/dashboard" segments={["admin"]} />,
+      {
+        products: mockProductsReducer,
+      }
+    );
+
+    expect(screen.queryByText(/Products/)).not.toBeInTheDocument();
+  });
+
+  it("should replace hyphens with a space in product names", () => {
+    const productWithHyphen = {
+      ...mockProduct,
+      name: "Test-Product",
+    } as unknown as Schema["Product"]["type"];
+
+    renderWithProviders(
+      <BreadCrumb
+        pathname="/product/test-product"
+        product={productWithHyphen}
+        segments={["product", "test-product"]}
+      />,
+      {
+        products: mockProductsReducer,
+      }
+    );
+
+    expect(screen.getByText(mockProduct.name)).toBeInTheDocument();
   });
 });

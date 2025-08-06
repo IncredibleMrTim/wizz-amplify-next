@@ -1,4 +1,3 @@
-"use client";
 import Link from "next/link";
 import {
   Breadcrumb,
@@ -6,25 +5,25 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { usePathname } from "next/navigation";
-import { useAppSelector } from "@/stores/store";
 import { segmentMappings } from "@/components/breadCrumb/breadcrumbMappings";
+import { Schema } from "amplify/data/resource";
 
-export const BreadCrumb = () => {
-  const product = useAppSelector((state) => state.products.currentProduct);
-  const pathname = usePathname();
+interface BreadCrumbProps {
+  pathname: string;
+  product?: Schema["Product"]["type"] | null;
+  segments: string[];
+}
 
-  const segments = pathname.split("/").filter((segment) => segment !== "");
-
-  const hiddenSegments = ["admin", "basket"];
-  const filteredSegments = segments.filter(
-    (segment) => !hiddenSegments.includes(segment)
-  );
+export const BreadCrumb = ({
+  pathname,
+  product,
+  segments,
+}: BreadCrumbProps) => {
   return pathname.includes("admin") ? null : (
     <div className="items-center justify-between text-black p-4 hidden md:flex">
       <Breadcrumb>
         <BreadcrumbList>
-          {filteredSegments.map((segment, index) => {
+          {segments.map((segment, index) => {
             return (
               <div key={index} className="flex place-items-center gap-2">
                 <BreadcrumbItem key={index}>
@@ -32,17 +31,16 @@ export const BreadCrumb = () => {
                     href={`/${
                       segmentMappings[segment] === "Products"
                         ? "/"
-                        : filteredSegments.slice(0, index + 1).join("/")
+                        : segments.slice(0, index + 1).join("/")
                     }`}
                   >
                     {segmentMappings[segment] ||
-                      product?.name?.replace(/-/g, " ") ||
-                      segment.replace(/-/g, " ")}
+                      product?.name?.replace(/-/g, " ")}
                   </Link>
                 </BreadcrumbItem>
 
                 <BreadcrumbSeparator
-                  className={`${index === filteredSegments.length - 1 && "hidden"}`}
+                  className={`${index === segments.length - 1 && "hidden"}`}
                 >
                   <p>/</p>
                 </BreadcrumbSeparator>

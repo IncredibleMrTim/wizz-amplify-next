@@ -34,7 +34,6 @@ import { useUpdateProductMutation } from "@/services/product/useUpdateProductMut
 import { STORE_KEYS, useAppDispatch, useAppSelector } from "@/stores/store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronDown } from "lucide-react";
-import { ca } from "zod/dist/types/v4/locales";
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
@@ -117,7 +116,7 @@ export const ProductEditor = () => {
     } catch (error) {
       console.error("Error setting product data:", error);
     }
-  }, [data]);
+  }, []);
 
   // update the imagesRef when product images change
   // this is used so that we always have an upto date reference to the images
@@ -132,6 +131,7 @@ export const ProductEditor = () => {
         if (product.id) {
           updateProductMutation.mutateAsync({
             ...form.getValues(),
+            images: productImagesRef.current,
             createdAt: product.createdAt,
             updatedAt: new Date().toISOString(),
           } as Schema["Product"]["type"]);
@@ -322,7 +322,7 @@ export const ProductEditor = () => {
                   <FormItem className="w-1/2">
                     <FormLabel className="text-xl">Stock Level</FormLabel>
                     <FormDescription>
-                      Enter the product stock level
+                      Enter the product stock level.
                     </FormDescription>
                     <FormControl>
                       <div className="bg-white">
@@ -359,8 +359,7 @@ export const ProductEditor = () => {
                         Product Category
                       </FormLabel>
                       <FormDescription>
-                        Marking a product as Featured will display it on the
-                        home page
+                        Select product category.
                       </FormDescription>
                       <FormControl className="w-full">
                         <div className="flex gap-2 w-container relative">
@@ -421,7 +420,7 @@ export const ProductEditor = () => {
                       <FormLabel className="text-xl">Feature Product</FormLabel>
                       <FormDescription>
                         Marking a product as Featured will display it on the
-                        home page
+                        home page.
                       </FormDescription>
                       <FormControl>
                         <div className="flex items-center gap-2">
@@ -457,7 +456,7 @@ export const ProductEditor = () => {
                       <FormDescription>
                         Marking this product as Enquiry Only will hide the
                         payment methods and only allow the user to send an
-                        enquiry email
+                        enquiry email.
                       </FormDescription>
                       <FormControl>
                         <div className="flex items-center gap-2">
