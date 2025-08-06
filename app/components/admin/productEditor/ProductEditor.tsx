@@ -10,14 +10,7 @@ import { z } from "zod";
 import { FileUploader } from "@/components/fileUploader/FileUploader";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -61,6 +54,7 @@ const formSchema = z.object({
   isFeatured: z.boolean().optional(),
   isEnquiryOnly: z.boolean().optional(),
   id: z.string().optional(),
+  productCategory: z.string().optional(),
 });
 
 export const ProductEditor = () => {
@@ -334,8 +328,9 @@ export const ProductEditor = () => {
             <div className="flex gap-4">
               <div className="w-[50%]">
                 <FormField
+                  disabled={true}
                   control={form.control}
-                  name="isFeatured"
+                  name="productCategory"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-xl">
@@ -349,6 +344,7 @@ export const ProductEditor = () => {
                         <div className="flex gap-2 w-container relative">
                           <DropdownMenu>
                             <DropdownMenuTrigger
+                              disabled={field.disabled}
                               asChild
                               className="!ring-0 bg-white w-full"
                             >
