@@ -34,6 +34,7 @@ import { useUpdateProductMutation } from "@/services/product/useUpdateProductMut
 import { STORE_KEYS, useAppDispatch, useAppSelector } from "@/stores/store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronDown } from "lucide-react";
+import { ca } from "zod/dist/types/v4/locales";
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
@@ -94,24 +95,28 @@ export const ProductEditor = () => {
   });
 
   useEffect(() => {
-    if (!data) return;
+    try {
+      if (!data) return;
 
-    setProduct(data as Schema["Product"]["type"]);
-    form.reset(data as z.infer<typeof formSchema>);
-    dispatch({
-      type: STORE_KEYS.SET_CURRENT_PRODUCT,
-      payload: data as Schema["Product"]["type"],
-    });
-
-    return () => {
-      // Clean up function to reset the form and product state
-      setProduct(null);
-      form.reset();
+      setProduct(data as Schema["Product"]["type"]);
+      form.reset(data as z.infer<typeof formSchema>);
       dispatch({
         type: STORE_KEYS.SET_CURRENT_PRODUCT,
-        payload: null,
+        payload: data as Schema["Product"]["type"],
       });
-    };
+
+      return () => {
+        // Clean up function to reset the form and product state
+        setProduct(null);
+        form.reset();
+        dispatch({
+          type: STORE_KEYS.SET_CURRENT_PRODUCT,
+          payload: null,
+        });
+      };
+    } catch (error) {
+      console.error("Error setting product data:", error);
+    }
   }, [data]);
 
   // update the imagesRef when product images change
@@ -122,75 +127,92 @@ export const ProductEditor = () => {
   }, [product?.images]);
 
   const handleSubmit = async () => {
-    if (product) {
-      if (product.id) {
-        updateProductMutation.mutateAsync({
-          ...form.getValues(),
-          createdAt: product.createdAt,
-          updatedAt: new Date().toISOString(),
-        } as Schema["Product"]["type"]);
+    try {
+      if (product) {
+        if (product.id) {
+          updateProductMutation.mutateAsync({
+            ...form.getValues(),
+            createdAt: product.createdAt,
+            updatedAt: new Date().toISOString(),
+          } as Schema["Product"]["type"]);
 
-        // if an existing product, update it in the product list
-        const updatedProducts = allProducts.map((p) =>
-          p.id === product.id ? product : p
-        );
-        dispatch({
-          type: STORE_KEYS.SET_PRODUCTS,
-          payload: updatedProducts,
-        });
+          // if an existing product, update it in the product list
+          const updatedProducts = allProducts.map((p) =>
+            p.id === product.id ? product : p
+          );
+          dispatch({
+            type: STORE_KEYS.SET_PRODUCTS,
+            payload: updatedProducts,
+          });
+        } else {
+          try {
+            const newProduct = await addProductMutation.mutateAsync(product);
+
+            dispatch({
+              type: STORE_KEYS.SET_PRODUCTS,
+              payload: [...allProducts, newProduct],
+            });
+          } catch (error) {
+            console.error("Error adding product:", error);
+          }
+          // if a new product, add it to the product list
+        }
+        router.push("/admin");
       } else {
-        const newProduct = await addProductMutation.mutateAsync(product);
-
-        dispatch({
-          type: STORE_KEYS.SET_PRODUCTS,
-          payload: [...allProducts, newProduct],
-        });
+        console.error("Product is null and cannot be submitted.");
       }
-      router.push("/admin");
-    } else {
-      console.error("Product is null and cannot be submitted.");
+    } catch (error) {
+      console.error("Error submitting product:", error);
     }
   };
 
   const updateProductImages = (images: Schema["Product"]["type"]["images"]) => {
-    setProduct((prev) => {
-      return {
-        ...prev,
-        images: images,
-      } as unknown as Schema["Product"]["type"];
-    });
+    try {
+      setProduct((prev) => {
+        return {
+          ...prev,
+          images: images,
+        } as unknown as Schema["Product"]["type"];
+      });
+    } catch (error) {
+      console.error("Error updating product images:", error);
+    }
   };
 
   const updateProductImageOrder = useCallback(
     (key: string, orderPosition: number) => {
-      setProduct((prev) => {
-        if (!prev || !Array.isArray(prev.images)) return prev;
+      try {
+        setProduct((prev) => {
+          if (!prev || !Array.isArray(prev.images)) return prev;
 
-        const images = [...prev.images];
+          const images = [...prev.images];
 
-        const imageIndex = images.findIndex((img) => img?.url === key);
+          const imageIndex = images.findIndex((img) => img?.url === key);
 
-        const currentImage = images[imageIndex];
+          const currentImage = images[imageIndex];
 
-        images.splice(imageIndex, 1);
-        if (currentImage?.url) {
-          images.splice(orderPosition, 0, {
-            ...currentImage,
-            order: orderPosition,
-            url: currentImage.url,
-          });
-        }
+          images.splice(imageIndex, 1);
+          if (currentImage?.url) {
+            images.splice(orderPosition, 0, {
+              ...currentImage,
+              order: orderPosition,
+              url: currentImage.url,
+            });
+          }
 
-        const orderedImages = images.map((img, index) => ({
-          ...img,
-          order: index,
-        }));
+          const orderedImages = images.map((img, index) => ({
+            ...img,
+            order: index,
+          }));
 
-        return {
-          ...prev,
-          images: orderedImages,
-        } as unknown as Schema["Product"]["type"];
-      });
+          return {
+            ...prev,
+            images: orderedImages,
+          } as unknown as Schema["Product"]["type"];
+        });
+      } catch (error) {
+        console.error("Error updating product image order:", error);
+      }
     },
     [setProduct]
   );

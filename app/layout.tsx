@@ -1,19 +1,21 @@
 import type { Metadata } from "next";
 
-import { Container, Theme } from "@radix-ui/themes";
 import "@radix-ui/themes/styles.css";
 import "./globals.css";
-
 import "@aws-amplify/ui-react/styles.css";
-import ConfigureAmplifyClientSide from "@/components/auth/configureAmplifyClientSide/ConfigureAmplifyClientSide";
-import Header from "./components/header/Header";
-import ReduxProvider from "./providers/reduxProvider";
 
 import { Amplify } from "aws-amplify";
+
+import ConfigureAmplifyClientSide from "@/components/auth/configureAmplifyClientSide/ConfigureAmplifyClientSide";
+import { Container, Theme } from "@radix-ui/themes";
+
 import outputs from "../amplify_outputs.json";
-import { ReactQueryProvider } from "./providers/reactQueryProvider";
 import { BreadCrumb } from "./components/breadCrumb/BreadCrumb";
+import Header from "./components/header/Header";
 import { AuthProvider } from "./providers/AuthProvider";
+import { ReactQueryProvider } from "./providers/reactQueryProvider";
+import ReduxProvider from "@/providers/reduxProvider";
+
 Amplify.configure(outputs);
 
 export const metadata: Metadata = {

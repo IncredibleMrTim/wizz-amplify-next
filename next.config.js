@@ -19,7 +19,7 @@ const nextConfig = {
       process.env.NEXT_PUBLIC_LAMBDA_REFRESH_TOKEN_URL,
   },
   images: {
-    domains: [process.env.S3_IMAGE_DOMAIN],
+    domains: [process.env.S3_IMAGE_DOMAIN].filter(Boolean),
   },
 };
 export default nextConfig;
