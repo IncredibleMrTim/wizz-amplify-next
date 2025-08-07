@@ -29,7 +29,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useAddProductMutation } from "@/services/product/useAddProductMutation";
-import { useGetProductQuery } from "@/services/product/useGetProductQuery";
+
 import { useUpdateProductMutation } from "@/services/product/useUpdateProductMutation";
 import { STORE_KEYS, useAppDispatch, useAppSelector } from "@/stores/store";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -57,8 +57,13 @@ const formSchema = z.object({
   productCategory: z.string().optional(),
 });
 
-export const ProductEditor = () => {
-  const { getProductById } = useGetProductQuery();
+export const ProductEditor = ({
+  product,
+  updateProductImages,
+}: {
+  product: Schema["Product"]["type"];
+  updateProductImages: (images: Schema["Product"]["type"]["images"]) => void;
+}) => {
   const params = useParams();
   const dispatch = useAppDispatch();
   const allProducts = useAppSelector((state) => state.products.allProducts);
@@ -66,14 +71,10 @@ export const ProductEditor = () => {
   const addProductMutation = useAddProductMutation();
   const updateProductMutation = useUpdateProductMutation();
 
-  const [product, setProduct] = useState<Schema["Product"]["type"] | null>(
+  const [product1, setProduct1] = useState<Schema["Product"]["type"] | null>(
     null
   );
   const router = useRouter();
-
-  const data = params?.productId?.[0]
-    ? getProductById(params?.productId?.[0]).data
-    : null;
 
   const form = useForm<
     z.infer<typeof formSchema>,
@@ -81,7 +82,7 @@ export const ProductEditor = () => {
     z.infer<typeof formSchema>
   >({
     resolver: zodResolver(formSchema),
-    mode: "onSubmit",
+    mode: "onBlur",
     values: {
       id: product?.id || "",
       name: product?.name || "",
@@ -93,31 +94,6 @@ export const ProductEditor = () => {
     },
   });
 
-  useEffect(() => {
-    try {
-      if (!data) return;
-
-      setProduct(data as Schema["Product"]["type"]);
-      form.reset(data as z.infer<typeof formSchema>);
-      dispatch({
-        type: STORE_KEYS.SET_CURRENT_PRODUCT,
-        payload: data as Schema["Product"]["type"],
-      });
-
-      return () => {
-        // Clean up function to reset the form and product state
-        setProduct(null);
-        form.reset();
-        dispatch({
-          type: STORE_KEYS.SET_CURRENT_PRODUCT,
-          payload: null,
-        });
-      };
-    } catch (error) {
-      console.error("Error setting product data:", error);
-    }
-  }, []);
-
   // update the imagesRef when product images change
   // this is used so that we always have an upto date reference to the images
   // when the FileUploader component is used
@@ -126,63 +102,48 @@ export const ProductEditor = () => {
   }, [product?.images]);
 
   const handleSubmit = async () => {
-    try {
-      if (product) {
-        if (product.id) {
-          updateProductMutation.mutateAsync({
-            ...form.getValues(),
-            images: productImagesRef.current,
-            createdAt: product.createdAt,
-            updatedAt: new Date().toISOString(),
-          } as Schema["Product"]["type"]);
+    if (product) {
+      if (product.id) {
+        // if an existing product, update it
+        const newP = await updateProductMutation.mutateAsync({
+          ...form.getValues(),
+          images: productImagesRef.current,
+          createdAt: product.createdAt,
+          updatedAt: new Date().toISOString(),
+        } as Schema["Product"]["type"]);
 
-          // if an existing product, update it in the product list
-          const updatedProducts = allProducts.map((p) =>
-            p.id === product.id ? product : p
-          );
-          dispatch({
-            type: STORE_KEYS.SET_PRODUCTS,
-            payload: updatedProducts,
-          });
-        } else {
-          try {
-            const newProduct = await addProductMutation.mutateAsync(product);
+        // if an existing product, update it in the product list
+        const updatedProducts = allProducts.map((p) =>
+          p.id === product.id ? newP : p
+        );
 
-            dispatch({
-              type: STORE_KEYS.SET_PRODUCTS,
-              payload: [...allProducts, newProduct],
-            });
-          } catch (error) {
-            console.error("Error adding product:", error);
-          }
-          // if a new product, add it to the product list
-        }
-        router.push("/admin");
+        // update the product in the store
+        dispatch({
+          type: STORE_KEYS.SET_PRODUCTS,
+          payload: updatedProducts,
+        });
       } else {
-        console.error("Product is null and cannot be submitted.");
-      }
-    } catch (error) {
-      console.error("Error submitting product:", error);
-    }
-  };
+        // if a new product, add it
 
-  const updateProductImages = (images: Schema["Product"]["type"]["images"]) => {
-    try {
-      setProduct((prev) => {
-        return {
-          ...prev,
-          images: images,
-        } as unknown as Schema["Product"]["type"];
-      });
-    } catch (error) {
-      console.error("Error updating product images:", error);
+        const newProduct = await addProductMutation.mutateAsync(product);
+
+        dispatch({
+          type: STORE_KEYS.SET_PRODUCTS,
+          payload: [...allProducts, newProduct],
+        });
+
+        // if a new product, add it to the product list
+      }
+      router.push("/admin");
+    } else {
+      console.error("Product is null and cannot be submitted.");
     }
   };
 
   const updateProductImageOrder = useCallback(
     (key: string, orderPosition: number) => {
       try {
-        setProduct((prev) => {
+        setProduct1((prev) => {
           if (!prev || !Array.isArray(prev.images)) return prev;
 
           const images = [...prev.images];
@@ -214,9 +175,9 @@ export const ProductEditor = () => {
         console.error("Error updating product image order:", error);
       }
     },
-    [setProduct]
+    [setProduct1]
   );
-
+  console.log("ProductEditor product:", product);
   return (
     <div className="-mt-8 bg-violet-50 p-4   shadow-sm shadow-gray-300 border-gray-200">
       <Form {...form}>
@@ -238,12 +199,6 @@ export const ProductEditor = () => {
                           {...field}
                           type="text"
                           placeholder="Product Name"
-                          onBlur={(e) =>
-                            setProduct({
-                              ...form.getValues(),
-                              name: e.target.value,
-                            } as Schema["Product"]["type"])
-                          }
                         />
                       </div>
                     </FormControl>
@@ -267,12 +222,6 @@ export const ProductEditor = () => {
                         <Textarea
                           {...field}
                           placeholder="Product Description"
-                          onBlur={(e) =>
-                            setProduct({
-                              ...form.getValues(),
-                              description: e.target.value,
-                            } as unknown as Schema["Product"]["type"])
-                          }
                           className="border-0 border-b-1 border-gray-300 rounded-none focus:!ring-0"
                         />
                       </div>
@@ -295,19 +244,7 @@ export const ProductEditor = () => {
                     </FormDescription>
                     <FormControl>
                       <div className="bg-white">
-                        <Input
-                          {...field}
-                          type="number"
-                          placeholder="Price"
-                          onBlur={(e) => {
-                            setProduct({
-                              ...form.getValues(),
-                              price: isNaN(e.target.valueAsNumber)
-                                ? 0
-                                : e.target.valueAsNumber,
-                            } as unknown as Schema["Product"]["type"]);
-                          }}
-                        />
+                        <Input {...field} type="number" placeholder="Price" />
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -326,19 +263,7 @@ export const ProductEditor = () => {
                     </FormDescription>
                     <FormControl>
                       <div className="bg-white">
-                        <Input
-                          {...field}
-                          type="number"
-                          placeholder="Stock"
-                          onBlur={(e) =>
-                            setProduct({
-                              ...form.getValues(),
-                              stock: isNaN(e.target.valueAsNumber)
-                                ? 0
-                                : e.target.valueAsNumber,
-                            } as unknown as Schema["Product"]["type"])
-                          }
-                        />
+                        <Input {...field} type="number" placeholder="Stock" />
                       </div>
                     </FormControl>
 
@@ -378,29 +303,10 @@ export const ProductEditor = () => {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className=" bg-white w-full">
-                              <DropdownMenuItem
-                                onClick={() => {
-                                  field.onChange(0);
-                                  setProduct({
-                                    ...form.getValues(),
-                                    stock: 0,
-                                  } as unknown as Schema["Product"]["type"]);
-                                }}
-                                className="w-full"
-                              >
+                              <DropdownMenuItem className="w-full">
                                 In Stock
                               </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() => {
-                                  field.onChange(1);
-                                  setProduct({
-                                    ...form.getValues(),
-                                    stock: 1,
-                                  } as unknown as Schema["Product"]["type"]);
-                                }}
-                              >
-                                Out of Stock
-                              </DropdownMenuItem>
+                              <DropdownMenuItem>Out of Stock</DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </div>
@@ -427,18 +333,14 @@ export const ProductEditor = () => {
                           <p>Check this box to feature the product.</p>
                           <Checkbox
                             checked={field.value ?? false}
-                            onCheckedChange={(checked) => {
-                              field.onChange(checked);
-                              setProduct({
-                                ...form.getValues(),
-                                isFeatured: checked,
-                              } as unknown as Schema["Product"]["type"]);
-                            }}
                             name={field.name}
                             ref={field.ref}
                             onBlur={field.onBlur}
+                            onCheckedChange={(checked) => {
+                              field.onChange(checked === true);
+                            }}
                             disabled={field.disabled}
-                            className={`h-4 w-4 bg-white border-gray-500 ${field.value === true ? "bg-pink-500 border-pink-500 text-white" : ""}`}
+                            className={`h-4 w-4 bg-white border-gray-500 ${form.getValues("isFeatured") === true ? "bg-pink-500 border-pink-500 text-white" : ""}`}
                           />
                         </div>
                       </FormControl>
@@ -464,18 +366,14 @@ export const ProductEditor = () => {
                             Check this box to mark the product as Enquiry Only.
                           </p>
                           <Checkbox
+                            className={`h-4 w-4 bg-white border-gray-500 ${form.getValues("isEnquiryOnly") === true ? "bg-pink-500 border-pink-500 text-white" : ""}`}
                             checked={field.value ?? false}
-                            onCheckedChange={(checked) => {
-                              field.onChange(checked);
-                              setProduct({
-                                ...form.getValues(),
-                                isEnquiryOnly: checked,
-                              } as unknown as Schema["Product"]["type"]);
-                            }}
-                            className={`h-4 w-4 bg-white border-gray-500 ${field.value === true ? "bg-pink-500 border-pink-500 text-white" : ""}`}
                             name={field.name}
                             ref={field.ref}
                             onBlur={field.onBlur}
+                            onCheckedChange={(checked) => {
+                              field.onChange(checked === true);
+                            }}
                             disabled={field.disabled}
                           />
                         </div>

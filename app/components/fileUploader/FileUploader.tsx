@@ -19,6 +19,7 @@ export const FileUploader = ({
   imagesRef,
 }: FileUploaderProps) => {
   const dragKey = useRef<string | undefined>(undefined);
+  console.log("FileList imagesRef:", product);
 
   return (
     <div className="flex justify-between gap-4 w-full">
@@ -59,6 +60,7 @@ export const FileUploader = ({
                     [...product.images]
                       ?.sort((a, b) => (a?.order ?? 0) - (b?.order ?? 0))
                       ?.map((file, index) => {
+                        console.log(file?.url, "file url");
                         return (
                           <div
                             key={file?.url}

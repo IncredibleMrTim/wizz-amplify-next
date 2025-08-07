@@ -7,6 +7,7 @@ export interface ProductState {
   setProducts: (allProducts: Schema["Product"]["type"] | null) => void;
   setCurrentProduct: (currentProduct: Schema["Product"]["type"] | null) => void;
   clearCurrentProduct?: () => void;
+  updateProductImages: (images: Schema["Product"]["type"]["images"]) => void;
 }
 
 const initialSate: ProductState = {
@@ -15,6 +16,7 @@ const initialSate: ProductState = {
   setProducts: () => {},
   setCurrentProduct: () => {},
   clearCurrentProduct: () => {},
+  updateProductImages: () => {},
 };
 
 export const productSlice = createSlice({
@@ -36,8 +38,20 @@ export const productSlice = createSlice({
     clearCurrentProduct: (state) => {
       state.currentProduct = null;
     },
+    updateProductImages: (
+      state,
+      action: PayloadAction<Schema["Product"]["type"]["images"]>
+    ) => {
+      if (state.currentProduct) {
+        state.currentProduct.images = action.payload;
+      }
+    },
   },
 });
-export const { setProducts, setCurrentProduct, clearCurrentProduct } =
-  productSlice.actions;
+export const {
+  setProducts,
+  setCurrentProduct,
+  clearCurrentProduct,
+  updateProductImages,
+} = productSlice.actions;
 export const productReducer = productSlice.reducer;

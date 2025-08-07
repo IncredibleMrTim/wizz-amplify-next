@@ -1,4 +1,4 @@
-import { ProductEditor } from "@/components/admin/productEditor/ProductEditor";
+import ProductEditor from "@/components/admin/productEditor/ProductEditorWrapper";
 
 const AdminProductsPage = () => {
   return <ProductEditor />;
