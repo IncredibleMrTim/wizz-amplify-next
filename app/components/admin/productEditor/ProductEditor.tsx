@@ -177,7 +177,7 @@ export const ProductEditor = ({
     },
     [setProduct1]
   );
-  console.log("ProductEditor product:", product);
+
   return (
     <div className="-mt-8 bg-violet-50 p-4   shadow-sm shadow-gray-300 border-gray-200">
       <Form {...form}>

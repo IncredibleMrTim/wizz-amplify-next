@@ -24,8 +24,6 @@ const ProductEditorWrapper = () => {
   }, []);
 
   const updateProductImages = (images: Schema["Product"]["type"]["images"]) => {
-    console.log("Updating product images:", images);
-
     dispatch({
       type: STORE_KEYS.UPDATE_PRODUCT_IMAGES,
       payload: images,

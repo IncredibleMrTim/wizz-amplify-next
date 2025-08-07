@@ -21,7 +21,6 @@ export const useGetProductQuery = () => {
   };
 
   const getProductById = (id: string) => {
-    console.log("getProductById id:", id);
     return useQuery({
       queryKey: [ProductQueryKeys.GET_PRODUCT],
       queryFn: async () => {
@@ -29,7 +28,6 @@ export const useGetProductQuery = () => {
       },
       staleTime: 0,
       select: (data) => {
-        console.log("getProductById data:", data);
         return data?.data ?? null;
       },
       enabled: !!id,
