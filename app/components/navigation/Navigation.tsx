@@ -25,6 +25,7 @@ export type NavComponent = {
   href: string;
   content?: string | React.ReactNode;
   icon?: React.ReactNode;
+  onClick?: (e: React.MouseEvent<HTMLElement>) => void;
 };
 
 // used to render the navigation bar

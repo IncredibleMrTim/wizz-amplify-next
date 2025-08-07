@@ -20,18 +20,19 @@ export const useGetProductQuery = () => {
     });
   };
 
-  const getProductById = (id: string) =>
-    useQuery({
+  const getProductById = (id: string) => {
+    return useQuery({
       queryKey: [ProductQueryKeys.GET_PRODUCT],
       queryFn: async () => {
         return await fetchProductById(id);
       },
-
+      staleTime: 0,
       select: (data) => {
         return data?.data ?? null;
       },
       enabled: !!id,
     });
+  };
 
   const getProductByName = (name: string) =>
     useQuery({

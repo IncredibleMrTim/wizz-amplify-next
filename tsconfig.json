@@ -15,7 +15,11 @@
     "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["app/*"]
+      "@/*": ["app/*"],
+      "@/stores/*": ["app/stores/*"],
+      "@/testing/*": ["app/testing/*"],
+      "@/services/*": ["app/services/*"],
+      "@/providers/*": ["app/providers/*"]
     },
     "plugins": [
       {
@@ -23,6 +27,15 @@
       }
     ]
   },
-  "include": ["next-env.d.ts", ".next/types/**/*.ts", "**/*.ts", "**/*.tsx"],
+  "include": [
+    "next-env.d.ts",
+    ".next/types/**/*.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/jest.config.ts",
+    "**/testing/setupTests.ts"
+  ],
   "exclude": ["node_modules"]
 }

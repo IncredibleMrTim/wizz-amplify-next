@@ -1,4 +1,5 @@
-import { configureStore } from "@reduxjs/toolkit";
+"use client";
+import { configureStore, EnhancedStore } from "@reduxjs/toolkit";
 import { useDispatch, TypedUseSelectorHook, useSelector } from "react-redux";
 import { navReducer } from "./navigation/navSlice";
 import { authReducer } from "./auth/authSlice";
@@ -8,6 +9,7 @@ import { orderReducer } from "./order/orderSlice";
 export const STORE_KEYS = {
   SET_PRODUCTS: "PRODUCTS/setProducts",
   SET_CURRENT_PRODUCT: "PRODUCTS/setCurrentProduct",
+  UPDATE_PRODUCT_IMAGES: "PRODUCTS/updateProductImages",
   SET_ACTIVE_MENU_ITEM: "NAVIGATION/setActiveMenuItem",
   SET_DRAWER_IS_OPEN: "NAVIGATION/setIsDrawerOpen",
   SET_CURRENT_ORDER: "ORDER/setCurrentOrder",
@@ -29,5 +31,8 @@ export const store = configureStore({
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 
+export type AppStore = EnhancedStore<RootState>;
+
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
+export const dispatch = store.dispatch;

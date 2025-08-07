@@ -3,3 +3,5 @@ export const segmentMappings: { [key: string]: string } = {
   product: "Products",
   productDetails: "Product Details",
 };
+
+export const hiddenSegments = ["admin", "basket", "checkout"];
