@@ -15,6 +15,9 @@ export const STORE_KEYS = {
   SET_CURRENT_ORDER: "ORDER/setCurrentOrder",
   UPDATE_ORDER_PRODUCT: "ORDER/updateOrderProduct",
   SET_CURRENT_USER: "AUTH/setCurrentUser",
+  CLEAR_CURRENT_PRODUCT: "PRODUCTS/clearCurrentProduct",
+  UPDATE_ALL_PRODUCTS_WITH_NEW_PRODUCT:
+    "PRODUCTS/updateAllProductsWithNewProduct",
 };
 
 export const store = configureStore({

@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { generateClient } from "aws-amplify/data";
 import { type Schema } from "amplify/data/resource";
 import { ProductQueryKeys } from "./keys";
@@ -20,9 +20,15 @@ export const useGetProductQuery = () => {
     });
   };
 
-  const getProductById = (id: string) => {
+  const getProductById = ({
+    id,
+    enabled,
+  }: {
+    id: string;
+    enabled: boolean;
+  }) => {
     return useQuery({
-      queryKey: [ProductQueryKeys.GET_PRODUCT],
+      queryKey: [ProductQueryKeys.GET_PRODUCT, id],
       queryFn: async () => {
         return await fetchProductById(id);
       },
@@ -30,7 +36,8 @@ export const useGetProductQuery = () => {
       select: (data) => {
         return data?.data ?? null;
       },
-      enabled: !!id,
+
+      enabled,
     });
   };
 

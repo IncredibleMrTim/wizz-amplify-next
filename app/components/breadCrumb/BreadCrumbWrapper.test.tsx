@@ -1,5 +1,6 @@
 import BreadCrumbWrapper from "./BreadCrumbWrapper";
-import { renderWithProviders } from "@/testing/utils";
+import { renderWithProviders, StoreProps } from "@/testing/utils";
+import { screen, render } from "@testing-library/react";
 
 // Mock usePathname
 jest.mock("next/navigation", () => {
@@ -13,28 +14,27 @@ jest.mock("next/navigation", () => {
 describe("BreadCrumbWrapper", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.restoreAllMocks();
   });
 
-  const mockProductsReducer = (
-    state = {
-      currentProduct: {
-        id: "1",
-        name: "Test Product",
-      },
-      allProducts: [
-        {
-          id: "1",
-          name: "Test Product",
-        },
-      ],
-    },
-    action: any
-  ) => state;
+  // mock the product store data
+  const mockProduct = {
+    id: "1",
+    name: "Test Product",
+  };
 
-  it("should render the breadcrumb component", () => {
-    const { container } = renderWithProviders(<BreadCrumbWrapper />, {
-      products: mockProductsReducer,
-    });
-    expect(container.querySelector("nav")).toBeInTheDocument();
+  const mockStore: StoreProps = {
+    preloadedState: { products: { currentProduct: mockProduct } },
+    reducer: {
+      products: (state = mockProduct, action: any) => state,
+    },
+  };
+
+  it("should render the breadcrumb component", async () => {
+    const { container } = render(
+      renderWithProviders({ children: <BreadCrumbWrapper />, ...mockStore })
+    );
+    expect(screen.getByText("Products")).toBeInTheDocument();
+    expect(screen.getByText("Test Product")).toBeInTheDocument();
   });
 });

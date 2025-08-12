@@ -10,4 +10,5 @@ global.ResizeObserver = class ResizeObserver {
 beforeEach(() => {
   // Reset any global state or mocks before each test
   jest.clearAllMocks();
+  jest.restoreAllMocks();
 });

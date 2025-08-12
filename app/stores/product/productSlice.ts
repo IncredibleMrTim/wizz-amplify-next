@@ -8,6 +8,7 @@ export interface ProductState {
   setCurrentProduct: (currentProduct: Schema["Product"]["type"] | null) => void;
   clearCurrentProduct?: () => void;
   updateProductImages: (images: Schema["Product"]["type"]["images"]) => void;
+  updateAllProducts?: (product: Schema["Product"]["type"]) => void;
 }
 
 const initialSate: ProductState = {
@@ -17,6 +18,10 @@ const initialSate: ProductState = {
   setCurrentProduct: () => {},
   clearCurrentProduct: () => {},
   updateProductImages: () => {},
+  updateAllProducts: (product: Schema["Product"]["type"]) => {
+    // This function can be used to update the product in the allProducts array
+    // if needed, but it's not implemented here.
+  },
 };
 
 export const productSlice = createSlice({
@@ -46,6 +51,19 @@ export const productSlice = createSlice({
         state.currentProduct.images = action.payload;
       }
     },
+    updateAllProductsWithNewProduct: (
+      state,
+      action: PayloadAction<Schema["Product"]["type"]>
+    ) => {
+      const index = state.allProducts.findIndex(
+        (p) => p.id === action.payload.id
+      );
+      if (index !== -1) {
+        state.allProducts[index] = action.payload;
+      } else {
+        state.allProducts.push(action.payload);
+      }
+    },
   },
 });
 export const {
@@ -53,5 +71,6 @@ export const {
   setCurrentProduct,
   clearCurrentProduct,
   updateProductImages,
+  updateAllProductsWithNewProduct,
 } = productSlice.actions;
 export const productReducer = productSlice.reducer;

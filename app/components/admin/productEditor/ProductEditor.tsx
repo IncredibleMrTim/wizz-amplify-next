@@ -1,16 +1,11 @@
 "use client";
-
 import { Schema } from "amplify/data/resource";
-import { useParams, useRouter } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
+import { ChevronDown } from "lucide-react";
 import { FiArrowLeft, FiCheck } from "react-icons/fi";
-import { z } from "zod";
 
 import { FileUploader } from "@/components/fileUploader/FileUploader";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,12 +23,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useAddProductMutation } from "@/services/product/useAddProductMutation";
 
-import { useUpdateProductMutation } from "@/services/product/useUpdateProductMutation";
-import { STORE_KEYS, useAppDispatch, useAppSelector } from "@/stores/store";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ChevronDown } from "lucide-react";
+import { useRouter, useParams } from "next/navigation";
+import { SubmitHandler, useForm } from "react-hook-form";
+import z from "zod";
+import { useProductEditor } from "./useProductEditor";
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
@@ -54,28 +49,15 @@ const formSchema = z.object({
   isFeatured: z.boolean().optional(),
   isEnquiryOnly: z.boolean().optional(),
   id: z.string().optional(),
-  productCategory: z.string().optional(),
+  category: z.string().optional(),
 });
 
-export const ProductEditor = ({
-  product,
-  updateProductImages,
-}: {
-  product: Schema["Product"]["type"];
-  updateProductImages: (images: Schema["Product"]["type"]["images"]) => void;
-}) => {
+export const ProductEditor = () => {
   const params = useParams();
-  const dispatch = useAppDispatch();
-  const allProducts = useAppSelector((state) => state.products.allProducts);
-  const productImagesRef = useRef<Schema["Product"]["type"]["images"]>([]);
-  const addProductMutation = useAddProductMutation();
-  const updateProductMutation = useUpdateProductMutation();
+  const id = params.productId?.[0];
+  const { product, isLoading, updateImages, save } = useProductEditor();
 
-  const [product1, setProduct1] = useState<Schema["Product"]["type"] | null>(
-    null
-  );
   const router = useRouter();
-
   const form = useForm<
     z.infer<typeof formSchema>,
     any,
@@ -91,92 +73,48 @@ export const ProductEditor = ({
       stock: product?.stock ?? 0,
       isFeatured: product?.isFeatured ?? false,
       isEnquiryOnly: product?.isEnquiryOnly ?? false,
+      category: undefined,
     },
   });
 
-  // update the imagesRef when product images change
-  // this is used so that we always have an upto date reference to the images
-  // when the FileUploader component is used
-  useEffect(() => {
-    productImagesRef.current = product?.images || [];
-  }, [product?.images]);
+  const updateProductImageOrder = (key: string, orderPosition: number) => {
+    if (!product || !Array.isArray(product.images)) return product;
 
-  const handleSubmit = async () => {
-    if (product) {
-      if (product.id) {
-        // if an existing product, update it
-        const newP = await updateProductMutation.mutateAsync({
-          ...form.getValues(),
-          images: productImagesRef.current,
-          createdAt: product.createdAt,
-          updatedAt: new Date().toISOString(),
-        } as Schema["Product"]["type"]);
+    const images = [...product.images];
 
-        // if an existing product, update it in the product list
-        const updatedProducts = allProducts.map((p) =>
-          p.id === product.id ? newP : p
-        );
+    const imageIndex = images.findIndex((img) => img?.url === key);
 
-        // update the product in the store
-        dispatch({
-          type: STORE_KEYS.SET_PRODUCTS,
-          payload: updatedProducts,
-        });
-      } else {
-        // if a new product, add it
+    const currentImage = images[imageIndex];
 
-        const newProduct = await addProductMutation.mutateAsync(product);
-
-        dispatch({
-          type: STORE_KEYS.SET_PRODUCTS,
-          payload: [...allProducts, newProduct],
-        });
-
-        // if a new product, add it to the product list
-      }
-      router.push("/admin");
-    } else {
-      console.error("Product is null and cannot be submitted.");
+    images.splice(imageIndex, 1);
+    if (currentImage?.url) {
+      images.splice(orderPosition, 0, {
+        ...currentImage,
+        order: orderPosition,
+        url: currentImage.url,
+      });
     }
+
+    const orderedImages = images.map((img, index) => ({
+      ...img,
+      order: index,
+    }));
+
+    updateImages(orderedImages);
   };
 
-  const updateProductImageOrder = useCallback(
-    (key: string, orderPosition: number) => {
-      try {
-        setProduct1((prev) => {
-          if (!prev || !Array.isArray(prev.images)) return prev;
-
-          const images = [...prev.images];
-
-          const imageIndex = images.findIndex((img) => img?.url === key);
-
-          const currentImage = images[imageIndex];
-
-          images.splice(imageIndex, 1);
-          if (currentImage?.url) {
-            images.splice(orderPosition, 0, {
-              ...currentImage,
-              order: orderPosition,
-              url: currentImage.url,
-            });
-          }
-
-          const orderedImages = images.map((img, index) => ({
-            ...img,
-            order: index,
-          }));
-
-          return {
-            ...prev,
-            images: orderedImages,
-          } as unknown as Schema["Product"]["type"];
-        });
-      } catch (error) {
-        console.error("Error updating product image order:", error);
-      }
-    },
-    [setProduct1]
-  );
+  const handleSubmit: SubmitHandler<z.infer<typeof formSchema>> = async (
+    values
+  ) => {
+    const payload: Schema["Product"]["type"] = {
+      ...product,
+      ...values,
+      images: product.images ?? [],
+      createdAt: product.createdAt ?? new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    await save(payload);
+  };
 
   return (
     <div className="-mt-8 bg-violet-50 p-4   shadow-sm shadow-gray-300 border-gray-200">
@@ -189,7 +127,9 @@ export const ProductEditor = ({
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel htmlFor={field.name} className="text-xl">
+                      Product Name
+                    </FormLabel>
                     <FormDescription>
                       Enter the name of the product.
                     </FormDescription>
@@ -197,12 +137,13 @@ export const ProductEditor = ({
                       <div className="bg-white">
                         <Input
                           {...field}
+                          id={field.name}
                           type="text"
                           placeholder="Product Name"
                         />
                       </div>
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage aria-live="assertive" />
                   </FormItem>
                 )}
               />
@@ -213,7 +154,9 @@ export const ProductEditor = ({
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xl">Description</FormLabel>
+                    <FormLabel htmlFor={field.name} className="text-xl">
+                      Description
+                    </FormLabel>
                     <FormDescription>
                       Enter the product description.
                     </FormDescription>
@@ -221,6 +164,7 @@ export const ProductEditor = ({
                       <div className="bg-white">
                         <Textarea
                           {...field}
+                          id={field.name}
                           placeholder="Product Description"
                           className="border-0 border-b-1 border-gray-300 rounded-none focus:!ring-0"
                         />
@@ -238,13 +182,20 @@ export const ProductEditor = ({
                 name="price"
                 render={({ field }) => (
                   <FormItem className="w-1/2">
-                    <FormLabel className="text-xl">Price</FormLabel>
+                    <FormLabel htmlFor={field.name} className="text-xl">
+                      Price
+                    </FormLabel>
                     <FormDescription>
                       Enter the product price (£).
                     </FormDescription>
                     <FormControl>
                       <div className="bg-white">
-                        <Input {...field} type="number" placeholder="Price" />
+                        <Input
+                          {...field}
+                          id={field.name}
+                          type="number"
+                          placeholder="Price"
+                        />
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -257,13 +208,20 @@ export const ProductEditor = ({
                 name="stock"
                 render={({ field }) => (
                   <FormItem className="w-1/2">
-                    <FormLabel className="text-xl">Stock Level</FormLabel>
+                    <FormLabel className="text-xl" htmlFor={field.name}>
+                      Stock Level
+                    </FormLabel>
                     <FormDescription>
                       Enter the product stock level.
                     </FormDescription>
                     <FormControl>
                       <div className="bg-white">
-                        <Input {...field} type="number" placeholder="Stock" />
+                        <Input
+                          {...field}
+                          type="number"
+                          placeholder="Stock"
+                          id={field.name}
+                        />
                       </div>
                     </FormControl>
 
@@ -277,10 +235,10 @@ export const ProductEditor = ({
                 <FormField
                   disabled={true}
                   control={form.control}
-                  name="productCategory"
+                  name="category"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-xl">
+                      <FormLabel htmlFor={field.name} className="text-xl">
                         Product Category
                       </FormLabel>
                       <FormDescription>
@@ -295,14 +253,15 @@ export const ProductEditor = ({
                               className="!ring-0 bg-white w-full"
                             >
                               <Button
+                                id={field.name}
                                 variant="outline"
-                                className="w-full justify-end"
+                                className="flex w-full justify-between"
                               >
-                                {field.value ?? "Select stock level"}
+                                {field.value ?? "Category"}
                                 <ChevronDown className="ml-2 h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent className=" bg-white w-full">
+                            <DropdownMenuContent className="bg-white w-full">
                               <DropdownMenuItem className="w-full">
                                 In Stock
                               </DropdownMenuItem>
@@ -323,7 +282,9 @@ export const ProductEditor = ({
                   name="isFeatured"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-xl">Feature Product</FormLabel>
+                      <FormLabel className="text-xl" htmlFor={field.name}>
+                        Feature Product
+                      </FormLabel>
                       <FormDescription>
                         Marking a product as Featured will display it on the
                         home page.
@@ -332,7 +293,8 @@ export const ProductEditor = ({
                         <div className="flex items-center gap-2">
                           <p>Check this box to feature the product.</p>
                           <Checkbox
-                            checked={field.value ?? false}
+                            id={field.name}
+                            checked={field.value}
                             name={field.name}
                             ref={field.ref}
                             onBlur={field.onBlur}
@@ -354,7 +316,9 @@ export const ProductEditor = ({
                   name="isEnquiryOnly"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-xl">Enquiry Only</FormLabel>
+                      <FormLabel className="text-xl" htmlFor={field.name}>
+                        Enquiry Only
+                      </FormLabel>
                       <FormDescription>
                         Marking this product as Enquiry Only will hide the
                         payment methods and only allow the user to send an
@@ -367,7 +331,8 @@ export const ProductEditor = ({
                           </p>
                           <Checkbox
                             className={`h-4 w-4 bg-white border-gray-500 ${form.getValues("isEnquiryOnly") === true ? "bg-pink-500 border-pink-500 text-white" : ""}`}
-                            checked={field.value ?? false}
+                            id={field.name}
+                            checked={field.value}
                             name={field.name}
                             ref={field.ref}
                             onBlur={field.onBlur}
@@ -389,8 +354,7 @@ export const ProductEditor = ({
                 {/* FileUploader component for uploading images */}
                 <FileUploader
                   product={product!}
-                  imagesRef={productImagesRef}
-                  updateProductImages={updateProductImages}
+                  updateProductImages={updateImages}
                   updateProductImageOrder={updateProductImageOrder}
                 />
               </div>
@@ -403,12 +367,14 @@ export const ProductEditor = ({
             </Button>
 
             <Button
+              role="submit"
               type="submit"
               disabled={form.formState.isSubmitting || !form.formState.isValid}
               className="flex items-center gap-2"
+              aria-label={`Submit ${product ? "Update" : "Create"} product form`}
             >
               <FiCheck />
-              {params.productId?.[0] ? "Update" : "Create"} Product
+              {product ? "Update" : "Create"} Product
             </Button>
           </div>
         </form>

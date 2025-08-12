@@ -1,8 +1,8 @@
 import { Schema } from "amplify/data/resource";
 import * as nextNavigation from "next/navigation";
 
-import { renderWithProviders } from "@/testing/utils";
-import { screen } from "@testing-library/dom";
+import { renderWithProviders, StoreProps } from "@/testing/utils";
+import { screen, render } from "@testing-library/react";
 
 import { BreadCrumb } from "./BreadCrumb";
 
@@ -17,33 +17,35 @@ jest.mock("next/navigation", () => {
 
 jest.mock("@/components/breadCrumb/breadcrumbMappings");
 
-const mockProduct = {
-  id: "1",
-  name: "Test Product",
-} as unknown as Schema["Product"]["type"];
-
-const mockProductsReducer = (
-  state = {
-    currentProduct: mockProduct,
-    allProducts: [mockProduct],
-  },
-  action: any
-) => state;
-
 describe("BreadCrumb", () => {
+  // mock the product store data
+  const mockProduct = {
+    id: "1",
+    name: "Test Product",
+  } as unknown as Schema["Product"]["type"];
+
+  const mockStore: StoreProps = {
+    preloadedState: { products: { currentProduct: mockProduct } },
+    reducer: {
+      products: (state = mockProduct, action: any) => state,
+    },
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.restoreAllMocks();
   });
 
   it("renders breadcrumb links for a simple path", () => {
-    renderWithProviders(
+    render(
       <BreadCrumb
         pathname="/product/test-product"
         product={mockProduct}
         segments={["product", "shoes"]}
       />,
       {
-        products: mockProductsReducer,
+        wrapper: ({ children }) =>
+          renderWithProviders({ children, ...mockStore }),
       }
     );
 
@@ -54,12 +56,10 @@ describe("BreadCrumb", () => {
   it("does not render on admin path", async () => {
     jest.mocked(nextNavigation.usePathname).mockReturnValue("/admin/dashboard");
 
-    renderWithProviders(
-      <BreadCrumb pathname="/admin/dashboard" segments={["admin"]} />,
-      {
-        products: mockProductsReducer,
-      }
-    );
+    render(<BreadCrumb pathname="/admin/dashboard" segments={["admin"]} />, {
+      wrapper: ({ children }) =>
+        renderWithProviders({ children, ...mockStore }),
+    });
 
     expect(screen.queryByText(/Products/)).not.toBeInTheDocument();
   });
@@ -70,14 +70,15 @@ describe("BreadCrumb", () => {
       name: "Test-Product",
     } as unknown as Schema["Product"]["type"];
 
-    renderWithProviders(
+    render(
       <BreadCrumb
         pathname="/product/test-product"
         product={productWithHyphen}
         segments={["product", "test-product"]}
       />,
       {
-        products: mockProductsReducer,
+        wrapper: ({ children }) =>
+          renderWithProviders({ children, ...mockStore }),
       }
     );
 

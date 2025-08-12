@@ -82,6 +82,7 @@ export const FileUploader = ({
                               <img
                                 src={`${process.env.S3_PRODUCT_IMAGE_URL}${file?.url}`}
                                 alt={`${product?.name} product image`}
+                                aria-label={`${product?.name} product image`}
                                 className="h-full cursor-move"
                               />
 
